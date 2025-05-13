@@ -82,9 +82,60 @@
       top: 0;
       left: 0;
     }
+    /* Mobile Navigation Bar Styles */
+    .mobile-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      z-index: 50;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .mobile-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #94a3b8;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    .mobile-nav-item i {
+      font-size: 1.5rem;
+      margin-bottom: 4px;
+    }
+    .mobile-nav-item.active {
+      color: #3b82f6;
+    }
+    @media (min-width: 768px) {
+      .mobile-nav {
+        display: none;
+      }
+    }
   </style>
 </head>
 <body class="bg-slate-900 h-screen flex flex-col items-center justify-center overflow-hidden">
+  <!-- Top Bar (Desktop Only) -->
+  <div class="hidden md:flex top-bar fixed top-0 left-0 right-0 py-3 px-6 justify-between items-center z-40">
+    <div class="flex items-center space-x-4">
+      <h1 class="text-xl font-bold text-white">SwiftWaves</h1>
+    </div>
+    <div class="flex items-center space-x-4">
+      <a href="#" class="nav-link" onclick="openCategory('games')">Games</a>
+      <a href="#" class="nav-link" onclick="openCategory('ai')">AI</a>
+      <a href="#" class="nav-link" onclick="openCategory('proxy')">Proxy</a>
+      <a href="#" class="nav-link" onclick="openCategory('movies')">Movies</a>
+      <a href="#" class="nav-link" onclick="openCategory('apps')">Apps</a>
+      <button id="settings-button" class="text-white hover:text-blue-400">
+        <i class="fas fa-cog"></i>
+      </button>
+    </div>
+  </div>
+
   <!-- Particles Background -->
   <div id="particles-js"></div>
   
@@ -92,7 +143,7 @@
   <div id="welcome-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 
     text-center transition-all duration-300">
     <div class="bg-slate-800 rounded-2xl p-8 max-w-md w-full shadow-2xl border border-slate-700">
-      <h2 id="time-greeting" class="text-2xl font-bold text-white mb-4">Good morning</h2>
+      <h2 id="time-greeting" class="text-2xl font-bold text-white mb-4"></h2>
       <p class="text-gray-300 mb-6">Welcome to SwiftWaves. What's your name?</p>
       <input 
         type="text" 
@@ -111,22 +162,28 @@
     </div>
   </div>
 
-  <!-- New Top Bar -->
-  <nav class="top-bar fixed top-0 left-0 w-full px-6 py-4 flex justify-between items-center z-50 hidden">
-    <div class="flex items-center space-x-4">
-      <img src="/85d32b57-e47e-4306-aa45-33394b770c89.png" alt="SwiftGuard Logo" class="h-10 w-10">
-      <h1 class="text-2xl font-bold text-white">SwiftWaves</h1>
-    </div>
-    <div class="flex space-x-6 items-center">
-      <a href="#" class="nav-link text-lg" onclick="openCategory('games')">Games</a>
-      <a href="#" class="nav-link text-lg" onclick="openCategory('ai')">AI</a>
-      <a href="#" class="nav-link text-lg" onclick="openCategory('proxy')">Proxy</a>
-      <a href="#" class="nav-link text-lg" onclick="openCategory('movies')">Movies</a>
-      <a href="#" class="nav-link text-lg" onclick="openCategory('apps')">Apps</a>
-      <button id="settings-button" class="text-gray-300 hover:text-white text-xl ml-4">
-        <i class="fas fa-cog"></i>
-      </button>
-    </div>
+  <!-- Mobile Navigation Bar -->
+  <nav class="mobile-nav">
+    <a href="#" class="mobile-nav-item" onclick="openCategory('games')">
+      <i class="fas fa-gamepad"></i>
+      <span class="text-xs">Games</span>
+    </a>
+    <a href="#" class="mobile-nav-item" onclick="openCategory('ai')">
+      <i class="fas fa-robot"></i>
+      <span class="text-xs">AI</span>
+    </a>
+    <a href="#" class="mobile-nav-item" onclick="openCategory('proxy')">
+      <i class="fas fa-globe"></i>
+      <span class="text-xs">Proxy</span>
+    </a>
+    <a href="#" class="mobile-nav-item" onclick="openCategory('movies')">
+      <i class="fas fa-film"></i>
+      <span class="text-xs">Movies</span>
+    </a>
+    <a href="#" class="mobile-nav-item" onclick="openCategory('apps')">
+      <i class="fas fa-th"></i>
+      <span class="text-xs">Apps</span>
+    </a>
   </nav>
 
   <!-- Settings Modal -->
@@ -182,11 +239,15 @@
             <button class="theme-btn bg-blue-900 h-12 rounded-lg border-2 border-transparent hover:border-blue-500"></button>
           </div>
         </div>
+
+        <div class="mt-6 text-center">
+          <p class="text-xs text-gray-400">Made by Brian</p>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="max-w-4xl w-full px-4 text-center py-8 mt-20">
+  <div class="max-w-4xl w-full px-4 text-center py-8 mt-20 md:mt-32">
     <h1 class="text-3xl font-bold mb-2 text-white">SwiftWaves</h1>
     <div class="search-container mx-auto mb-8 backdrop-filter: blur(10px); background: rgba(255,255,255,0.05); border-radius: 1rem; padding: 1rem;">
       <input 
@@ -241,10 +302,71 @@
   <script>
     function getTimeGreeting() {
       const hour = new Date().getHours();
-      if (hour < 12) return 'Good morning';
-      if (hour < 18) return 'Good afternoon';
-      return 'Good evening';
+      let greeting = '';
+      let motivationalText = "You've got this!";
+  
+      if (hour < 12) {
+        greeting = 'Good morning';
+        motivationalText = "Start your day strong!";
+      } else if (hour < 18) {
+        greeting = 'Good afternoon';
+        motivationalText = "Keep pushing forward!";
+      } else {
+        greeting = 'Good evening';
+        motivationalText = "Wind down and recharge!";
+      }
+  
+      document.getElementById('time-greeting').textContent = greeting;
+      
+      const personalizedGreeting = document.getElementById('time-greeting-display');
+      const savedName = localStorage.getItem('userName');
+      
+      if (savedName) {
+        personalizedGreeting.textContent = `${greeting}, ${savedName}`;
+      } else {
+        personalizedGreeting.textContent = greeting;
+      }
+  
+      document.querySelector('#personalized-greeting p').textContent = motivationalText;
+      
+      return greeting;
     }
+
+    // Call getTimeGreeting when the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      getTimeGreeting();
+      
+      // Optional: Update greeting periodically to catch time changes
+      setInterval(getTimeGreeting, 60000);
+      
+      const savedName = localStorage.getItem('userName');
+      
+      if (savedName) {
+        const welcomeModal = document.getElementById('welcome-modal');
+        welcomeModal.style.display = 'none';
+      }
+
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme) {
+        document.body.style.backgroundColor = savedTheme;
+      }
+
+      const savedCloak = localStorage.getItem('tabCloak');
+      if (savedCloak) {
+        document.getElementById('tab-cloak').value = savedCloak;
+        const titles = {
+          default: 'SwiftGuard',
+          google: 'Google',
+          drive: 'Google Drive',
+          docs: 'Google Docs'
+        };
+        document.title = titles[savedCloak];
+      }
+
+      let panicKey = localStorage.getItem('panicKey') || '';
+      const panicKeyInput = document.getElementById('panic-key');
+      panicKeyInput.value = panicKey;
+    });
 
     function submitName() {
       const nameInput = document.getElementById('name-input');
@@ -262,10 +384,6 @@
         setTimeout(() => {
           welcomeModal.style.display = 'none';
         }, 300);
-        
-        // Show top bar
-        const topBar = document.querySelector('.top-bar');
-        topBar.classList.remove('hidden');
       } else {
         alert('Please enter your name');
       }
@@ -294,50 +412,6 @@
       }
     }
 
-    // Modified window.addEventListener
-    window.addEventListener('DOMContentLoaded', () => {
-      const welcomeModal = document.getElementById('welcome-modal');
-      const timeGreetingEl = document.getElementById('time-greeting');
-      const timeGreetingDisplay = document.getElementById('time-greeting-display');
-      const savedName = localStorage.getItem('userName');
-      const topBar = document.querySelector('.top-bar');
-      
-      // Set time-based greeting
-      const greeting = getTimeGreeting();
-      timeGreetingEl.textContent = greeting;
-      
-      // Update the main greeting display if name exists
-      if (savedName) {
-        timeGreetingDisplay.textContent = `${greeting}, ${savedName}`;
-        welcomeModal.style.display = 'none';
-        topBar.classList.remove('hidden');
-      } else {
-        timeGreetingDisplay.textContent = greeting;
-        topBar.classList.add('hidden');
-      }
-
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme) {
-        document.body.style.backgroundColor = savedTheme;
-      }
-
-      const savedCloak = localStorage.getItem('tabCloak');
-      if (savedCloak) {
-        document.getElementById('tab-cloak').value = savedCloak;
-        const titles = {
-          default: 'SwiftGuard',
-          google: 'Google',
-          drive: 'Google Drive',
-          docs: 'Google Docs'
-        };
-        document.title = titles[savedCloak];
-      }
-
-      let panicKey = localStorage.getItem('panicKey') || '';
-      const panicKeyInput = document.getElementById('panic-key');
-      panicKeyInput.value = panicKey;
-    });
-
     function openCategory(category) {
       const fullscreenView = document.getElementById('fullscreen-view');
       const fullscreenIframe = document.getElementById('fullscreen-iframe');
@@ -357,7 +431,6 @@
           url = 'https://movies.usewaves.site/';
           break;
         case 'apps':
-          // Create a modal or grid for app selection
           openAppsModal();
           return; // Exit the function to prevent iframe loading
       }
@@ -465,69 +538,76 @@
       fullscreenIframe.src = '';
     }
 
-    // Settings functionality
-    document.getElementById('settings-button').addEventListener('click', () => {
-      document.getElementById('settings-modal').classList.remove('hidden');
-    });
+    document.addEventListener('DOMContentLoaded', () => {
+      const settingsButton = document.getElementById('settings-button');
+      const settingsModal = document.getElementById('settings-modal');
+      const closeSettingsButton = document.getElementById('close-settings');
 
-    document.getElementById('close-settings').addEventListener('click', () => {
-      document.getElementById('settings-modal').classList.add('hidden');
-    });
-
-    // Tab Cloaking
-    document.getElementById('tab-cloak').addEventListener('change', (e) => {
-      const titles = {
-        default: 'SwiftGuard',
-        google: 'Google',
-        drive: 'Google Drive',
-        docs: 'Google Docs'
-      };
-      document.title = titles[e.target.value];
-      localStorage.setItem('tabCloak', e.target.value);
-    });
-
-    // About:Blank
-    document.getElementById('about-blank').addEventListener('click', () => {
-      const win = window.open('about:blank', '_blank');
-      win.document.write(`
-        <iframe src="${window.location.href}" style="width:100%; height:100%; border:none; position:fixed; top:0; left:0"></iframe>
-      `);
-    });
-
-    // Panic Key
-    let panicKey = localStorage.getItem('panicKey') || '';
-    const panicKeyInput = document.getElementById('panic-key');
-    
-    panicKeyInput.addEventListener('keydown', (e) => {
-      e.preventDefault();
-      panicKey = e.key.toUpperCase();
-      panicKeyInput.value = panicKey;
-      localStorage.setItem('panicKey', panicKey);
-    });
-
-    document.getElementById('clear-panic').addEventListener('click', () => {
-      panicKey = '';
-      panicKeyInput.value = '';
-      localStorage.removeItem('panicKey');
-    });
-
-    // Global panic key listener
-    document.addEventListener('keydown', (e) => {
-      if (e.key.toUpperCase() === panicKey) {
-        window.location.href = 'https://classroom.google.com';
+      if (settingsButton) {
+        settingsButton.addEventListener('click', () => {
+          settingsModal.classList.remove('hidden');
+        });
       }
-    });
 
-    // Themes
-    document.querySelectorAll('.theme-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.body.style.backgroundColor = getComputedStyle(btn).backgroundColor;
-        localStorage.setItem('theme', getComputedStyle(btn).backgroundColor);
+      if (closeSettingsButton) {
+        closeSettingsButton.addEventListener('click', () => {
+          settingsModal.classList.add('hidden');
+        });
+      }
+
+      // Tab Cloaking
+      document.getElementById('tab-cloak').addEventListener('change', (e) => {
+        const titles = {
+          default: 'SwiftGuard',
+          google: 'Google',
+          drive: 'Google Drive',
+          docs: 'Google Docs'
+        };
+        document.title = titles[e.target.value];
+        localStorage.setItem('tabCloak', e.target.value);
       });
-    });
 
-    // Particles.js Configuration
-    window.addEventListener('DOMContentLoaded', () => {
+      // About:Blank
+      document.getElementById('about-blank').addEventListener('click', () => {
+        const win = window.open('about:blank', '_blank');
+        win.document.write(`
+          <iframe src="${window.location.href}" style="width:100%; height:100%; border:none; position:fixed; top:0; left:0"></iframe>
+        `);
+      });
+
+      // Panic Key
+      let panicKey = localStorage.getItem('panicKey') || '';
+      const panicKeyInput = document.getElementById('panic-key');
+      
+      panicKeyInput.addEventListener('keydown', (e) => {
+        e.preventDefault();
+        panicKey = e.key.toUpperCase();
+        panicKeyInput.value = panicKey;
+        localStorage.setItem('panicKey', panicKey);
+      });
+
+      document.getElementById('clear-panic').addEventListener('click', () => {
+        panicKey = '';
+        panicKeyInput.value = '';
+        localStorage.removeItem('panicKey');
+      });
+
+      // Global panic key listener
+      document.addEventListener('keydown', (e) => {
+        if (e.key.toUpperCase() === panicKey) {
+          window.location.href = 'https://classroom.google.com';
+        }
+      });
+
+      // Themes
+      document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.body.style.backgroundColor = getComputedStyle(btn).backgroundColor;
+          localStorage.setItem('theme', getComputedStyle(btn).backgroundColor);
+        });
+      });
+
+      // Particles.js Configuration
       particlesJS('particles-js', {
         particles: {
           number: { value: 80, density: { enable: true, value_area: 800 } },
