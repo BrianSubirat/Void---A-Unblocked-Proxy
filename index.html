@@ -2,13 +2,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SwiftGuard</title>
+  <title>SwiftWaves</title>
   <link rel="icon" type="image/png" href="/favicon.png">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
   <style>
     body {
-      background-color: #0f172a;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
       font-family: 'Inter', sans-serif;
       color: #e2e8f0;
     }
@@ -16,29 +17,46 @@
       transition: all 0.3s ease;
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
     }
     .category-card:hover {
-      transform: scale(1.05);
+      transform: scale(1.05) translateY(-10px);
       background: rgba(255,255,255,0.1);
       border-color: rgba(255,255,255,0.2);
+      box-shadow: 0 15px 25px -5px rgba(0,0,0,0.2), 0 8px 10px -3px rgba(0,0,0,0.1);
     }
-    #welcome-modal {
+    .search-container {
       backdrop-filter: blur(10px);
-      background: rgba(15, 23, 42, 0.8);
+      background: rgba(255,255,255,0.05);
+      border-radius: 1rem;
+      padding: 1rem;
     }
     .search-bar {
       background: rgba(255, 255, 255, 0.1);
       border: 2px solid rgba(255, 255, 255, 0.1);
-      transition: all 0.3s ease;
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
     }
-    .search-bar:focus {
-      border-color: rgba(59, 130, 246, 0.5);
-      background: rgba(255, 255, 255, 0.15);
-    }
-    .search-container {
+    .nav-link {
       position: relative;
+      transition: all 0.3s ease;
+      color: #94a3b8;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #3b82f6;
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after {
       width: 100%;
-      max-width: 600px;
+    }
+    #welcome-modal {
+      backdrop-filter: blur(10px);
+      background: rgba(15, 23, 42, 0.8);
     }
     .search-icon {
       position: absolute;
@@ -46,16 +64,36 @@
       top: 50%;
       transform: translateY(-50%);
       color: #64748b;
+      z-index: 10;
+    }
+    .search-bar {
+      padding-left: 3rem !important; /* Ensure space for the icon */
+    }
+    .top-bar {
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+    }
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      top: 0;
+      left: 0;
     }
   </style>
 </head>
 <body class="bg-slate-900 h-screen flex flex-col items-center justify-center overflow-hidden">
+  <!-- Particles Background -->
+  <div id="particles-js"></div>
+  
   <!-- Welcome Modal -->
   <div id="welcome-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 
     text-center transition-all duration-300">
     <div class="bg-slate-800 rounded-2xl p-8 max-w-md w-full shadow-2xl border border-slate-700">
       <h2 id="time-greeting" class="text-2xl font-bold text-white mb-4">Good morning</h2>
-      <p class="text-gray-300 mb-6">Welcome to SwiftGuard. What's your name?</p>
+      <p class="text-gray-300 mb-6">Welcome to SwiftWaves. What's your name?</p>
       <input 
         type="text" 
         id="name-input" 
@@ -73,10 +111,23 @@
     </div>
   </div>
 
-  <!-- Settings Button -->
-  <button id="settings-button" class="fixed top-4 right-4 text-gray-300 hover:text-white text-2xl z-40">
-    <i class="fas fa-cog"></i>
-  </button>
+  <!-- New Top Bar -->
+  <nav class="top-bar fixed top-0 left-0 w-full px-6 py-4 flex justify-between items-center z-50 hidden">
+    <div class="flex items-center space-x-4">
+      <img src="/85d32b57-e47e-4306-aa45-33394b770c89.png" alt="SwiftGuard Logo" class="h-10 w-10">
+      <h1 class="text-2xl font-bold text-white">SwiftWaves</h1>
+    </div>
+    <div class="flex space-x-6 items-center">
+      <a href="#" class="nav-link text-lg" onclick="openCategory('games')">Games</a>
+      <a href="#" class="nav-link text-lg" onclick="openCategory('ai')">AI</a>
+      <a href="#" class="nav-link text-lg" onclick="openCategory('proxy')">Proxy</a>
+      <a href="#" class="nav-link text-lg" onclick="openCategory('movies')">Movies</a>
+      <a href="#" class="nav-link text-lg" onclick="openCategory('apps')">Apps</a>
+      <button id="settings-button" class="text-gray-300 hover:text-white text-xl ml-4">
+        <i class="fas fa-cog"></i>
+      </button>
+    </div>
+  </nav>
 
   <!-- Settings Modal -->
   <div id="settings-modal" class="fixed inset-0 z-[99] hidden">
@@ -135,29 +186,22 @@
     </div>
   </div>
 
-  <div class="max-w-4xl w-full px-4 text-center py-8">
-    <img src="/85d32b57-e47e-4306-aa45-33394b770c89.png" alt="SwiftGuard Logo" class="w-32 h-32 mx-auto mb-8">
-    <h1 class="text-4xl font-bold mb-2 text-white">SwiftGuard</h1>
-    <h2 class="text-xl mb-8 text-gray-400">Safe unblocked proxy</h2>
-    
-    <!-- Added personalized greeting -->
-    <div id="personalized-greeting" class="mb-8">
-      <h3 id="time-greeting-display" class="text-2xl text-blue-400 mb-2"></h3>
-      <p class="text-lg text-gray-300">You've got this!</p>
-    </div>
-    
-    <!-- New Search Bar -->
-    <div class="search-container mx-auto mb-12">
-      <i class="fas fa-search search-icon"></i>
+  <div class="max-w-4xl w-full px-4 text-center py-8 mt-20">
+    <h1 class="text-3xl font-bold mb-2 text-white">SwiftWaves</h1>
+    <div class="search-container mx-auto mb-8 backdrop-filter: blur(10px); background: rgba(255,255,255,0.05); border-radius: 1rem; padding: 1rem;">
       <input 
         type="text" 
         id="search-input" 
         placeholder="Search or enter URL" 
-        class="search-bar w-full px-12 py-4 rounded-full text-white text-lg focus:outline-none"
+        class="search-bar w-full px-12 py-3 rounded-full text-white text-base focus:outline-none"
         onkeydown="handleSearch(event)"
       >
+      <i class="fas fa-search search-icon"></i>
+      <div id="personalized-greeting" class="mt-2">
+        <h3 id="time-greeting-display" class="text-lg text-blue-400"></h3>
+        <p class="text-xs text-gray-300">You've got this!</p>
+      </div>
     </div>
-    
     <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
       <div class="category-card p-6 rounded-2xl text-center cursor-pointer" onclick="openCategory('games')">
         <div class="bg-blue-500/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
@@ -218,6 +262,10 @@
         setTimeout(() => {
           welcomeModal.style.display = 'none';
         }, 300);
+        
+        // Show top bar
+        const topBar = document.querySelector('.top-bar');
+        topBar.classList.remove('hidden');
       } else {
         alert('Please enter your name');
       }
@@ -252,7 +300,8 @@
       const timeGreetingEl = document.getElementById('time-greeting');
       const timeGreetingDisplay = document.getElementById('time-greeting-display');
       const savedName = localStorage.getItem('userName');
-
+      const topBar = document.querySelector('.top-bar');
+      
       // Set time-based greeting
       const greeting = getTimeGreeting();
       timeGreetingEl.textContent = greeting;
@@ -261,8 +310,10 @@
       if (savedName) {
         timeGreetingDisplay.textContent = `${greeting}, ${savedName}`;
         welcomeModal.style.display = 'none';
+        topBar.classList.remove('hidden');
       } else {
         timeGreetingDisplay.textContent = greeting;
+        topBar.classList.add('hidden');
       }
 
       const savedTheme = localStorage.getItem('theme');
@@ -305,12 +356,106 @@
         case 'movies':
           url = 'https://movies.usewaves.site/';
           break;
+        case 'apps':
+          // Create a modal or grid for app selection
+          openAppsModal();
+          return; // Exit the function to prevent iframe loading
       }
 
       if (url) {
         fullscreenIframe.src = url;
         fullscreenView.classList.remove('hidden');
       }
+    }
+
+    function openAppsModal() {
+      const fullscreenView = document.getElementById('fullscreen-view');
+      const fullscreenIframe = document.getElementById('fullscreen-iframe');
+      
+      // Create a custom HTML for app selection
+      fullscreenIframe.srcdoc = `
+        <html>
+        <head>
+          <style>
+            body { 
+              font-family: 'Arial', sans-serif; 
+              background-color: #1e293b; 
+              color: white; 
+              display: flex; 
+              flex-wrap: wrap; 
+              justify-content: center; 
+              align-items: center; 
+              height: 100vh; 
+              margin: 0; 
+              gap: 20px; 
+              background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            }
+            .app-button {
+              background-color: rgba(255,255,255,0.1);
+              border: 2px solid rgba(255,255,255,0.2);
+              border-radius: 15px;
+              padding: 20px;
+              width: 200px;
+              text-align: center;
+              transition: all 0.3s ease;
+              cursor: pointer;
+            }
+            .app-button:hover {
+              background-color: rgba(255,255,255,0.2);
+              transform: scale(1.05);
+            }
+            .app-button img {
+              width: 100px;
+              height: 100px;
+              object-fit: contain;
+              margin-bottom: 10px;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="app-button" onclick="parent.openAppUrl('https://discord.com/app')">
+            <img src="/discord_icon.png" alt="Discord">
+            <h3>Discord</h3>
+          </div>
+          <div class="app-button" onclick="parent.openAppUrl('https://open.spotify.com')">
+            <img src="https://cdn.iconscout.com/icon/free/png-256/spotify-11-432546.png" alt="Spotify">
+            <h3>Spotify</h3>
+          </div>
+          <div class="app-button" onclick="parent.openAppUrl('https://www.tiktok.com')">
+            <img src="/tiktok_icon.png" alt="TikTok">
+            <h3>TikTok</h3>
+          </div>
+          <div class="app-button" onclick="parent.openAppUrl('https://www.twitch.tv')">
+            <img src="/twitch_icon.png" alt="Twitch">
+            <h3>Twitch</h3>
+          </div>
+          <div class="app-button" onclick="parent.openAppUrl('https://www.y8.com')">
+            <img src="https://www.y8.com/favicon.ico" alt="Y8 Games">
+            <h3>Y8 Games</h3>
+          </div>
+          <div class="app-button" onclick="parent.openAppUrl('https://www.crazygames.com')">
+            <img src="/crazygames_icon.png" alt="Crazy Games">
+            <h3>Crazy Games</h3>
+          </div>
+          <div class="app-button" onclick="parent.openAppUrl('https://www.chess.com')">
+            <img src="https://www.chess.com/favicon.ico" alt="Chess.com">
+            <h3>Chess.com</h3>
+          </div>
+          <div class="app-button" onclick="parent.openAppUrl('https://chat.openai.com')">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/800px-ChatGPT_logo.svg.png" alt="ChatGPT">
+            <h3>ChatGPT</h3>
+          </div>
+        </body>
+        </html>
+      `;
+      
+      fullscreenView.classList.remove('hidden');
+    }
+
+    // Add this function to the global scope to be called from the iframe
+    window.openAppUrl = function(url) {
+      const fullscreenIframe = document.getElementById('fullscreen-iframe');
+      fullscreenIframe.src = url;
     }
 
     function closeFullscreenView() {
@@ -378,6 +523,62 @@
       btn.addEventListener('click', () => {
         document.body.style.backgroundColor = getComputedStyle(btn).backgroundColor;
         localStorage.setItem('theme', getComputedStyle(btn).backgroundColor);
+      });
+    });
+
+    // Particles.js Configuration
+    window.addEventListener('DOMContentLoaded', () => {
+      particlesJS('particles-js', {
+        particles: {
+          number: { value: 80, density: { enable: true, value_area: 800 } },
+          color: { value: '#ffffff' },
+          shape: { 
+            type: 'circle',
+            stroke: { width: 0, color: '#000000' },
+          },
+          opacity: { 
+            value: 0.5, 
+            random: false,
+            anim: { enable: false }
+          },
+          size: {
+            value: 3,
+            random: true,
+            anim: { enable: false }
+          },
+          line_linked: {
+            enable: true,
+            distance: 150,
+            color: '#ffffff',
+            opacity: 0.4,
+            width: 1
+          },
+          move: {
+            enable: true,
+            speed: 3,
+            direction: 'none',
+            random: false,
+            straight: false,
+            out_mode: 'out',
+            bounce: false
+          }
+        },
+        interactivity: {
+          detect_on: 'canvas',
+          events: {
+            onhover: { enable: true, mode: 'repulse' },
+            onclick: { enable: true, mode: 'push' },
+            resize: true
+          },
+          modes: {
+            grab: { distance: 400, line_linked: { opacity: 1 } },
+            bubble: { distance: 400, size: 40, duration: 2, opacity: 8, speed: 3 },
+            repulse: { distance: 200, duration: 0.4 },
+            push: { particles_nb: 4 },
+            remove: { particles_nb: 2 }
+          }
+        },
+        retina_detect: true
       });
     });
   </script>
