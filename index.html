@@ -1,0 +1,85 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SwiftGuard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <style>
+    body {
+      background-color: #f3f4f6;
+      font-family: Arial, sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 h-screen flex flex-col items-center justify-center">
+  <!-- Main Menu Page -->
+  <div id="main-menu" class="max-w-4xl w-full px-4 text-center py-8">
+    <img src="/85d32b57-e47e-4306-aa45-33394b770c89.png" alt="SwiftGuard Logo" class="w-32 h-32 mx-auto mb-8">
+    <h1 class="text-4xl font-bold mb-4">Welcome to SwiftGuard</h1>
+    <h2 class="text-2xl mb-8">The Privacy-Focused Browser</h2>
+    
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="bg-blue-100 p-6 rounded-lg hover:bg-blue-200 transition-colors cursor-pointer" onclick="openCategory('games')">
+        <i class="fas fa-gamepad text-4xl text-blue-600 mb-4"></i>
+        <h3 class="text-xl font-semibold">Games</h3>
+      </div>
+      <div class="bg-green-100 p-6 rounded-lg hover:bg-green-200 transition-colors cursor-pointer" onclick="openCategory('ai')">
+        <i class="fas fa-robot text-4xl text-green-600 mb-4"></i>
+        <h3 class="text-xl font-semibold">AI Tools</h3>
+      </div>
+      <div class="bg-purple-100 p-6 rounded-lg hover:bg-purple-200 transition-colors cursor-pointer" onclick="openCategory('proxy')">
+        <i class="fas fa-globe text-4xl text-purple-600 mb-4"></i>
+        <h3 class="text-xl font-semibold">Proxy</h3>
+      </div>
+      <div class="bg-red-100 p-6 rounded-lg hover:bg-red-200 transition-colors cursor-pointer" onclick="openCategory('movies')">
+        <i class="fas fa-film text-4xl text-red-600 mb-4"></i>
+        <h3 class="text-xl font-semibold">Movies</h3>
+      </div>
+    </div>
+
+    <!-- Fullscreen View -->
+    <div id="fullscreen-view" class="fixed inset-0 bg-white z-50 hidden">
+      <button id="close-fullscreen" class="absolute top-4 right-4 text-3xl text-gray-700 hover:text-gray-900 z-50" onclick="closeFullscreenView()">
+        <i class="fas fa-times"></i>
+      </button>
+      <iframe id="fullscreen-iframe" class="w-full h-full border-none"></iframe>
+    </div>
+  </div>
+
+  <script>
+    function openCategory(category) {
+      const fullscreenView = document.getElementById('fullscreen-view');
+      const fullscreenIframe = document.getElementById('fullscreen-iframe');
+      
+      let url = '';
+      switch(category) {
+        case 'games':
+          url = 'https://gamehub-com.pages.dev';
+          break;
+        case 'ai':
+          url = 'https://ai.usewaves.site/';
+          break;
+        case 'proxy':
+          url = 'https://swiftguard-com.pages.dev';
+          break;
+        case 'movies':
+          url = 'https://movies.usewaves.site/';
+          break;
+      }
+
+      if (url) {
+        fullscreenIframe.src = url;
+        fullscreenView.classList.remove('hidden');
+      }
+    }
+
+    function closeFullscreenView() {
+      const fullscreenView = document.getElementById('fullscreen-view');
+      const fullscreenIframe = document.getElementById('fullscreen-iframe');
+      fullscreenView.classList.add('hidden');
+      fullscreenIframe.src = '';
+    }
+  </script>
+</body>
+</html>
