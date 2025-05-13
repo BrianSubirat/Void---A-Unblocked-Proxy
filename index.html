@@ -26,6 +26,27 @@
       backdrop-filter: blur(10px);
       background: rgba(15, 23, 42, 0.8);
     }
+    .search-bar {
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+    .search-bar:focus {
+      border-color: rgba(59, 130, 246, 0.5);
+      background: rgba(255, 255, 255, 0.15);
+    }
+    .search-container {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+    }
+    .search-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #64748b;
+    }
   </style>
 </head>
 <body class="bg-slate-900 h-screen flex flex-col items-center justify-center overflow-hidden">
@@ -125,6 +146,18 @@
       <p class="text-lg text-gray-300">You've got this!</p>
     </div>
     
+    <!-- New Search Bar -->
+    <div class="search-container mx-auto mb-12">
+      <i class="fas fa-search search-icon"></i>
+      <input 
+        type="text" 
+        id="search-input" 
+        placeholder="Search or enter URL" 
+        class="search-bar w-full px-12 py-4 rounded-full text-white text-lg focus:outline-none"
+        onkeydown="handleSearch(event)"
+      >
+    </div>
+    
     <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
       <div class="category-card p-6 rounded-2xl text-center cursor-pointer" onclick="openCategory('games')">
         <div class="bg-blue-500/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
@@ -187,6 +220,29 @@
         }, 300);
       } else {
         alert('Please enter your name');
+      }
+    }
+
+    function handleSearch(event) {
+      if (event.key === 'Enter') {
+        const searchInput = document.getElementById('search-input');
+        let url = searchInput.value.trim();
+        
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+          // If it's not a URL, treat it as a Bing search
+          if (!url.includes('.')) {
+            url = `https://www.bing.com/search?q=${encodeURIComponent(url)}`;
+          } else {
+            url = `https://${url}`;
+          }
+        }
+
+        const fullscreenView = document.getElementById('fullscreen-view');
+        const fullscreenIframe = document.getElementById('fullscreen-iframe');
+        
+        fullscreenIframe.src = url;
+        fullscreenView.classList.remove('hidden');
+        searchInput.value = '';
       }
     }
 
