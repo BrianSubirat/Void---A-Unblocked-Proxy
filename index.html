@@ -3,44 +3,158 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SwiftGuard</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
   <style>
     body {
-      background-color: #f3f4f6;
-      font-family: Arial, sans-serif;
+      background-color: #0f172a;
+      font-family: 'Inter', sans-serif;
+      color: #e2e8f0;
+    }
+    .category-card {
+      transition: all 0.3s ease;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .category-card:hover {
+      transform: scale(1.05);
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.2);
+    }
+    #welcome-modal {
+      backdrop-filter: blur(10px);
+      background: rgba(15, 23, 42, 0.8);
     }
   </style>
 </head>
-<body class="bg-gray-100 h-screen flex flex-col items-center justify-center">
-  <!-- Main Menu Page -->
-  <div id="main-menu" class="max-w-4xl w-full px-4 text-center py-8">
+<body class="bg-slate-900 h-screen flex flex-col items-center justify-center overflow-hidden">
+  <!-- Welcome Modal -->
+  <div id="welcome-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 
+    text-center transition-all duration-300">
+    <div class="bg-slate-800 rounded-2xl p-8 max-w-md w-full shadow-2xl border border-slate-700">
+      <h2 id="time-greeting" class="text-2xl font-bold text-white mb-4">Good morning</h2>
+      <p class="text-gray-300 mb-6">Welcome to SwiftGuard. What's your name?</p>
+      <input 
+        type="text" 
+        id="name-input" 
+        placeholder="Enter your name" 
+        class="w-full px-4 py-2 rounded-lg bg-slate-700 text-white mb-4 
+        focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+      <button 
+        onclick="submitName()" 
+        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg 
+        transition duration-300 ease-in-out"
+      >
+        Continue
+      </button>
+    </div>
+  </div>
+
+  <!-- Settings Button -->
+  <button id="settings-button" class="fixed top-4 right-4 text-gray-300 hover:text-white text-2xl z-40">
+    <i class="fas fa-cog"></i>
+  </button>
+
+  <!-- Settings Modal -->
+  <div id="settings-modal" class="fixed inset-0 z-[99] hidden">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+    <div class="relative z-10 bg-slate-800 max-w-md w-full mx-auto mt-20 rounded-2xl shadow-2xl border border-slate-700">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-bold text-white">Settings</h2>
+          <button id="close-settings" class="text-gray-400 hover:text-white">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <!-- Tab Cloaking -->
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold text-white mb-3">Tab Cloaking</h3>
+          <select id="tab-cloak" class="w-full bg-slate-700 text-white rounded-lg px-4 py-2">
+            <option value="default">Default</option>
+            <option value="google">Google</option>
+            <option value="drive">Google Drive</option>
+            <option value="docs">Google Docs</option>
+          </select>
+        </div>
+
+        <!-- About:Blank -->
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold text-white mb-3">about:blank Cloaking</h3>
+          <button id="about-blank" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg">
+            Open in about:blank
+          </button>
+        </div>
+
+        <!-- Panic Button -->
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold text-white mb-3">Panic Button</h3>
+          <div class="flex items-center space-x-4">
+            <input type="text" id="panic-key" placeholder="Press a key" 
+              class="bg-slate-700 text-white px-4 py-2 rounded-lg w-full" readonly>
+            <button id="clear-panic" class="text-red-400 hover:text-red-300">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+          <p class="text-gray-400 text-sm mt-2">Current redirect: Google Classroom</p>
+        </div>
+
+        <!-- Themes -->
+        <div>
+          <h3 class="text-lg font-semibold text-white mb-3">Themes</h3>
+          <div class="grid grid-cols-3 gap-3">
+            <button class="theme-btn bg-slate-900 h-12 rounded-lg border-2 border-transparent hover:border-blue-500"></button>
+            <button class="theme-btn bg-purple-900 h-12 rounded-lg border-2 border-transparent hover:border-blue-500"></button>
+            <button class="theme-btn bg-blue-900 h-12 rounded-lg border-2 border-transparent hover:border-blue-500"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-4xl w-full px-4 text-center py-8">
     <img src="/85d32b57-e47e-4306-aa45-33394b770c89.png" alt="SwiftGuard Logo" class="w-32 h-32 mx-auto mb-8">
-    <h1 class="text-4xl font-bold mb-4">Welcome to SwiftGuard</h1>
-    <h2 class="text-2xl mb-8">The Privacy-Focused Browser</h2>
+    <h1 class="text-4xl font-bold mb-2 text-white">SwiftGuard</h1>
+    <h2 class="text-xl mb-8 text-gray-400">Safe unblocked proxy</h2>
     
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-      <div class="bg-blue-100 p-6 rounded-lg hover:bg-blue-200 transition-colors cursor-pointer" onclick="openCategory('games')">
-        <i class="fas fa-gamepad text-4xl text-blue-600 mb-4"></i>
-        <h3 class="text-xl font-semibold">Games</h3>
+    <!-- Added personalized greeting -->
+    <div id="personalized-greeting" class="mb-8">
+      <h3 id="time-greeting-display" class="text-2xl text-blue-400 mb-2"></h3>
+      <p class="text-lg text-gray-300">You've got this!</p>
+    </div>
+    
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+      <div class="category-card p-6 rounded-2xl text-center cursor-pointer" onclick="openCategory('games')">
+        <div class="bg-blue-500/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-gamepad text-3xl text-blue-400"></i>
+        </div>
+        <h3 class="text-xl font-semibold text-white">Games</h3>
       </div>
-      <div class="bg-green-100 p-6 rounded-lg hover:bg-green-200 transition-colors cursor-pointer" onclick="openCategory('ai')">
-        <i class="fas fa-robot text-4xl text-green-600 mb-4"></i>
-        <h3 class="text-xl font-semibold">AI Tools</h3>
+      <div class="category-card p-6 rounded-2xl text-center cursor-pointer" onclick="openCategory('ai')">
+        <div class="bg-green-500/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-robot text-3xl text-green-400"></i>
+        </div>
+        <h3 class="text-xl font-semibold text-white">AI</h3>
       </div>
-      <div class="bg-purple-100 p-6 rounded-lg hover:bg-purple-200 transition-colors cursor-pointer" onclick="openCategory('proxy')">
-        <i class="fas fa-globe text-4xl text-purple-600 mb-4"></i>
-        <h3 class="text-xl font-semibold">Proxy</h3>
+      <div class="category-card p-6 rounded-2xl text-center cursor-pointer" onclick="openCategory('proxy')">
+        <div class="bg-purple-500/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-globe text-3xl text-purple-400"></i>
+        </div>
+        <h3 class="text-xl font-semibold text-white">Proxy</h3>
       </div>
-      <div class="bg-red-100 p-6 rounded-lg hover:bg-red-200 transition-colors cursor-pointer" onclick="openCategory('movies')">
-        <i class="fas fa-film text-4xl text-red-600 mb-4"></i>
-        <h3 class="text-xl font-semibold">Movies</h3>
+      <div class="category-card p-6 rounded-2xl text-center cursor-pointer" onclick="openCategory('movies')">
+        <div class="bg-red-500/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-film text-3xl text-red-400"></i>
+        </div>
+        <h3 class="text-xl font-semibold text-white">Movies</h3>
       </div>
     </div>
 
     <!-- Fullscreen View -->
-    <div id="fullscreen-view" class="fixed inset-0 bg-white z-50 hidden">
-      <button id="close-fullscreen" class="absolute top-4 right-4 text-3xl text-gray-700 hover:text-gray-900 z-50" onclick="closeFullscreenView()">
+    <div id="fullscreen-view" class="fixed inset-0 bg-slate-900 z-50 hidden">
+      <button id="close-fullscreen" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeFullscreenView()">
         <i class="fas fa-times"></i>
       </button>
       <iframe id="fullscreen-iframe" class="w-full h-full border-none"></iframe>
@@ -48,6 +162,75 @@
   </div>
 
   <script>
+    function getTimeGreeting() {
+      const hour = new Date().getHours();
+      if (hour < 12) return 'Good morning';
+      if (hour < 18) return 'Good afternoon';
+      return 'Good evening';
+    }
+
+    function submitName() {
+      const nameInput = document.getElementById('name-input');
+      const name = nameInput.value.trim();
+      
+      if (name) {
+        localStorage.setItem('userName', name);
+        const welcomeModal = document.getElementById('welcome-modal');
+        const timeGreetingDisplay = document.getElementById('time-greeting-display');
+        
+        // Update greeting with name
+        timeGreetingDisplay.textContent = `${getTimeGreeting()}, ${name}`;
+        
+        welcomeModal.classList.add('opacity-0', 'pointer-events-none');
+        setTimeout(() => {
+          welcomeModal.style.display = 'none';
+        }, 300);
+      } else {
+        alert('Please enter your name');
+      }
+    }
+
+    // Modified window.addEventListener
+    window.addEventListener('DOMContentLoaded', () => {
+      const welcomeModal = document.getElementById('welcome-modal');
+      const timeGreetingEl = document.getElementById('time-greeting');
+      const timeGreetingDisplay = document.getElementById('time-greeting-display');
+      const savedName = localStorage.getItem('userName');
+
+      // Set time-based greeting
+      const greeting = getTimeGreeting();
+      timeGreetingEl.textContent = greeting;
+      
+      // Update the main greeting display if name exists
+      if (savedName) {
+        timeGreetingDisplay.textContent = `${greeting}, ${savedName}`;
+        welcomeModal.style.display = 'none';
+      } else {
+        timeGreetingDisplay.textContent = greeting;
+      }
+
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme) {
+        document.body.style.backgroundColor = savedTheme;
+      }
+
+      const savedCloak = localStorage.getItem('tabCloak');
+      if (savedCloak) {
+        document.getElementById('tab-cloak').value = savedCloak;
+        const titles = {
+          default: 'SwiftGuard',
+          google: 'Google',
+          drive: 'Google Drive',
+          docs: 'Google Docs'
+        };
+        document.title = titles[savedCloak];
+      }
+
+      let panicKey = localStorage.getItem('panicKey') || '';
+      const panicKeyInput = document.getElementById('panic-key');
+      panicKeyInput.value = panicKey;
+    });
+
     function openCategory(category) {
       const fullscreenView = document.getElementById('fullscreen-view');
       const fullscreenIframe = document.getElementById('fullscreen-iframe');
@@ -80,6 +263,67 @@
       fullscreenView.classList.add('hidden');
       fullscreenIframe.src = '';
     }
+
+    // Settings functionality
+    document.getElementById('settings-button').addEventListener('click', () => {
+      document.getElementById('settings-modal').classList.remove('hidden');
+    });
+
+    document.getElementById('close-settings').addEventListener('click', () => {
+      document.getElementById('settings-modal').classList.add('hidden');
+    });
+
+    // Tab Cloaking
+    document.getElementById('tab-cloak').addEventListener('change', (e) => {
+      const titles = {
+        default: 'SwiftGuard',
+        google: 'Google',
+        drive: 'Google Drive',
+        docs: 'Google Docs'
+      };
+      document.title = titles[e.target.value];
+      localStorage.setItem('tabCloak', e.target.value);
+    });
+
+    // About:Blank
+    document.getElementById('about-blank').addEventListener('click', () => {
+      const win = window.open('about:blank', '_blank');
+      win.document.write(`
+        <iframe src="${window.location.href}" style="width:100%; height:100%; border:none; position:fixed; top:0; left:0"></iframe>
+      `);
+    });
+
+    // Panic Key
+    let panicKey = localStorage.getItem('panicKey') || '';
+    const panicKeyInput = document.getElementById('panic-key');
+    
+    panicKeyInput.addEventListener('keydown', (e) => {
+      e.preventDefault();
+      panicKey = e.key.toUpperCase();
+      panicKeyInput.value = panicKey;
+      localStorage.setItem('panicKey', panicKey);
+    });
+
+    document.getElementById('clear-panic').addEventListener('click', () => {
+      panicKey = '';
+      panicKeyInput.value = '';
+      localStorage.removeItem('panicKey');
+    });
+
+    // Global panic key listener
+    document.addEventListener('keydown', (e) => {
+      if (e.key.toUpperCase() === panicKey) {
+        window.location.href = 'https://classroom.google.com';
+      }
+    });
+
+    // Themes
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.body.style.backgroundColor = getComputedStyle(btn).backgroundColor;
+        localStorage.setItem('theme', getComputedStyle(btn).backgroundColor);
+      });
+    });
   </script>
 </body>
 </html>
