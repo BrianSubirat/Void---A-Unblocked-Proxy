@@ -7,39 +7,48 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  
+  <!-- Ensure Ultraviolet scripts are loaded in the correct order -->
+  <script src="/uv/uv.bundle.js"></script>
+  <script src="/uv/uv.config.js"></script>
+  <script src="/uv/uv.sw.js"></script>
+
   <style>
     body {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      background: linear-gradient(135deg, #0a0f1f 0%, #1a1f3f 100%);
       font-family: 'Inter', sans-serif;
       color: #e2e8f0;
     }
     .category-card {
       transition: all 0.3s ease;
       background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid rgba(79, 70, 229, 0.3);
       box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+      backdrop-filter: blur(10px);
     }
     .category-card:hover {
       transform: scale(1.05) translateY(-10px);
-      background: rgba(255,255,255,0.1);
-      border-color: rgba(255,255,255,0.2);
-      box-shadow: 0 15px 25px -5px rgba(0,0,0,0.2), 0 8px 10px -3px rgba(0,0,0,0.1);
+      background: rgba(79, 70, 229, 0.1);
+      border-color: rgba(79, 70, 229, 0.5);
+      box-shadow: 0 0 20px rgba(79, 70, 229, 0.3);
     }
     .search-container {
       backdrop-filter: blur(10px);
-      background: rgba(255,255,255,0.05);
-      border-radius: 1rem;
-      padding: 1rem;
+      background: rgba(79, 70, 229, 0.05);
+      border: 1px solid rgba(79, 70, 229, 0.2);
+      border-radius: 1.5rem;
+      padding: 1.5rem;
+      box-shadow: 0 0 30px rgba(79, 70, 229, 0.1);
     }
     .search-bar {
-      background: rgba(255, 255, 255, 0.1);
-      border: 2px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+      background: rgba(79, 70, 229, 0.1);
+      border: 2px solid rgba(79, 70, 229, 0.2);
+      box-shadow: 0 0 20px rgba(79, 70, 229, 0.1);
     }
     .nav-link {
       position: relative;
       transition: all 0.3s ease;
-      color: #94a3b8;
+      color: #a5b4fc;
     }
     .nav-link::after {
       content: '';
@@ -48,31 +57,11 @@
       left: 0;
       width: 0;
       height: 2px;
-      background-color: #3b82f6;
+      background-color: #6366f1;
       transition: width 0.3s ease;
     }
     .nav-link:hover::after {
       width: 100%;
-    }
-    #welcome-modal {
-      backdrop-filter: blur(10px);
-      background: rgba(15, 23, 42, 0.8);
-    }
-    .search-icon {
-      position: absolute;
-      left: 1rem;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #64748b;
-      z-index: 10;
-    }
-    .search-bar {
-      padding-left: 3rem !important; /* Ensure space for the icon */
-    }
-    .top-bar {
-      background: rgba(255, 255, 255, 0.05);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
     }
     #particles-js {
       position: fixed;
@@ -116,24 +105,129 @@
         display: none;
       }
     }
+    .space-glow {
+      text-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+    }
+
+    /* Update sidebar styles */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 100vh;
+      width: 64px; 
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(10px);
+      border-right: 1px solid rgba(79, 70, 229, 0.2);
+      padding: 1rem 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      z-index: 45;
+    }
+
+    .sidebar.active {
+      transform: translateX(0);
+    }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      color: #a5b4fc;
+      text-decoration: none;
+      border-radius: 0.5rem;
+      margin-bottom: 0.5rem;
+      width: 48px;
+      height: 48px;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar-item:hover {
+      background: rgba(79, 70, 229, 0.2);
+      color: white;
+    }
+
+    .sidebar-item i {
+      font-size: 1.5rem;
+    }
+
+    @media (min-width: 768px) {
+      .main-content {
+        margin-left: 64px; 
+      }
+      .sidebar {
+        transform: translateX(0);
+      }
+      .sidebar-toggle {
+        display: none;
+      }
+    }
+    .top-bar {
+      display: none !important;
+    }
+
+    .typing-text {
+      display: inline-block;
+      overflow: hidden;
+      white-space: nowrap;
+      margin: 0;
+      border-right: 3px solid #6366f1;
+    }
+    
+    @keyframes blink-caret {
+      from, to { border-color: transparent }
+      50% { border-color: #6366f1 }
+    }
+    
+    .typing-text {
+      animation: blink-caret 0.75s step-end infinite;
+    }
+
+    #settings-modal .border-indigo-500/20 {
+      border-color: rgba(99, 102, 241, 0.2);
+    }
+
+    #settings-modal select option {
+      background-color: #1f2937;
+    }
+
+    #settings-modal input:focus,
+    #settings-modal select:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
+    }
   </style>
 </head>
 <body class="bg-slate-900 h-screen flex flex-col items-center justify-center overflow-hidden">
-  <!-- Top Bar (Desktop Only) -->
-  <div class="hidden md:flex top-bar fixed top-0 left-0 right-0 py-3 px-6 justify-between items-center z-40">
-    <div class="flex items-center space-x-4">
-      <h1 class="text-xl font-bold text-white">SwiftWaves</h1>
-    </div>
-    <div class="flex items-center space-x-4">
-      <a href="#" class="nav-link" onclick="openCategory('games')">Games</a>
-      <a href="#" class="nav-link" onclick="openCategory('ai')">AI</a>
-      <a href="#" class="nav-link" onclick="openCategory('proxy')">Proxy</a>
-      <a href="#" class="nav-link" onclick="openCategory('movies')">Movies</a>
-      <a href="#" class="nav-link" onclick="openCategory('apps')">Apps</a>
-      <button id="settings-button" class="text-white hover:text-blue-400">
-        <i class="fas fa-cog"></i>
-      </button>
-    </div>
+  <!-- Add Sidebar Toggle Button -->
+  <button class="sidebar-toggle" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <!-- Add Sidebar -->
+  <div class="sidebar">
+    <a href="#" class="sidebar-item" onclick="openCategory('games')">
+      <i class="fas fa-gamepad"></i>
+    </a>
+    
+    <a href="#" class="sidebar-item" onclick="openCategory('apps')">
+      <i class="fas fa-th"></i>
+    </a>
+    
+    <a href="#" class="sidebar-item" onclick="openCategory('proxy')">
+      <i class="fas fa-globe"></i>
+    </a>
+    
+    <a href="#" class="sidebar-item" onclick="openCategory('movies')">
+      <i class="fas fa-film"></i>
+    </a>
+    <a href="#" class="sidebar-item" onclick="openSettings()">
+      <i class="fas fa-cog"></i>
+    </a>
   </div>
 
   <!-- Particles Background -->
@@ -189,40 +283,41 @@
   <!-- Settings Modal -->
   <div id="settings-modal" class="fixed inset-0 z-[99] hidden">
     <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-    <div class="relative z-10 bg-slate-800 max-w-md w-full mx-auto mt-20 rounded-2xl shadow-2xl border border-slate-700">
+    <div class="relative z-10 bg-slate-800/90 backdrop-filter backdrop-blur-lg max-w-md w-full mx-auto mt-20 rounded-2xl shadow-2xl border border-indigo-500/20">
       <div class="p-6">
         <div class="flex justify-between items-center mb-6">
-          <h2 class="text-2xl font-bold text-white">Settings</h2>
-          <button id="close-settings" class="text-gray-400 hover:text-white">
+          <h2 class="text-2xl font-bold text-white space-glow">Settings</h2>
+          <button onclick="closeSettings()" class="text-gray-400 hover:text-white">
             <i class="fas fa-times"></i>
           </button>
         </div>
 
         <!-- Tab Cloaking -->
         <div class="mb-6">
-          <h3 class="text-lg font-semibold text-white mb-3">Tab Cloaking</h3>
-          <select id="tab-cloak" class="w-full bg-slate-700 text-white rounded-lg px-4 py-2">
+          <h3 class="text-lg font-semibold text-white mb-3 space-glow">Tab Cloaking</h3>
+          <select id="tab-cloak" class="w-full bg-slate-700/50 backdrop-blur text-white rounded-lg px-4 py-2 border border-indigo-500/20">
             <option value="default">Default</option>
             <option value="google">Google</option>
             <option value="drive">Google Drive</option>
             <option value="docs">Google Docs</option>
+            <option value="classroom">Google Classroom</option>
           </select>
         </div>
 
         <!-- About:Blank -->
         <div class="mb-6">
-          <h3 class="text-lg font-semibold text-white mb-3">about:blank Cloaking</h3>
-          <button id="about-blank" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg">
+          <h3 class="text-lg font-semibold text-white mb-3 space-glow">about:blank Cloaking</h3>
+          <button id="about-blank" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg transition-all duration-300">
             Open in about:blank
           </button>
         </div>
 
         <!-- Panic Button -->
         <div class="mb-6">
-          <h3 class="text-lg font-semibold text-white mb-3">Panic Button</h3>
+          <h3 class="text-lg font-semibold text-white mb-3 space-glow">Panic Key</h3>
           <div class="flex items-center space-x-4">
             <input type="text" id="panic-key" placeholder="Press a key" 
-              class="bg-slate-700 text-white px-4 py-2 rounded-lg w-full" readonly>
+              class="bg-slate-700/50 backdrop-blur text-white px-4 py-2 rounded-lg w-full border border-indigo-500/20" readonly>
             <button id="clear-panic" class="text-red-400 hover:text-red-300">
               <i class="fas fa-trash"></i>
             </button>
@@ -232,186 +327,39 @@
 
         <!-- Themes -->
         <div>
-          <h3 class="text-lg font-semibold text-white mb-3">Themes</h3>
+          <h3 class="text-lg font-semibold text-white mb-3 space-glow">Themes</h3>
           <div class="grid grid-cols-3 gap-3">
-            <button class="theme-btn bg-slate-900 h-12 rounded-lg border-2 border-transparent hover:border-blue-500"></button>
-            <button class="theme-btn bg-purple-900 h-12 rounded-lg border-2 border-transparent hover:border-blue-500"></button>
-            <button class="theme-btn bg-blue-900 h-12 rounded-lg border-2 border-transparent hover:border-blue-500"></button>
+            <button class="theme-btn bg-gradient-to-br from-slate-900 to-slate-800 h-12 rounded-lg border border-indigo-500/20 hover:border-indigo-500/50 transition-all duration-300"></button>
+            <button class="theme-btn bg-gradient-to-br from-purple-900 to-purple-800 h-12 rounded-lg border border-indigo-500/20 hover:border-indigo-500/50 transition-all duration-300"></button>
+            <button class="theme-btn bg-gradient-to-br from-blue-900 to-blue-800 h-12 rounded-lg border border-indigo-500/20 hover:border-indigo-500/50 transition-all duration-300"></button>
           </div>
-        </div>
-
-        <div class="mt-6 text-center">
-          <p class="text-xs text-gray-400">Made by Brian</p>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="max-w-4xl w-full px-4 text-center py-8 mt-20 md:mt-32">
-    <h1 class="text-3xl font-bold mb-2 text-white">SwiftWaves</h1>
-    <div class="search-container mx-auto mb-8 backdrop-filter: blur(10px); background: rgba(255,255,255,0.05); border-radius: 1rem; padding: 1rem;">
-      <input 
-        type="text" 
-        id="search-input" 
-        placeholder="Search or enter URL" 
-        class="search-bar w-full px-12 py-3 rounded-full text-white text-base focus:outline-none"
-        onkeydown="handleSearch(event)"
-      >
-      <i class="fas fa-search search-icon"></i>
-      <div id="personalized-greeting" class="mt-2">
-        <h3 id="time-greeting-display" class="text-lg text-blue-400"></h3>
-        <p class="text-xs text-gray-300">You've got this!</p>
-      </div>
+  <div class="max-w-4xl w-full px-4 text-center py-8 mt-20 md:mt-32 main-content">
+    <div class="flex flex-col items-center justify-center space-y-4">
+      <h1 class="typing-text text-4xl font-bold text-white space-glow mb-4" id="typing-text">Welcome to your dream site.</h1>
+      <h2 class="text-2xl text-indigo-300 space-glow"></h2>
+      <p class="text-xl text-indigo-400 space-glow">Experience Unrestricted Internet Freedom.</p>
     </div>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-      <div class="category-card p-6 rounded-2xl text-center cursor-pointer" onclick="openCategory('games')">
-        <div class="bg-blue-500/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-          <i class="fas fa-gamepad text-3xl text-blue-400"></i>
-        </div>
-        <h3 class="text-xl font-semibold text-white">Games</h3>
-      </div>
-      <div class="category-card p-6 rounded-2xl text-center cursor-pointer" onclick="openCategory('ai')">
-        <div class="bg-green-500/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-          <i class="fas fa-robot text-3xl text-green-400"></i>
-        </div>
-        <h3 class="text-xl font-semibold text-white">AI</h3>
-      </div>
-      <div class="category-card p-6 rounded-2xl text-center cursor-pointer" onclick="openCategory('proxy')">
-        <div class="bg-purple-500/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-          <i class="fas fa-globe text-3xl text-purple-400"></i>
-        </div>
-        <h3 class="text-xl font-semibold text-white">Proxy</h3>
-      </div>
-      <div class="category-card p-6 rounded-2xl text-center cursor-pointer" onclick="openCategory('movies')">
-        <div class="bg-red-500/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-          <i class="fas fa-film text-3xl text-red-400"></i>
-        </div>
-        <h3 class="text-xl font-semibold text-white">Movies</h3>
-      </div>
+    
+    <div id="personalized-greeting" class="mt-8 text-center">
+      <h3 id="time-greeting-display" class="text-xl text-indigo-400 space-glow"></h3>
+      <p class="text-sm text-indigo-300 mt-2">Explore the infinite possibilities</p>
     </div>
+  </div>
 
-    <!-- Fullscreen View -->
-    <div id="fullscreen-view" class="fixed inset-0 bg-slate-900 z-50 hidden">
-      <button id="close-fullscreen" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeFullscreenView()">
-        <i class="fas fa-times"></i>
-      </button>
-      <iframe id="fullscreen-iframe" class="w-full h-full border-none"></iframe>
-    </div>
+  <!-- Fullscreen View -->
+  <div id="fullscreen-view" class="fixed inset-0 bg-slate-900 z-50 hidden">
+    <button id="close-fullscreen" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeFullscreenView()">
+      <i class="fas fa-times"></i>
+    </button>
+    <iframe id="fullscreen-iframe" class="w-full h-full border-none"></iframe>
   </div>
 
   <script>
-    function getTimeGreeting() {
-      const hour = new Date().getHours();
-      let greeting = '';
-      let motivationalText = "You've got this!";
-  
-      if (hour < 12) {
-        greeting = 'Good morning';
-        motivationalText = "Start your day strong!";
-      } else if (hour < 18) {
-        greeting = 'Good afternoon';
-        motivationalText = "Keep pushing forward!";
-      } else {
-        greeting = 'Good evening';
-        motivationalText = "Wind down and recharge!";
-      }
-  
-      document.getElementById('time-greeting').textContent = greeting;
-      
-      const personalizedGreeting = document.getElementById('time-greeting-display');
-      const savedName = localStorage.getItem('userName');
-      
-      if (savedName) {
-        personalizedGreeting.textContent = `${greeting}, ${savedName}`;
-      } else {
-        personalizedGreeting.textContent = greeting;
-      }
-  
-      document.querySelector('#personalized-greeting p').textContent = motivationalText;
-      
-      return greeting;
-    }
-
-    // Call getTimeGreeting when the page loads
-    document.addEventListener('DOMContentLoaded', () => {
-      getTimeGreeting();
-      
-      // Optional: Update greeting periodically to catch time changes
-      setInterval(getTimeGreeting, 60000);
-      
-      const savedName = localStorage.getItem('userName');
-      
-      if (savedName) {
-        const welcomeModal = document.getElementById('welcome-modal');
-        welcomeModal.style.display = 'none';
-      }
-
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme) {
-        document.body.style.backgroundColor = savedTheme;
-      }
-
-      const savedCloak = localStorage.getItem('tabCloak');
-      if (savedCloak) {
-        document.getElementById('tab-cloak').value = savedCloak;
-        const titles = {
-          default: 'SwiftGuard',
-          google: 'Google',
-          drive: 'Google Drive',
-          docs: 'Google Docs'
-        };
-        document.title = titles[savedCloak];
-      }
-
-      let panicKey = localStorage.getItem('panicKey') || '';
-      const panicKeyInput = document.getElementById('panic-key');
-      panicKeyInput.value = panicKey;
-    });
-
-    function submitName() {
-      const nameInput = document.getElementById('name-input');
-      const name = nameInput.value.trim();
-      
-      if (name) {
-        localStorage.setItem('userName', name);
-        const welcomeModal = document.getElementById('welcome-modal');
-        const timeGreetingDisplay = document.getElementById('time-greeting-display');
-        
-        // Update greeting with name
-        timeGreetingDisplay.textContent = `${getTimeGreeting()}, ${name}`;
-        
-        welcomeModal.classList.add('opacity-0', 'pointer-events-none');
-        setTimeout(() => {
-          welcomeModal.style.display = 'none';
-        }, 300);
-      } else {
-        alert('Please enter your name');
-      }
-    }
-
-    function handleSearch(event) {
-      if (event.key === 'Enter') {
-        const searchInput = document.getElementById('search-input');
-        let url = searchInput.value.trim();
-        
-        if (!url.startsWith('http://') && !url.startsWith('https://')) {
-          // If it's not a URL, treat it as a Bing search
-          if (!url.includes('.')) {
-            url = `https://www.bing.com/search?q=${encodeURIComponent(url)}`;
-          } else {
-            url = `https://${url}`;
-          }
-        }
-
-        const fullscreenView = document.getElementById('fullscreen-view');
-        const fullscreenIframe = document.getElementById('fullscreen-iframe');
-        
-        fullscreenIframe.src = url;
-        fullscreenView.classList.remove('hidden');
-        searchInput.value = '';
-      }
-    }
-
     function openCategory(category) {
       const fullscreenView = document.getElementById('fullscreen-view');
       const fullscreenIframe = document.getElementById('fullscreen-iframe');
@@ -422,7 +370,7 @@
           url = 'https://gamehub-com.pages.dev';
           break;
         case 'ai':
-          url = 'https://ai.usewaves.site/';
+          url = 'http://gemini.google.com/';
           break;
         case 'proxy':
           url = 'https://swiftguard-com.pages.dev';
@@ -431,13 +379,19 @@
           url = 'https://movies.usewaves.site/';
           break;
         case 'apps':
-          openAppsModal();
-          return; // Exit the function to prevent iframe loading
+          return openAppsModal(); 
       }
 
       if (url) {
-        fullscreenIframe.src = url;
-        fullscreenView.classList.remove('hidden');
+        // Safely encode URL using Ultraviolet
+        try {
+          const encodedUrl = __uv$config.prefix + __uv$config.encodeUrl(url);
+          fullscreenIframe.src = encodedUrl;
+          fullscreenView.classList.remove('hidden');
+        } catch (error) {
+          console.error('Error encoding URL:', error);
+          alert('Could not open the selected category. Please try again.');
+        }
       }
     }
 
@@ -445,7 +399,6 @@
       const fullscreenView = document.getElementById('fullscreen-view');
       const fullscreenIframe = document.getElementById('fullscreen-iframe');
       
-      // Create a custom HTML for app selection
       fullscreenIframe.srcdoc = `
         <html>
         <head>
@@ -525,49 +478,131 @@
       fullscreenView.classList.remove('hidden');
     }
 
-    // Add this function to the global scope to be called from the iframe
-    window.openAppUrl = function(url) {
-      const fullscreenIframe = document.getElementById('fullscreen-iframe');
-      fullscreenIframe.src = url;
+    window.openCategory = openCategory;
+    window.openAppsModal = openAppsModal;
+
+    if (typeof __uv$config === 'undefined') {
+      window.__uv$config = {
+        prefix: '/service/',
+        bare: '/bare/',
+        encodeUrl: (url) => url,
+        decodeUrl: (url) => url,
+        handler: '/uv/uv.handler.js',
+        bundle: '/uv/uv.bundle.js',
+        config: '/uv/uv.config.js',
+        sw: '/uv/uv.sw.js',
+      };
     }
 
     function closeFullscreenView() {
-      const fullscreenView = document.getElementById('fullscreen-view');
-      const fullscreenIframe = document.getElementById('fullscreen-iframe');
-      fullscreenView.classList.add('hidden');
-      fullscreenIframe.src = '';
+        const fullscreenView = document.getElementById('fullscreen-view');
+        const fullscreenIframe = document.getElementById('fullscreen-iframe');
+        
+        fullscreenView.classList.add('hidden');
+        fullscreenIframe.src = '';
     }
 
+    window.closeFullscreenView = closeFullscreenView;
+
     document.addEventListener('DOMContentLoaded', () => {
-      const settingsButton = document.getElementById('settings-button');
-      const settingsModal = document.getElementById('settings-modal');
-      const closeSettingsButton = document.getElementById('close-settings');
-
-      if (settingsButton) {
-        settingsButton.addEventListener('click', () => {
-          settingsModal.classList.remove('hidden');
-        });
+      getTimeGreeting();
+      
+      const savedName = localStorage.getItem('userName');
+      
+      if (savedName) {
+        const welcomeModal = document.getElementById('welcome-modal');
+        welcomeModal.style.display = 'none';
       }
 
-      if (closeSettingsButton) {
-        closeSettingsButton.addEventListener('click', () => {
-          settingsModal.classList.add('hidden');
-        });
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme) {
+        document.body.style.backgroundColor = savedTheme;
       }
 
-      // Tab Cloaking
+      const savedCloak = localStorage.getItem('tabCloak');
+      if (savedCloak) {
+        document.getElementById('tab-cloak').value = savedCloak;
+        const titles = {
+          default: 'SwiftGuard',
+          google: 'Google',
+          drive: 'Google Drive',
+          docs: 'Google Docs',
+          classroom: 'Google Classroom'
+        };
+        document.title = titles[savedCloak];
+      }
+
+      let panicKey = localStorage.getItem('panicKey') || '';
+      const panicKeyInput = document.getElementById('panic-key');
+      panicKeyInput.value = panicKey;
+
+      function requestFullScreen() {
+        const docElm = document.documentElement;
+        if (docElm.requestFullscreen) {
+          docElm.requestFullscreen().catch(err => {
+            console.warn('Fullscreen request was prevented:', err);
+          });
+        } else if (docElm.mozRequestFullScreen) { 
+          docElm.mozRequestFullScreen().catch(err => {
+            console.warn('Fullscreen request was prevented:', err);
+          });
+        } else if (docElm.webkitRequestFullScreen) {
+          docElm.webkitRequestFullScreen().catch(err => {
+            console.warn('Fullscreen request was prevented:', err);
+          });
+        } else if (docElm.msRequestFullscreen) {
+          docElm.msRequestFullscreen().catch(err => {
+            console.warn('Fullscreen request was prevented:', err);
+          });
+        }
+      }
+
+      function lockScreenOrientation() {
+        if (screen.orientation && screen.orientation.lock) {
+          screen.orientation.lock('landscape')
+            .catch(error => {
+              console.warn('Screen orientation lock failed:', error);
+            });
+        }
+      }
+
+      function initializeFullscreenAndOrientation() {
+        if (document.fullscreenEnabled) {
+          requestFullScreen();
+        }
+
+        try {
+          lockScreenOrientation();
+        } catch (error) {
+          console.warn('Failed to lock screen orientation:', error);
+        }
+      }
+
+      window.addEventListener('unhandledrejection', (event) => {
+        console.warn('Unhandled promise rejection:', event.reason);
+        event.preventDefault(); 
+      });
+
+      initializeFullscreenAndOrientation();
+
+      document.getElementById('settings-modal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) {
+          closeSettings();
+        }
+      });
+
       document.getElementById('tab-cloak').addEventListener('change', (e) => {
         const titles = {
           default: 'SwiftGuard',
           google: 'Google',
           drive: 'Google Drive',
-          docs: 'Google Docs'
+          docs: 'Google Docs',
+          classroom: 'Google Classroom'
         };
         document.title = titles[e.target.value];
         localStorage.setItem('tabCloak', e.target.value);
       });
 
-      // About:Blank
       document.getElementById('about-blank').addEventListener('click', () => {
         const win = window.open('about:blank', '_blank');
         win.document.write(`
@@ -575,10 +610,6 @@
         `);
       });
 
-      // Panic Key
-      let panicKey = localStorage.getItem('panicKey') || '';
-      const panicKeyInput = document.getElementById('panic-key');
-      
       panicKeyInput.addEventListener('keydown', (e) => {
         e.preventDefault();
         panicKey = e.key.toUpperCase();
@@ -592,14 +623,12 @@
         localStorage.removeItem('panicKey');
       });
 
-      // Global panic key listener
       document.addEventListener('keydown', (e) => {
         if (e.key.toUpperCase() === panicKey) {
           window.location.href = 'https://classroom.google.com';
         }
       });
 
-      // Themes
       document.querySelectorAll('.theme-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           document.body.style.backgroundColor = getComputedStyle(btn).backgroundColor;
@@ -607,40 +636,40 @@
         });
       });
 
-      // Particles.js Configuration
       particlesJS('particles-js', {
         particles: {
-          number: { value: 80, density: { enable: true, value_area: 800 } },
-          color: { value: '#ffffff' },
+          number: { value: 100, density: { enable: true, value_area: 800 } },
+          color: { value: '#6366f1' },
           shape: { 
             type: 'circle',
             stroke: { width: 0, color: '#000000' },
           },
           opacity: { 
             value: 0.5, 
-            random: false,
-            anim: { enable: false }
+            random: true,
+            anim: { enable: true, speed: 1, opacity_min: 0.1, sync: false }
           },
           size: {
             value: 3,
             random: true,
-            anim: { enable: false }
+            anim: { enable: true, speed: 2, size_min: 0.1, sync: false }
           },
           line_linked: {
             enable: true,
             distance: 150,
-            color: '#ffffff',
+            color: '#6366f1',
             opacity: 0.4,
             width: 1
           },
           move: {
             enable: true,
-            speed: 3,
+            speed: 2,
             direction: 'none',
-            random: false,
+            random: true,
             straight: false,
             out_mode: 'out',
-            bounce: false
+            bounce: false,
+            attract: { enable: true, rotateX: 600, rotateY: 1200 }
           }
         },
         interactivity: {
@@ -651,16 +680,200 @@
             resize: true
           },
           modes: {
-            grab: { distance: 400, line_linked: { opacity: 1 } },
-            bubble: { distance: 400, size: 40, duration: 2, opacity: 8, speed: 3 },
-            repulse: { distance: 200, duration: 0.4 },
-            push: { particles_nb: 4 },
-            remove: { particles_nb: 2 }
+            repulse: { distance: 100, duration: 0.4 },
+            push: { particles_nb: 4 }
           }
         },
         retina_detect: true
       });
+
+      document.addEventListener('fullscreenchange', () => {
+        if (!document.fullscreenElement) {
+          requestFullScreen();
+        }
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          requestFullScreen();
+        }
+      });
+
+      function handleSearch(event) {
+        if (event.key === 'Enter') {
+          const searchInput = document.getElementById('search-input');
+          let url = searchInput.value.trim();
+          
+          if (!url.startsWith('http://') && !url.startsWith('https://')) {
+            if (!url.includes('.')) {
+              url = `https://www.bing.com/search?q=${encodeURIComponent(url)}`;
+            } else {
+              url = `https://${url}`;
+            }
+          }
+
+          // Safely encode URL using Ultraviolet
+          try {
+            const encodedUrl = __uv$config.prefix + __uv$config.encodeUrl(url);
+            
+            const fullscreenView = document.getElementById('fullscreen-view');
+            const fullscreenIframe = document.getElementById('fullscreen-iframe');
+            
+            fullscreenIframe.src = encodedUrl;
+            fullscreenView.classList.remove('hidden');
+            searchInput.value = '';
+          } catch (error) {
+            console.error('Error encoding URL:', error);
+            alert('Could not process the URL. Please try again.');
+          }
+        }
+      }
+
+      window.openAppUrl = function(url) {
+        const fullscreenIframe = document.getElementById('fullscreen-iframe');
+        fullscreenIframe.src = url;
+      }
+
+      function submitName() {
+        const nameInput = document.getElementById('name-input');
+        const name = nameInput.value.trim();
+        
+        if (name) {
+          localStorage.setItem('userName', name);
+          const welcomeModal = document.getElementById('welcome-modal');
+          const timeGreetingDisplay = document.getElementById('time-greeting-display');
+          
+          timeGreetingDisplay.textContent = `${getTimeGreeting()}, ${name}`;
+          
+          welcomeModal.classList.add('opacity-0', 'pointer-events-none');
+          setTimeout(() => {
+            welcomeModal.style.display = 'none';
+          }, 300);
+        } else {
+          alert('Please enter your name');
+        }
+      }
+
+      // Add sidebar toggle function
+      function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        sidebar.classList.toggle('active');
+      }
+
+      // Close sidebar when clicking outside on mobile
+      document.addEventListener('click', (e) => {
+        const sidebar = document.querySelector('.sidebar');
+        const sidebarToggle = document.querySelector('.sidebar-toggle');
+        
+        if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target) && window.innerWidth < 768) {
+          sidebar.classList.remove('active');
+        }
+      });
+
+      // Update the body padding to account for sidebar on desktop
+      function updateLayout() {
+        const mainContent = document.querySelector('.max-w-4xl');
+        if (window.innerWidth >= 768) {
+          mainContent.classList.add('main-content');
+        } else {
+          mainContent.classList.remove('main-content');
+        }
+      }
+
+      window.addEventListener('resize', updateLayout);
+      document.addEventListener('DOMContentLoaded', updateLayout);
     });
+
+    function getTimeGreeting() {
+      const hour = new Date().getHours();
+      let greeting = '';
+      let motivationalText = "You've got this!";
+  
+      if (hour < 12) {
+        greeting = 'Good morning';
+        motivationalText = "Start your day strong!";
+      } else if (hour < 18) {
+        greeting = 'Good afternoon';
+        motivationalText = "Keep pushing forward!";
+      } else {
+        greeting = 'Good evening';
+        motivationalText = "Wind down and recharge!";
+      }
+  
+      document.getElementById('time-greeting').textContent = greeting;
+      
+      const personalizedGreeting = document.getElementById('time-greeting-display');
+      const savedName = localStorage.getItem('userName');
+      
+      if (savedName) {
+        personalizedGreeting.textContent = `${greeting}, ${savedName}`;
+      } else {
+        personalizedGreeting.textContent = greeting;
+      }
+  
+      document.querySelector('#personalized-greeting p').textContent = motivationalText;
+      
+      return greeting;
+    }
+
+    function openSettings() {
+      document.getElementById('settings-modal').classList.remove('hidden');
+    }
+
+    function closeSettings() {
+      document.getElementById('settings-modal').classList.add('hidden');
+    }
+  </script>
+
+  <script>
+    const messages = [
+        "Welcome to your dream site.",
+        "Welcome to perfection.",
+        "Welcome to freedom."
+    ];
+    
+    let currentMessageIndex = 0;
+    const typingText = document.getElementById('typing-text');
+    
+    function typeMessage(message, element) {
+        let index = 0;
+        element.textContent = '';
+        
+        function type() {
+            if (index < message.length) {
+                element.textContent += message[index];
+                index++;
+                setTimeout(type, 100); // Adjust typing speed here
+            } else {
+                setTimeout(() => {
+                    eraseMessage(element, () => {
+                        currentMessageIndex = (currentMessageIndex + 1) % messages.length;
+                        typeMessage(messages[currentMessageIndex], element);
+                    });
+                }, 2000); // Wait before erasing
+            }
+        }
+        type();
+    }
+    
+    function eraseMessage(element, callback) {
+        let text = element.textContent;
+        
+        function erase() {
+            if (text.length > 0) {
+                text = text.slice(0, -1);
+                element.textContent = text;
+                setTimeout(erase, 50); // Adjust erasing speed here
+            } else {
+                callback();
+            }
+        }
+        erase();
+    }
+    
+    // Start the animation when the page loads
+    typeMessage(messages[currentMessageIndex], typingText);
   </script>
 </body>
 </html>
