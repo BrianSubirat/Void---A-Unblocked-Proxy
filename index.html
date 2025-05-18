@@ -3,7 +3,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Void - A Unblocked Proxy</title>
-  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="icon" type="image/png" href="/Screenshot_2025-05-18_11.25.04_AM-removebg-preview.png">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
@@ -12,6 +12,41 @@
   <script src="/uv/uv.bundle.js"></script>
   <script src="/uv/uv.config.js"></script>
   <script src="/uv/uv.sw.js"></script>
+
+  <script>
+    // Ensure __uv$config is defined before any proxy functions
+    if (typeof __uv$config === 'undefined') {
+      // Fallback configuration if not loaded
+      self.__uv$config = {
+        prefix: '/service/',
+        bare: '/bare/',
+        encodeUrl: (url) => {
+          // Simple URL encoding fallback
+          return encodeURIComponent(url);
+        },
+        decodeUrl: (url) => {
+          // Simple URL decoding fallback
+          return decodeURIComponent(url);
+        },
+        handler: '/uv/uv.handler.js',
+        bundle: '/uv/uv.bundle.js',
+        config: '/uv/uv.config.js',
+        sw: '/uv/uv.sw.js',
+      };
+    }
+
+    function proxyApp(url) {
+      // Ensure __uv$config exists before using it
+      if (typeof __uv$config !== 'undefined' && __uv$config.encodeUrl) {
+        let encodedUrl = __uv$config.prefix + __uv$config.encodeUrl(url);
+        window.open(encodedUrl, '_blank');
+      } else {
+        // Fallback if configuration is not available
+        window.open(url, '_blank');
+        console.warn('Ultraviolet configuration not found. Opening URL directly.');
+      }
+    }
+  </script>
 
   <style>
     body {
@@ -280,16 +315,224 @@
       opacity: 1;
       transition: opacity 0.3s ease-in-out;
     }
+    
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      transition: transform 0.3s ease;
+    }
+    .sidebar-logo img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+    }
+    .sidebar-logo:hover {
+      transform: scale(1.1);
+    }
+    
+    /* New style for sidebar toggle */
+    .sidebar-toggle {
+      position: absolute;
+      top: 100px; /* Position under the logo */
+      left: 8px; /* Aligned with sidebar */
+      background: rgba(79, 70, 229, 0.2);
+      color: #a5b4fc;
+      border: none;
+      border-radius: 0.5rem;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      z-index: 50;
+    }
+
+    .sidebar-toggle:hover {
+      background: rgba(79, 70, 229, 0.3);
+      color: white;
+    }
+
+    @media (min-width: 768px) {
+      .sidebar-toggle {
+        display: none;
+      }
+    }
+    
+    /* Update the line styles in the sidebar */
+    .sidebar .w-8 {
+      width: 48px; 
+      height: 1px;
+      background-color: rgba(79, 70, 229, 0.3);
+      margin-bottom: 1rem;
+    }
+    
+    /* New styles for update notification positioning */
+    #update-notification-btn {
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      width: 48px;
+      height: 48px;
+      z-index: 50;
+      transition: all 0.3s ease;
+    }
+
+    #update-notification-modal {
+      position: fixed;
+      bottom: 72px; 
+      right: 16px;
+      width: 400px; 
+      max-height: 500px; 
+      background: linear-gradient(to bottom right, rgba(23, 37, 84, 0.95), rgba(15, 23, 42, 0.95));
+      border: 1px solid rgba(79, 70, 229, 0.3);
+      border-radius: 1.5rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      overflow: hidden;
+      transform: translateY(20px);
+      opacity: 0;
+      visibility: hidden;
+      transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #update-notification-modal.show {
+      transform: translateY(0);
+      opacity: 1;
+      visibility: visible;
+    }
+
+    #update-notification-modal .modal-header {
+      background: rgba(79, 70, 229, 0.2);
+      border-bottom: 1px solid rgba(79, 70, 229, 0.2);
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #update-notification-modal .modal-header h2 {
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    #update-notification-modal .modal-header h2 i {
+      color: #6366f1;
+      font-size: 1.5rem;
+    }
+
+    #update-notification-modal .modal-content {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    #update-notification-modal .update-item {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(79, 70, 229, 0.2);
+      border-radius: 1rem;
+      padding: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    #update-notification-modal .update-item:hover {
+      background: rgba(79, 70, 229, 0.1);
+      border-color: rgba(79, 70, 229, 0.4);
+      transform: translateY(-5px);
+    }
+
+    #update-notification-modal .update-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    #update-notification-modal .update-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+    }
+
+    #update-notification-modal .update-details {
+      flex-grow: 1;
+    }
+
+    #update-notification-modal .update-details h3 {
+      font-size: 1rem;
+      font-weight: bold;
+      color: white;
+      margin-bottom: 0.25rem;
+    }
+
+    #update-notification-modal .update-details p {
+      color: #94a3b8;
+      font-size: 0.875rem;
+    }
+
+    #update-notification-modal .update-tags {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    #update-notification-modal .update-tag {
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+
+    #update-notification-modal .modal-footer {
+      background: rgba(255, 255, 255, 0.05);
+      border-top: 1px solid rgba(79, 70, 229, 0.2);
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #update-notification-modal .modal-footer a {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #6366f1;
+      transition: color 0.3s ease;
+    }
+
+    #update-notification-modal .modal-footer a:hover {
+      color: #4f46e5;
+    }
   </style>
 </head>
 <body class="bg-slate-900 h-screen flex flex-col items-center justify-center overflow-hidden">
-  <!-- Add Sidebar Toggle Button -->
-  <button class="sidebar-toggle" onclick="toggleSidebar()">
-    <i class="fas fa-bars"></i>
-  </button>
-
-  <!-- Add Sidebar -->
+  
   <div class="sidebar">
+    <a href="#" onclick="window.location.reload()" class="sidebar-logo mb-4">
+      <img src="/Screenshot_2025-05-18_11.25.04_AM-removebg-preview.png" alt="Void Logo" class="w-12 h-12">
+    </a>
+    
+    <div class="w-8 h-[1px] bg-indigo-500/30 mb-4"></div>
+
+    <button class="sidebar-toggle" onclick="toggleSidebar()">
+      <i class="fas fa-bars"></i>
+    </button>
+
     <a href="#" class="sidebar-item" onclick="openCategory('games')">
       <i class="fas fa-gamepad"></i>
     </a>
@@ -307,8 +550,17 @@
       <i class="fas fa-robot"></i>
     </a>
     
+    <a href="#" class="sidebar-item" onclick="openCategory('apps')">
+      <i class="fas fa-th-large"></i>
+    </a>
+    
+    <div class="w-8 h-[1px] bg-indigo-500/30 mb-4"></div>
+    
     <a href="#" class="sidebar-item" onclick="openSettings()">
       <i class="fas fa-cog"></i>
+    </a>
+    <a href="https://discord.gg/WzEdPeCw" target="_blank" class="sidebar-item">
+      <i class="fab fa-discord"></i>
     </a>
   </div>
 
@@ -317,16 +569,17 @@
   
   <!-- Welcome Modal -->
   <div id="welcome-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 
-    text-center transition-all duration-300 bg-black/50 backdrop-blur-lg">
+    text-center transition-all duration-300 bg-black/50 backdrop-blur-lg" style="display: none;">
     <div class="bg-slate-800/90 backdrop-blur rounded-2xl p-8 max-w-md w-full shadow-2xl border border-indigo-500/20">
-      <h2 id="time-greeting" class="text-2xl font-bold text-white mb-4 space-glow"></h2>
-      <p class="text-gray-300 mb-6">Welcome to Void. What's your name?</p>
+      <h2 id="time-greeting" class="text-2xl font-bold text-white mb-4 space-glow">Welcome</h2>
+      <p class="text-gray-300 mb-6">We're excited to have you! What's your name?</p>
       <input 
         type="text" 
         id="name-input" 
         placeholder="Enter your name" 
         class="w-full px-4 py-2 rounded-lg bg-slate-700/50 backdrop-blur text-white mb-4 
         border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none"
+        maxlength="20"
       >
       <button 
         onclick="submitName()" 
@@ -564,28 +817,42 @@
           <h3 class="text-2xl font-semibold text-white mb-6 space-glow">About</h3>
           <div class="space-y-6">
             <div class="p-6 bg-slate-800/30 rounded-xl border border-indigo-500/20">
+              <h4 class="text-lg font-medium text-white mb-2">Development Team</h4>
+              <p class="text-gray-300 mb-4">Space is completely open-source and is owned, maintained, and managed by the Void Development Group (VDG) at Night Network. All of the source code is available on GitHub. Thank you for choosing Void!</p>
+              <a href="https://discord.gg/WzEdPeCw" target="_blank" class="text-indigo-400 hover:text-indigo-300 flex items-center space-x-2">
+                <i class="fab fa-discord"></i>
+                <span>To join our Discord for updates, uptimes, and links, click here.</span>
+              </a>
+            </div>
+
+            <div class="p-6 bg-slate-800/30 rounded-xl border border-indigo-500/20">
               <h4 class="text-lg font-medium text-white mb-2">Version Information</h4>
-              <p class="text-gray-300">Version: 1.0.0</p>
-              <p class="text-gray-300">Build: 2024.01</p>
-              <p class="text-gray-300">Last Updated: January 2024</p>
+              <p class="text-gray-300">Version: 1.1.0</p>
+              <p class="text-gray-300">Build: 2024.02</p>
+              <p class="text-gray-300">Last Updated: February 2024</p>
+              <p class="text-gray-300 mt-2 font-semibold text-indigo-300">Major UI Overhaul: Significant interface redesign and improvements</p>
             </div>
 
             <div class="p-6 bg-slate-800/30 rounded-xl border border-indigo-500/20">
               <h4 class="text-lg font-medium text-white mb-2">Credits</h4>
-              <p class="text-gray-300">Created with by SwiftWaves Team</p>
+              <p class="text-gray-300">Created with by Void Team</p>
               <p class="text-gray-300">Powered by Ultraviolet</p>
             </div>
 
             <div class="p-6 bg-slate-800/30 rounded-xl border border-indigo-500/20">
               <h4 class="text-lg font-medium text-white mb-2">Support</h4>
-              <a href="https://discord.gg/WzEdPeCw" target="_blank" class="text-indigo-400 hover:text-indigo-300 flex items-center space-x-2">
-                <i class="fab fa-discord"></i>
-                <span>Join our Discord</span>
-              </a>
-              <a href="https://github.com/BrianSubirat/Void---A-Unblocked-Proxy" target="_blank" class="text-indigo-400 hover:text-indigo-300 flex items-center space-x-2 mt-2">
-                <i class="fab fa-github"></i>
-                <span>GitHub Repository</span>
-              </a>
+              <p class="text-gray-300 mb-4">If you have any issues while using Void please report them on our GitHub. We will try to fix them as soon as possible.</p>
+              <p class="text-gray-300 mb-4">If you have any suggestions you can post them in our Discord.</p>
+              <div class="space-y-2">
+                <a href="https://github.com/BrianSubirat/Void---A-Unblocked-Proxy" target="_blank" class="text-indigo-400 hover:text-indigo-300 flex items-center space-x-2">
+                  <i class="fab fa-github"></i>
+                  <span>Report Issues on GitHub</span>
+                </a>
+                <a href="https://discord.gg/WzEdPeCw" target="_blank" class="text-indigo-400 hover:text-indigo-300 flex items-center space-x-2">
+                  <i class="fab fa-discord"></i>
+                  <span>Share Suggestions on Discord</span>
+                </a>
+              </div>
             </div>
 
             <div class="p-6 bg-slate-800/30 rounded-xl border border-indigo-500/20">
@@ -604,6 +871,90 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Update/Notification Button -->
+  <div id="update-notification-btn" 
+    class="fixed bottom-4 right-4 bg-indigo-600 hover:bg-indigo-700 text-white 
+    rounded-full flex items-center justify-center shadow-2xl 
+    transition-all duration-300 ease-in-out transform hover:scale-110 
+    hover:rotate-6 z-50 cursor-pointer"
+    onclick="openUpdateNotification()">
+    <i class="fas fa-bell text-lg"></i>
+    <span id="update-dot" class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 
+    rounded-full text-xs flex items-center justify-center text-white font-bold"></span>
+  </div>
+
+  <!-- Update Notification Modal -->
+  <div id="update-notification-modal">
+    <div class="modal-header">
+      <h2>
+        <i class="fas fa-bell"></i>
+        Void Updates
+      </h2>
+      <button onclick="closeUpdateNotification()" class="text-gray-400 hover:text-white">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-content">
+      <div class="update-item">
+        <div class="update-header">
+          <div class="update-icon bg-indigo-600">
+            <i class="fas fa-rocket"></i>
+          </div>
+          <div class="update-details">
+            <h3>Version 1.1.0 Released</h3>
+            <p>New features and performance improvements</p>
+          </div>
+        </div>
+        <div class="update-tags">
+          <span class="update-tag bg-indigo-500/20 text-indigo-300">🚀 Update</span>
+          <span class="update-tag bg-emerald-500/20 text-emerald-300">New Features</span>
+        </div>
+      </div>
+      
+      <div class="update-item">
+        <div class="update-header">
+          <div class="update-icon bg-emerald-600">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <div class="update-details">
+            <h3>Enhanced Security</h3>
+            <p>Improved proxy security features</p>
+          </div>
+        </div>
+        <div class="update-tags">
+          <span class="update-tag bg-emerald-500/20 text-emerald-300">🛡️ Security</span>
+        </div>
+      </div>
+      
+      <div class="update-item">
+        <div class="update-header">
+          <div class="update-icon bg-purple-600">
+            <i class="fas fa-palette"></i>
+          </div>
+          <div class="update-details">
+            <h3>UI/UX Updates</h3>
+            <p>Refined user experience design</p>
+          </div>
+        </div>
+        <div class="update-tags">
+          <span class="update-tag bg-purple-500/20 text-purple-300">💡 Design</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <a href="https://discord.gg/WzEdPeCw" target="_blank" class="flex items-center">
+        <i class="fab fa-discord"></i>
+        Join Discord
+      </a>
+      <a href="https://github.com/BrianSubirat/Void---A-Unblocked-Proxy" target="_blank" class="flex items-center">
+        <i class="fab fa-github"></i>
+        GitHub
+      </a>
     </div>
   </div>
 
@@ -631,283 +982,147 @@
   <script>
     function openCategory(category) {
       const sidePanel = document.getElementById('side-panel');
-      const panelIframe = document.getElementById('panel-iframe');
+      const updateNotificationBtn = document.getElementById('update-notification-btn');
       
-      let url = '';
-      switch(category) {
-        case 'games':
-          url = 'https://gamehub-com.pages.dev';
-          break;
-        case 'ai':
-          url = 'http://gemini.google.com/';
-          break;
-        case 'proxy':
-          url = window.location.href;
-          break;
-        case 'movies':
-          url = 'https://movies.usewaves.site/';
-          break;
-      }
+      if (category === 'proxy') {
+        sidePanel.innerHTML = `
+          <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
+            <i class="fas fa-times"></i>
+          </button>
+          <div class="w-full h-full flex items-center justify-center p-6">
+            <div class="max-w-2xl w-full">
+              <div class="search-container mb-12 flex justify-center">
+                <div class="relative w-full max-w-xl">
+                  <input 
+                    type="text" 
+                    id="proxy-search" 
+                    placeholder="Search or enter a URL" 
+                    class="w-full px-4 py-3 rounded-lg bg-slate-800/50 backdrop-blur text-white 
+                    border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none"
+                  >
+                  <button 
+                    onclick="proxySearch()" 
+                    class="absolute right-3 top-1/2 transform -translate-y-1/2 
+                    text-indigo-400 hover:text-indigo-300"
+                  >
+                    <i class="fas fa-search"></i>
+                  </button>
+                </div>
+              </div>
 
-      if (url) {
-        try {
-          const encodedUrl = __uv$config.prefix + __uv$config.encodeUrl(url);
-          panelIframe.src = encodedUrl;
+              <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-center">
+                ${[
+                  { name: 'YouTube', icon: 'fab fa-youtube', color: 'text-red-500', url: 'https://95.217.183.53/?themeRefresh=1&__pot=aHR0cHM6Ly93d3cueW91dHViZS5jb20' },
+                  { name: 'Discord', icon: 'fab fa-discord', color: 'text-indigo-500', url: 'https://discord.com/app' },
+                  { name: 'TikTok', icon: 'fab fa-tiktok', color: 'text-white', url: 'https://www.tiktok.com' },
+                  { name: 'Netflix', icon: 'fas fa-film', color: 'text-red-600', url: 'https://www.netflix.com' },
+                  { name: 'Twitch', icon: 'fab fa-twitch', color: 'text-purple-500', url: 'https://www.twitch.tv' },
+                  { name: 'Instagram', icon: 'fab fa-instagram', color: 'text-pink-500', url: 'https://www.instagram.com' },
+                  { name: 'Facebook', icon: 'fab fa-facebook', color: 'text-blue-500', url: 'https://www.facebook.com' },
+                  { name: 'Twitter', icon: 'fab fa-twitter', color: 'text-blue-400', url: 'https://twitter.com' }
+                ].map(app => `
+                  <div 
+                    onclick="proxyApp('${app.url}')" 
+                    class="category-card cursor-pointer flex flex-col items-center justify-center p-4 rounded-xl"
+                  >
+                    <i class="${app.icon} ${app.color} text-4xl mb-2"></i>
+                    <span class="text-white text-sm">${app.name}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+        
+        sidePanel.classList.add('active');
+        updateNotificationBtn.style.display = 'none';
+      } else if (category === 'apps') {
+        sidePanel.innerHTML = `
+          <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
+            <i class="fas fa-times"></i>
+          </button>
+          <div class="w-full h-full overflow-y-auto p-6">
+            <div class="max-w-4xl mx-auto">
+              <h2 class="text-3xl font-bold text-white mb-8 space-glow">All Apps</h2>
+              <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                ${[
+                  { name: 'Discord', icon: 'fab fa-discord', color: 'text-indigo-500', url: 'https://discord.com/app', category: 'Social' },
+                  { name: 'Messenger', icon: 'fab fa-facebook-messenger', color: 'text-blue-500', url: 'https://www.messenger.com', category: 'Social' },
+                  { name: 'Instagram', icon: 'fab fa-instagram', color: 'text-pink-500', url: 'https://www.instagram.com', category: 'Social' },
+                  { name: 'Twitter', icon: 'fab fa-twitter', color: 'text-blue-400', url: 'https://twitter.com', category: 'Social' },
+                  { name: 'Snapchat', icon: 'fab fa-snapchat-ghost', color: 'text-yellow-500', url: 'https://www.snapchat.com', category: 'Social' },
+                  
+                  { name: 'YouTube', icon: 'fab fa-youtube', color: 'text-red-500', url: 'https://95.217.183.53/?themeRefresh=1&__pot=aHR0cHM6Ly93d3cueW91dHViZS5jb20', category: 'Video' },
+                  { name: 'Netflix', icon: 'fas fa-film', color: 'text-red-600', url: 'https://www.netflix.com', category: 'Video' },
+                  { name: 'Twitch', icon: 'fab fa-twitch', color: 'text-purple-500', url: 'https://www.twitch.tv', category: 'Video' },
+                  { name: 'TikTok', icon: 'fab fa-tiktok', color: 'text-white', url: 'https://www.tiktok.com', category: 'Video' },
+                  
+                  { name: 'GitHub', icon: 'fab fa-github', color: 'text-gray-300', url: 'https://github.com', category: 'Productivity' },
+                  
+                  { name: 'Spotify', icon: 'fab fa-spotify', color: 'text-green-500', url: 'https://open.spotify.com', category: 'Entertainment' },
+                  { name: 'Epic Games', icon: 'fas fa-gamepad', color: 'text-blue-600', url: 'https://www.epicgames.com', category: 'Games' },
+                  { name: 'Steam', icon: 'fab fa-steam', color: 'text-blue-800', url: 'https://store.steampowered.com', category: 'Games' },
+                  
+                  { name: 'Google Drive', icon: 'fab fa-google-drive', color: 'text-green-500', url: 'https://drive.google.com', category: 'Utility' },
+                  { name: 'Gmail', icon: 'fas fa-envelope', color: 'text-red-500', url: 'https://mail.google.com', category: 'Utility' },
+                  
+                  { name: 'ChatGPT', icon: 'fas fa-robot', color: 'text-emerald-500', url: 'https://chat.openai.com', category: 'AI' },
+                  { name: 'Gemini', icon: 'fas fa-brain', color: 'text-blue-400', url: 'https://gemini.google.com', category: 'AI' }
+                ].map(app => `
+                  <div 
+                    onclick="proxyApp('${app.url}')" 
+                    class="category-card cursor-pointer flex flex-col items-center justify-center p-4 rounded-xl hover:bg-indigo-500/10 transition-all duration-300"
+                  >
+                    <i class="${app.icon} ${app.color} text-4xl mb-2"></i>
+                    <span class="text-white text-sm">${app.name}</span>
+                    <span class="text-xs text-gray-400 mt-1">${app.category}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+        
+        sidePanel.classList.add('active');
+        updateNotificationBtn.style.display = 'none';
+      } else {
+        let url = '';
+        switch(category) {
+          case 'games':
+            url = 'https://gamehub-com.pages.dev';
+            break;
+          case 'ai':
+            url = 'http://gemini.google.com/';
+            break;
+          case 'movies':
+            url = 'https://movies.usewaves.site/';
+            break;
+        }
+
+        if (url) {
+          sidePanel.innerHTML = `
+            <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
+              <i class="fas fa-times"></i>
+            </button>
+            <iframe 
+              id="category-iframe" 
+              src="${url}" 
+              class="w-full h-full border-none"
+            ></iframe>
+          `;
           sidePanel.classList.add('active');
-        } catch (error) {
-          console.error('Error encoding URL:', error);
-          alert('Could not open the selected category. Please try again.');
+          updateNotificationBtn.style.display = 'none';
         }
       }
     }
 
     function closeSidePanel() {
       const sidePanel = document.getElementById('side-panel');
-      const panelIframe = document.getElementById('panel-iframe');
+      const updateNotificationBtn = document.getElementById('update-notification-btn');
       
       sidePanel.classList.remove('active');
-      setTimeout(() => {
-        panelIframe.src = '';
-      }, 300);
+      updateNotificationBtn.style.display = 'block';
     }
-
-    if (typeof __uv$config === 'undefined') {
-      window.__uv$config = {
-        prefix: '/service/',
-        bare: '/bare/',
-        encodeUrl: (url) => url,
-        decodeUrl: (url) => url,
-        handler: '/uv/uv.handler.js',
-        bundle: '/uv/uv.bundle.js',
-        config: '/uv/uv.config.js',
-        sw: '/uv/uv.sw.js',
-      };
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      getTimeGreeting();
-      
-      const savedName = localStorage.getItem('userName');
-      
-      if (savedName) {
-        const welcomeModal = document.getElementById('welcome-modal');
-        welcomeModal.style.display = 'none';
-      }
-
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme) {
-        document.body.style.background = getThemeColor(savedTheme);
-      }
-
-      const savedCloak = localStorage.getItem('tabCloak');
-      if (savedCloak) {
-        document.getElementById('tab-cloak').value = savedCloak;
-        const titles = {
-          default: 'Void',
-          google: 'Google',
-          drive: 'Google Drive',
-          docs: 'Google Docs',
-          classroom: 'Google Classroom'
-        };
-        document.title = titles[savedCloak];
-      }
-
-      let panicKey = localStorage.getItem('panicKey') || '';
-      const panicKeyInput = document.getElementById('panic-key');
-      panicKeyInput.value = panicKey;
-
-      function requestFullScreen() {
-        const docElm = document.documentElement;
-        if (docElm.requestFullscreen) {
-          docElm.requestFullscreen().catch(err => {
-            console.warn('Fullscreen request was prevented:', err);
-          });
-        } else if (docElm.mozRequestFullScreen) { 
-          docElm.mozRequestFullScreen().catch(err => {
-            console.warn('Fullscreen request was prevented:', err);
-          });
-        } else if (docElm.webkitRequestFullScreen) {
-          docElm.webkitRequestFullScreen().catch(err => {
-            console.warn('Fullscreen request was prevented:', err);
-          });
-        } else if (docElm.msRequestFullscreen) {
-          docElm.msRequestFullscreen().catch(err => {
-            console.warn('Fullscreen request was prevented:', err);
-          });
-        }
-      }
-
-      function lockScreenOrientation() {
-        if (screen.orientation && screen.orientation.lock) {
-          screen.orientation.lock('landscape')
-            .catch(error => {
-              console.warn('Screen orientation lock failed:', error);
-            });
-        }
-      }
-
-      function initializeFullscreenAndOrientation() {
-        if (document.fullscreenEnabled) {
-          requestFullScreen();
-        }
-
-        try {
-          lockScreenOrientation();
-        } catch (error) {
-          console.warn('Failed to lock screen orientation:', error);
-        }
-      }
-
-      window.addEventListener('unhandledrejection', (event) => {
-        console.warn('Unhandled promise rejection:', event.reason);
-        event.preventDefault(); 
-      });
-
-      initializeFullscreenAndOrientation();
-
-      document.getElementById('settings-modal').addEventListener('click', (e) => {
-        if (e.target === e.currentTarget) {
-          closeSettings();
-        }
-      });
-
-      document.getElementById('tab-cloak').addEventListener('change', (e) => {
-        const titles = {
-          default: 'Void',
-          google: 'Google',
-          drive: 'Google Drive',
-          docs: 'Google Docs',
-          classroom: 'Google Classroom'
-        };
-        document.title = titles[e.target.value];
-        localStorage.setItem('tabCloak', e.target.value);
-      });
-
-      document.getElementById('about-blank').addEventListener('click', () => {
-        const win = window.open('about:blank', '_blank');
-        win.document.write(`
-          <iframe src="${window.location.href}" style="width:100%; height:100%; border:none; position:fixed; top:0; left:0"></iframe>
-        `);
-      });
-
-      panicKeyInput.addEventListener('keydown', (e) => {
-        e.preventDefault();
-        panicKey = e.key.toUpperCase();
-        panicKeyInput.value = panicKey;
-        localStorage.setItem('panicKey', panicKey);
-      });
-
-      document.getElementById('clear-panic').addEventListener('click', () => {
-        panicKey = '';
-        panicKeyInput.value = '';
-        localStorage.removeItem('panicKey');
-      });
-
-      document.addEventListener('keydown', (e) => {
-        if (e.key.toUpperCase() === panicKey) {
-          window.location.href = 'https://classroom.google.com';
-        }
-      });
-
-      document.querySelectorAll('.theme-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const theme = btn.getAttribute('data-theme');
-          document.body.style.background = getThemeColor(theme);
-          localStorage.setItem('theme', theme);
-        });
-      });
-
-      function getThemeColor(theme) {
-        const themes = {
-          default: 'linear-gradient(135deg, #0a0f1f 0%, #1a1f3f 100%)',
-          purple: 'linear-gradient(135deg, #4a1d96 0%, #6b21a8 100%)',
-          blue: 'linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%)',
-          emerald: 'linear-gradient(135deg, #065f46 0%, #047857 100%)',
-          rose: 'linear-gradient(135deg, #9f1239 0%, #be123c 100%)',
-          amber: 'linear-gradient(135deg, #92400e 0%, #b45309 100%)'
-        };
-        return themes[theme];
-      }
-
-      const particlesEnabled = localStorage.getItem('particlesEnabled') === null ? true : localStorage.getItem('particlesEnabled') === 'true';
-      document.getElementById('particles-toggle').checked = particlesEnabled;
-      toggleParticles(particlesEnabled);
-
-      if (particlesEnabled) {
-        const savedAmount = localStorage.getItem('particlesAmount') || '100';
-        const savedSpeed = localStorage.getItem('particlesSpeed') || '2';
-        
-        document.getElementById('particles-amount').value = savedAmount;
-        document.getElementById('particles-speed').value = savedSpeed;
-        
-        updateParticlesAmount(savedAmount);
-        updateParticlesSpeed(savedSpeed);
-      }
-
-      particlesJS('particles-js', {
-        particles: {
-          number: { value: 100, density: { enable: true, value_area: 800 } },
-          color: { value: '#6366f1' },
-          shape: { 
-            type: 'circle',
-            stroke: { width: 0, color: '#000000' },
-          },
-          opacity: { 
-            value: 0.5, 
-            random: true,
-            anim: { enable: true, speed: 1, opacity_min: 0.1, sync: false }
-          },
-          size: {
-            value: 3,
-            random: true,
-            anim: { enable: true, speed: 2, size_min: 0.1, sync: false }
-          },
-          line_linked: {
-            enable: true,
-            distance: 150,
-            color: '#6366f1',
-            opacity: 0.4,
-            width: 1
-          },
-          move: {
-            enable: true,
-            speed: 2,
-            direction: 'none',
-            random: true,
-            straight: false,
-            out_mode: 'out',
-            bounce: false,
-            attract: { enable: true, rotateX: 600, rotateY: 1200 }
-          }
-        },
-        interactivity: {
-          detect_on: 'canvas',
-          events: {
-            onhover: { enable: true, mode: 'repulse' },
-            onclick: { enable: true, mode: 'push' },
-            resize: true
-          },
-          modes: {
-            repulse: { distance: 100, duration: 0.4 },
-            push: { particles_nb: 4 }
-          }
-        },
-        retina_detect: true
-      });
-
-      document.addEventListener('fullscreenchange', () => {
-        if (!document.fullscreenElement) {
-          requestFullScreen();
-        }
-      });
-
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-          e.preventDefault();
-          requestFullScreen();
-        }
-      });
-    });
 
     function updateFontSize(size) {
       document.documentElement.style.fontSize = size + 'px';
@@ -1044,87 +1259,152 @@
     function closeSettings() {
       document.getElementById('settings-modal').classList.add('hidden');
     }
-  </script>
 
-  <script>
     function switchSettingsTab(tabName) {
-      // Hide all tabs
       document.querySelectorAll('.settings-tab').forEach(tab => {
         tab.classList.add('hidden');
       });
       
-      // Show selected tab
       document.getElementById(`${tabName}-tab`).classList.remove('hidden');
       
-      // Update active state of tab buttons
       document.querySelectorAll('.settings-tab-btn').forEach(btn => {
         btn.classList.remove('bg-indigo-500/10', 'text-white');
       });
       
-      // Add active state to clicked button
       event.currentTarget.classList.add('bg-indigo-500/10', 'text-white');
     }
-  </script>
 
-  <script>
     function submitName() {
       const nameInput = document.getElementById('name-input');
+      const welcomeModal = document.getElementById('welcome-modal');
+
+      if (!nameInput || !welcomeModal) {
+        console.warn('Required elements for name submission not found');
+        return;
+      }
+
       const name = nameInput.value.trim();
       
       if (name) {
-        // Save the name
         localStorage.setItem('userName', name);
         
-        // Hide the welcome modal with a fade out effect
-        const welcomeModal = document.getElementById('welcome-modal');
         welcomeModal.style.opacity = '0';
         
-        // After animation, hide the modal completely
         setTimeout(() => {
           welcomeModal.style.display = 'none';
         }, 300);
         
-        // Update the greeting
-        const personalizedGreeting = document.getElementById('time-greeting-display');
-        const timeGreeting = getTimeGreeting();
-        personalizedGreeting.textContent = `${timeGreeting}, ${name}`;
+        getTimeGreeting();
       } else {
-        // Add a subtle shake animation to the input if empty
         nameInput.classList.add('shake');
         setTimeout(() => nameInput.classList.remove('shake'), 500);
       }
     }
 
-    // Add event listener for Enter key
-    document.getElementById('name-input').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        submitName();
+    document.addEventListener('DOMContentLoaded', () => {
+      const nameInput = document.getElementById('name-input');
+      const proxySearchInput = document.getElementById('proxy-search');
+
+      if (nameInput) {
+        nameInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            submitName();
+          }
+        });
+      } else {
+        console.warn('Name input element not found');
       }
+
+      if (proxySearchInput) {
+        proxySearchInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            proxySearchInput.blur(); // Remove focus
+            proxySearch(); // Trigger search
+            proxySearchInput.focus(); // Return focus
+          }
+        });
+      } else {
+        console.warn('Proxy search input element not found');
+      }
+
+      initFirstTimeVisit();
+      getTimeGreeting();
     });
 
-    document.head.insertAdjacentHTML('beforeend', `
-      <style>
-        @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          25% { transform: translateX(-5px); }
-          75% { transform: translateX(5px); }
-        }
-        .shake {
-          animation: shake 0.2s ease-in-out;
-        }
-        #welcome-modal {
-          opacity: 1;
-          transition: opacity 0.3s ease-in-out;
-        }
-      </style>
-    `);
-  </script>
+    function initFirstTimeVisit() {
+      const hasVisitedBefore = localStorage.getItem('userName');
+      const welcomeModal = document.getElementById('welcome-modal');
+      const particlesToggle = document.getElementById('particles-toggle');
 
-  <script>
+      if (!welcomeModal) {
+        console.warn('Welcome modal element not found');
+        return;
+      }
+
+      if (!particlesToggle) {
+        console.warn('Particles toggle element not found');
+        return;
+      }
+
+      if (localStorage.getItem('particlesEnabled') === null) {
+        localStorage.setItem('particlesEnabled', 'true');
+        particlesToggle.checked = true;
+      }
+
+      const particlesEnabled = localStorage.getItem('particlesEnabled') === 'true';
+      toggleParticles(particlesEnabled);
+      particlesToggle.checked = particlesEnabled;
+
+      if (!hasVisitedBefore) {
+        welcomeModal.style.display = 'flex';
+      } else {
+        welcomeModal.style.display = 'none';
+        getTimeGreeting();
+      }
+    }
+
+    function proxySearch() {
+      const searchInput = document.getElementById('proxy-search');
+      const query = searchInput.value.trim();
+      
+      if (query) {
+        const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+        
+        let searchUrl;
+        if (urlPattern.test(query)) {
+          // If it's a valid URL, proxy the direct URL
+          searchUrl = query.startsWith('http') ? query : `https://${query}`;
+        } else {
+          // If it's a search term, use Torry.io
+          searchUrl = `https://www.torry.io/search?q=${encodeURIComponent(query)}`;
+        }
+        
+        // Open in side panel instead of new tab
+        const sidePanel = document.getElementById('side-panel');
+        const updateNotificationBtn = document.getElementById('update-notification-btn');
+        
+        sidePanel.innerHTML = `
+          <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
+            <i class="fas fa-times"></i>
+          </button>
+          <iframe 
+            id="search-iframe" 
+            src="${searchUrl}" 
+            class="w-full h-full border-none"
+          ></iframe>
+        `;
+        
+        sidePanel.classList.add('active');
+        updateNotificationBtn.style.display = 'none';
+      }
+    }
+
     const messages = [
         "Welcome to your dream site.",
         "Welcome to perfection.",
-        "Welcome to freedom."
+        "Welcome to freedom.",
+        "Welcome to beautiful.",
+        "Welcome to all you need."
     ];
     
     let currentMessageIndex = 0;
@@ -1138,14 +1418,14 @@
             if (index < message.length) {
                 element.textContent += message[index];
                 index++;
-                setTimeout(type, 100); // Adjust typing speed here
+                setTimeout(type, 100); 
             } else {
                 setTimeout(() => {
                     eraseMessage(element, () => {
                         currentMessageIndex = (currentMessageIndex + 1) % messages.length;
                         typeMessage(messages[currentMessageIndex], element);
                     });
-                }, 2000); // Wait before erasing
+                }, 2000); 
             }
         }
         type();
@@ -1158,7 +1438,7 @@
             if (text.length > 0) {
                 text = text.slice(0, -1);
                 element.textContent = text;
-                setTimeout(erase, 50); // Adjust erasing speed here
+                setTimeout(erase, 50); 
             } else {
                 callback();
             }
@@ -1167,6 +1447,36 @@
     }
     
     typeMessage(messages[currentMessageIndex], typingText);
+
+    function toggleSidebar() {
+      const sidebar = document.querySelector('.sidebar');
+      sidebar.classList.toggle('active');
+    }
+
+    function openUpdateNotification() {
+      const updateModal = document.getElementById('update-notification-modal');
+      const updateDot = document.getElementById('update-dot');
+      
+      updateModal.classList.toggle('show');
+      updateDot.classList.add('hidden'); 
+    }
+
+    function closeUpdateNotification() {
+      const updateModal = document.getElementById('update-notification-modal');
+      
+      updateModal.classList.remove('show');
+    }
+
+    document.addEventListener('click', (e) => {
+      const updateModal = document.getElementById('update-notification-modal');
+      const updateBtn = document.getElementById('update-notification-btn');
+      
+      if (updateModal.classList.contains('show') && 
+          !updateModal.contains(e.target) && 
+          !updateBtn.contains(e.target)) {
+        closeUpdateNotification();
+      }
+    });
   </script>
 </body>
 </html>
