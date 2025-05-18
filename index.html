@@ -36,15 +36,23 @@
     }
 
     function proxyApp(url) {
-      // Ensure __uv$config exists before using it
-      if (typeof __uv$config !== 'undefined' && __uv$config.encodeUrl) {
-        let encodedUrl = __uv$config.prefix + __uv$config.encodeUrl(url);
-        window.open(encodedUrl, '_blank');
-      } else {
-        // Fallback if configuration is not available
-        window.open(url, '_blank');
-        console.warn('Ultraviolet configuration not found. Opening URL directly.');
-      }
+      // Instead of using window.open(), we'll use the side panel iframe
+      const sidePanel = document.getElementById('side-panel');
+      const updateNotificationBtn = document.getElementById('update-notification-btn');
+      
+      sidePanel.innerHTML = `
+        <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
+          <i class="fas fa-times"></i>
+        </button>
+        <iframe 
+          id="app-iframe" 
+          src="${url}" 
+          class="w-full h-full border-none"
+        ></iframe>
+      `;
+      
+      sidePanel.classList.add('active');
+      updateNotificationBtn.style.display = 'none';
     }
   </script>
 
@@ -74,11 +82,40 @@
       border-radius: 1.5rem;
       padding: 1.5rem;
       box-shadow: 0 0 30px rgba(79, 70, 229, 0.1);
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
     }
     .search-bar {
       background: rgba(79, 70, 229, 0.1);
       border: 2px solid rgba(79, 70, 229, 0.2);
-      box-shadow: 0 0 20px rgba(79, 70, 229, 0.1);
+      border-radius: 1rem;
+      padding: 1rem 1.5rem;
+      font-size: 1.1rem;
+      color: white;
+      width: 100%;
+      transition: all 0.3s ease;
+    }
+    .search-bar:focus {
+      border-color: rgba(79, 70, 229, 0.5);
+      box-shadow: 0 0 20px rgba(79, 70, 229, 0.2);
+      outline: none;
+    }
+    .search-button {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: rgba(79, 70, 229, 0.6);
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .search-button:hover {
+      color: rgba(79, 70, 229, 1);
+      transform: translateY(-50%) scale(1.1);
     }
     .nav-link {
       position: relative;
@@ -301,6 +338,44 @@
         align-items: center;
         justify-content: center;
       }
+    }
+
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .app-card {
+      background: rgba(79, 70, 229, 0.1);
+      border: 1px solid rgba(79, 70, 229, 0.2);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .app-card:hover {
+      transform: translateY(-5px);
+      background: rgba(79, 70, 229, 0.2);
+      border-color: rgba(79, 70, 229, 0.4);
+      box-shadow: 0 10px 20px rgba(79, 70, 229, 0.1);
+    }
+
+    .app-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .app-name {
+      color: white;
+      font-size: 0.9rem;
+      font-weight: 500;
     }
 
     @keyframes shake {
@@ -1044,7 +1119,7 @@
           <div class="w-full h-full overflow-y-auto p-6">
             <div class="max-w-4xl mx-auto">
               <h2 class="text-3xl font-bold text-white mb-8 space-glow">All Apps</h2>
-              <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              <div class="app-grid">
                 ${[
                   { name: 'Discord', icon: 'fab fa-discord', color: 'text-indigo-500', url: 'https://discord.com/app', category: 'Social' },
                   { name: 'Messenger', icon: 'fab fa-facebook-messenger', color: 'text-blue-500', url: 'https://www.messenger.com', category: 'Social' },
@@ -1071,10 +1146,10 @@
                 ].map(app => `
                   <div 
                     onclick="proxyApp('${app.url}')" 
-                    class="category-card cursor-pointer flex flex-col items-center justify-center p-4 rounded-xl hover:bg-indigo-500/10 transition-all duration-300"
+                    class="app-card cursor-pointer flex flex-col items-center justify-center p-4 rounded-xl hover:bg-indigo-500/10 transition-all duration-300"
                   >
-                    <i class="${app.icon} ${app.color} text-4xl mb-2"></i>
-                    <span class="text-white text-sm">${app.name}</span>
+                    <i class="${app.icon} ${app.color} text-2xl mb-2"></i>
+                    <span class="app-name text-white text-sm">${app.name}</span>
                     <span class="text-xs text-gray-400 mt-1">${app.category}</span>
                   </div>
                 `).join('')}
@@ -1318,6 +1393,7 @@
       if (proxySearchInput) {
         proxySearchInput.addEventListener('keypress', (e) => {
           if (e.key === 'Enter') {
+            e.preventDefault();
             proxySearchInput.blur(); // Remove focus
             proxySearch(); // Trigger search
             proxySearchInput.focus(); // Return focus
@@ -1372,14 +1448,11 @@
         
         let searchUrl;
         if (urlPattern.test(query)) {
-          // If it's a valid URL, proxy the direct URL
           searchUrl = query.startsWith('http') ? query : `https://${query}`;
         } else {
-          // If it's a search term, use DuckDuckGo
           searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
         }
         
-        // Open in side panel instead of new tab
         const sidePanel = document.getElementById('side-panel');
         const updateNotificationBtn = document.getElementById('update-notification-btn');
         
