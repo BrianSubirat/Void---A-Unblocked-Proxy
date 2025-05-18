@@ -1037,7 +1037,7 @@
     <div class="flex flex-col items-center justify-center space-y-4">
       <h1 class="typing-text text-4xl font-bold text-white space-glow mb-4" id="typing-text">Welcome to your dream site.</h1>
       <h2 class="text-2xl text-indigo-300 space-glow"></h2>
-      <p class="text-xl text-indigo-400 space-glow">Experience Unrestricted Internet Freedom.</p>
+      <p class="text-xl text-indigo-400 space-glow">Start your unblocking journey today!</p>
     </div>
     
     <div id="personalized-greeting" class="mt-8 text-center">
@@ -1119,7 +1119,25 @@
           <div class="w-full h-full overflow-y-auto p-6">
             <div class="max-w-4xl mx-auto">
               <h2 class="text-3xl font-bold text-white mb-8 space-glow">All Apps</h2>
-              <div class="app-grid">
+              <div class="search-container mb-4">
+                <div class="relative w-full max-w-md">
+                  <input 
+                    type="text" 
+                    id="app-search" 
+                    placeholder="Search apps by name or category" 
+                    class="w-full px-4 py-3 rounded-lg bg-slate-800/50 backdrop-blur text-white 
+                    border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none"
+                  >
+                  <button 
+                    onclick="searchApps()" 
+                    class="absolute right-3 top-1/2 transform -translate-y-1/2 
+                    text-indigo-400 hover:text-indigo-300"
+                  >
+                    <i class="fas fa-search"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="app-grid" id="app-grid">
                 ${[
                   { name: 'Discord', icon: 'fab fa-discord', color: 'text-indigo-500', url: 'https://discord.com/app', category: 'Social' },
                   { name: 'Messenger', icon: 'fab fa-facebook-messenger', color: 'text-blue-500', url: 'https://www.messenger.com', category: 'Social' },
@@ -1141,6 +1159,10 @@
                   { name: 'Google Drive', icon: 'fab fa-google-drive', color: 'text-green-500', url: 'https://drive.google.com', category: 'Utility' },
                   { name: 'Gmail', icon: 'fas fa-envelope', color: 'text-red-500', url: 'https://mail.google.com', category: 'Utility' },
                   
+                  { name: 'ESPN', icon: 'fas fa-basketball-ball', color: 'text-red-500', url: 'https://www.espn.com', category: 'Sports' },
+                  { name: 'Poki', icon: 'fas fa-gamepad', color: 'text-blue-500', url: 'https://poki.com', category: 'Games' },
+                  { name: 'Y8 Games', icon: 'fas fa-chess', color: 'text-green-500', url: 'https://www.y8.com', category: 'Games' },
+                  { name: 'Chess.com', icon: 'fas fa-chess-knight', color: 'text-gray-300', url: 'https://www.chess.com', category: 'Games' },
                   { name: 'ChatGPT', icon: 'fas fa-robot', color: 'text-emerald-500', url: 'https://chat.openai.com', category: 'AI' },
                   { name: 'Gemini', icon: 'fas fa-brain', color: 'text-blue-400', url: 'https://gemini.google.com', category: 'AI' }
                 ].map(app => `
@@ -1376,9 +1398,46 @@
       }
     }
 
+    function searchApps() {
+      const searchInput = document.getElementById('app-search');
+      const query = searchInput.value.trim().toLowerCase();
+      const appGrid = document.getElementById('app-grid');
+      const apps = appGrid.querySelectorAll('.app-card');
+      
+      let visibleAppsCount = 0;
+      
+      apps.forEach(app => {
+        const appName = app.querySelector('.app-name').textContent.toLowerCase();
+        const appCategory = app.querySelector('.text-xs').textContent.toLowerCase();
+        
+        // Check if the query matches the app name or category
+        if (appName.includes(query) || appCategory.includes(query)) {
+          app.style.display = 'flex';
+          visibleAppsCount++;
+        } else {
+          app.style.display = 'none';
+        }
+      });
+
+      // Add a no results message if no apps match the search
+      const noResultsMessage = document.getElementById('no-results-message');
+      if (visibleAppsCount === 0) {
+        if (!noResultsMessage) {
+          const message = document.createElement('div');
+          message.id = 'no-results-message';
+          message.className = 'text-center text-gray-400 w-full py-8';
+          message.textContent = 'No apps found matching your search.';
+          appGrid.parentNode.insertBefore(message, appGrid.nextSibling);
+        }
+      } else if (noResultsMessage) {
+        noResultsMessage.remove();
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       const nameInput = document.getElementById('name-input');
       const proxySearchInput = document.getElementById('proxy-search');
+      const appSearchInput = document.getElementById('app-search');
 
       if (nameInput) {
         nameInput.addEventListener('keypress', (e) => {
@@ -1401,6 +1460,12 @@
         });
       } else {
         console.warn('Proxy search input element not found');
+      }
+
+      if (appSearchInput) {
+        appSearchInput.addEventListener('input', searchApps);
+      } else {
+        console.warn('App search input element not found');
       }
 
       initFirstTimeVisit();
@@ -1471,55 +1536,6 @@
         updateNotificationBtn.style.display = 'none';
       }
     }
-
-    const messages = [
-        "Welcome to your dream site.",
-        "Welcome to perfection.",
-        "Welcome to freedom.",
-        "Welcome to beautiful.",
-        "Welcome to all you need."
-    ];
-    
-    let currentMessageIndex = 0;
-    const typingText = document.getElementById('typing-text');
-    
-    function typeMessage(message, element) {
-        let index = 0;
-        element.textContent = '';
-        
-        function type() {
-            if (index < message.length) {
-                element.textContent += message[index];
-                index++;
-                setTimeout(type, 100); 
-            } else {
-                setTimeout(() => {
-                    eraseMessage(element, () => {
-                        currentMessageIndex = (currentMessageIndex + 1) % messages.length;
-                        typeMessage(messages[currentMessageIndex], element);
-                    });
-                }, 2000); 
-            }
-        }
-        type();
-    }
-    
-    function eraseMessage(element, callback) {
-        let text = element.textContent;
-        
-        function erase() {
-            if (text.length > 0) {
-                text = text.slice(0, -1);
-                element.textContent = text;
-                setTimeout(erase, 50); 
-            } else {
-                callback();
-            }
-        }
-        erase();
-    }
-    
-    typeMessage(messages[currentMessageIndex], typingText);
 
     function toggleSidebar() {
       const sidebar = document.querySelector('.sidebar');
