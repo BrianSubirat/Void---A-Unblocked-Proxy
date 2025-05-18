@@ -2,7 +2,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SwiftWaves</title>
+  <title>Void - A Unblocked Proxy</title>
   <link rel="icon" type="image/png" href="/favicon.png">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
@@ -200,6 +200,44 @@
       outline: none;
       box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
     }
+
+    #settings-modal .theme-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    #settings-modal h3 {
+      letter-spacing: 0.5px;
+    }
+
+    #settings-modal .space-glow {
+      text-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+    }
+
+    /* Side Panel styles */
+    .side-panel {
+      position: fixed;
+      top: 0;
+      left: 64px; /* Width of the sidebar */
+      bottom: 0;
+      width: calc(100% - 64px); /* Full width minus sidebar width */
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(10px);
+      transform: translateX(100%);
+      transition: transform 0.3s ease-in-out;
+      z-index: 40;
+      overflow: hidden;
+      border-left: 1px solid rgba(79, 70, 229, 0.2);
+    }
+
+    .side-panel.active {
+      transform: translateX(0);
+    }
+
+    #panel-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
   </style>
 </head>
 <body class="bg-slate-900 h-screen flex flex-col items-center justify-center overflow-hidden">
@@ -238,7 +276,7 @@
     text-center transition-all duration-300">
     <div class="bg-slate-800 rounded-2xl p-8 max-w-md w-full shadow-2xl border border-slate-700">
       <h2 id="time-greeting" class="text-2xl font-bold text-white mb-4"></h2>
-      <p class="text-gray-300 mb-6">Welcome to SwiftWaves. What's your name?</p>
+      <p class="text-gray-300 mb-6">Welcome to Void. What's your name?</p>
       <input 
         type="text" 
         id="name-input" 
@@ -282,56 +320,247 @@
 
   <!-- Settings Modal -->
   <div id="settings-modal" class="fixed inset-0 z-[99] hidden">
-    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-    <div class="relative z-10 bg-slate-800/90 backdrop-filter backdrop-blur-lg max-w-md w-full mx-auto mt-20 rounded-2xl shadow-2xl border border-indigo-500/20">
-      <div class="p-6">
-        <div class="flex justify-between items-center mb-6">
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-lg"></div>
+    <div class="relative z-10 w-full h-full flex">
+      <!-- Settings Tabs Sidebar -->
+      <div class="w-64 h-full bg-slate-900/90 border-r border-indigo-500/20 p-4">
+        <div class="flex items-center justify-between mb-8">
           <h2 class="text-2xl font-bold text-white space-glow">Settings</h2>
-          <button onclick="closeSettings()" class="text-gray-400 hover:text-white">
+          <button onclick="closeSettings()" class="text-gray-400 hover:text-white transition-colors duration-300">
             <i class="fas fa-times"></i>
           </button>
         </div>
-
-        <!-- Tab Cloaking -->
-        <div class="mb-6">
-          <h3 class="text-lg font-semibold text-white mb-3 space-glow">Tab Cloaking</h3>
-          <select id="tab-cloak" class="w-full bg-slate-700/50 backdrop-blur text-white rounded-lg px-4 py-2 border border-indigo-500/20">
-            <option value="default">Default</option>
-            <option value="google">Google</option>
-            <option value="drive">Google Drive</option>
-            <option value="docs">Google Docs</option>
-            <option value="classroom">Google Classroom</option>
-          </select>
-        </div>
-
-        <!-- About:Blank -->
-        <div class="mb-6">
-          <h3 class="text-lg font-semibold text-white mb-3 space-glow">about:blank Cloaking</h3>
-          <button id="about-blank" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg transition-all duration-300">
-            Open in about:blank
+        
+        <div class="space-y-2">
+          <button onclick="switchSettingsTab('appearance')" class="settings-tab-btn w-full text-left px-4 py-3 rounded-lg flex items-center space-x-3 text-gray-300 hover:bg-indigo-500/10 hover:text-white transition-all duration-300">
+            <i class="fas fa-paint-brush w-5"></i>
+            <span>Appearance</span>
+          </button>
+          <button onclick="switchSettingsTab('cloaking')" class="settings-tab-btn w-full text-left px-4 py-3 rounded-lg flex items-center space-x-3 text-gray-300 hover:bg-indigo-500/10 hover:text-white transition-all duration-300">
+            <i class="fas fa-mask w-5"></i>
+            <span>Tab Cloaking</span>
+          </button>
+          <button onclick="switchSettingsTab('security')" class="settings-tab-btn w-full text-left px-4 py-3 rounded-lg flex items-center space-x-3 text-gray-300 hover:bg-indigo-500/10 hover:text-white transition-all duration-300">
+            <i class="fas fa-shield-alt w-5"></i>
+            <span>Security</span>
+          </button>
+          <button onclick="switchSettingsTab('about')" class="settings-tab-btn w-full text-left px-4 py-3 rounded-lg flex items-center space-x-3 text-gray-300 hover:bg-indigo-500/10 hover:text-white transition-all duration-300">
+            <i class="fas fa-info-circle w-5"></i>
+            <span>About</span>
           </button>
         </div>
+      </div>
 
-        <!-- Panic Button -->
-        <div class="mb-6">
-          <h3 class="text-lg font-semibold text-white mb-3 space-glow">Panic Key</h3>
-          <div class="flex items-center space-x-4">
-            <input type="text" id="panic-key" placeholder="Press a key" 
-              class="bg-slate-700/50 backdrop-blur text-white px-4 py-2 rounded-lg w-full border border-indigo-500/20" readonly>
-            <button id="clear-panic" class="text-red-400 hover:text-red-300">
-              <i class="fas fa-trash"></i>
-            </button>
+      <!-- Settings Content -->
+      <div class="flex-1 h-full overflow-y-auto">
+        <!-- Appearance Tab -->
+        <div id="appearance-tab" class="settings-tab active p-8">
+          <h3 class="text-2xl font-semibold text-white mb-6 space-glow">Appearance</h3>
+          <div class="space-y-6">
+            <div>
+              <h4 class="text-lg font-medium text-white mb-4">Themes</h4>
+              <div class="grid grid-cols-3 gap-4">
+                <button class="theme-btn bg-gradient-to-br from-slate-900 to-slate-800 h-20 rounded-xl border border-indigo-500/20 hover:border-indigo-500/50 transition-all duration-300" data-theme="default"></button>
+                <button class="theme-btn bg-gradient-to-br from-purple-900 to-purple-800 h-20 rounded-xl border border-indigo-500/20 hover:border-indigo-500/50 transition-all duration-300" data-theme="purple"></button>
+                <button class="theme-btn bg-gradient-to-br from-blue-900 to-blue-800 h-20 rounded-xl border border-indigo-500/20 hover:border-indigo-500/50 transition-all duration-300" data-theme="blue"></button>
+                <button class="theme-btn bg-gradient-to-br from-emerald-900 to-emerald-800 h-20 rounded-xl border border-indigo-500/20 hover:border-indigo-500/50 transition-all duration-300" data-theme="emerald"></button>
+                <button class="theme-btn bg-gradient-to-br from-rose-900 to-rose-800 h-20 rounded-xl border border-indigo-500/20 hover:border-indigo-500/50 transition-all duration-300" data-theme="rose"></button>
+                <button class="theme-btn bg-gradient-to-br from-amber-900 to-amber-800 h-20 rounded-xl border border-indigo-500/20 hover:border-indigo-500/50 transition-all duration-300" data-theme="amber"></button>
+              </div>
+            </div>
+
+            <div>
+              <h4 class="text-lg font-medium text-white mb-4">Font Size</h4>
+              <div class="flex flex-col space-y-4">
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-300">Text Size: <span id="font-size-display">16px</span></span>
+                  <button onclick="resetFontSize()" class="px-3 py-1 bg-indigo-500/20 text-indigo-300 rounded-lg hover:bg-indigo-500/30 transition-all duration-300">Reset</button>
+                </div>
+                <input 
+                  type="range" 
+                  id="font-size-slider" 
+                  min="12" 
+                  max="20" 
+                  value="16" 
+                  class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer"
+                  oninput="updateFontSize(this.value)"
+                >
+                <div class="flex justify-between text-gray-400 text-sm">
+                  <span>Small</span>
+                  <span>Default</span>
+                  <span>Large</span>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h4 class="text-lg font-medium text-white mb-4">Particles Effect</h4>
+              <div class="flex flex-col space-y-4">
+                <label class="flex items-center space-x-3">
+                  <input 
+                    type="checkbox" 
+                    id="particles-toggle" 
+                    class="w-6 h-6 rounded bg-slate-800/50 border border-indigo-500/20"
+                    onchange="toggleParticles(this.checked)"
+                  >
+                  <span class="text-gray-300">Enable particles background</span>
+                </label>
+                <div class="space-y-2" id="particles-settings" style="display: none;">
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-300">Particles Amount</span>
+                    <input 
+                      type="range" 
+                      id="particles-amount" 
+                      min="20" 
+                      max="200" 
+                      value="100" 
+                      class="w-1/2 h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer"
+                      oninput="updateParticlesAmount(this.value)"
+                    >
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-300">Particles Speed</span>
+                    <input 
+                      type="range" 
+                      id="particles-speed" 
+                      min="1" 
+                      max="5" 
+                      value="2" 
+                      class="w-1/2 h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer"
+                      oninput="updateParticlesSpeed(this.value)"
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <p class="text-gray-400 text-sm mt-2">Current redirect: Google Classroom</p>
         </div>
 
-        <!-- Themes -->
-        <div>
-          <h3 class="text-lg font-semibold text-white mb-3 space-glow">Themes</h3>
-          <div class="grid grid-cols-3 gap-3">
-            <button class="theme-btn bg-gradient-to-br from-slate-900 to-slate-800 h-12 rounded-lg border border-indigo-500/20 hover:border-indigo-500/50 transition-all duration-300"></button>
-            <button class="theme-btn bg-gradient-to-br from-purple-900 to-purple-800 h-12 rounded-lg border border-indigo-500/20 hover:border-indigo-500/50 transition-all duration-300"></button>
-            <button class="theme-btn bg-gradient-to-br from-blue-900 to-blue-800 h-12 rounded-lg border border-indigo-500/20 hover:border-indigo-500/50 transition-all duration-300"></button>
+        <!-- Cloaking Tab -->
+        <div id="cloaking-tab" class="settings-tab hidden p-8">
+          <h3 class="text-2xl font-semibold text-white mb-6 space-glow">Tab Cloaking</h3>
+          <div class="space-y-6">
+            <div>
+              <h4 class="text-lg font-medium text-white mb-4">Tab Appearance</h4>
+              <select id="tab-cloak" class="w-full bg-slate-800/50 backdrop-blur text-white rounded-xl px-4 py-3 border border-indigo-500/20 hover:border-indigo-500/40 transition-all duration-300">
+                <option value="default">Default</option>
+                <option value="google">Google</option>
+                <option value="drive">Google Drive</option>
+                <option value="docs">Google Docs</option>
+                <option value="classroom">Google Classroom</option>
+                <option value="canvas">Canvas</option>
+                <option value="zoom">Zoom</option>
+              </select>
+            </div>
+
+            <div>
+              <h4 class="text-lg font-medium text-white mb-4">Custom Tab</h4>
+              <div class="space-y-4">
+                <input type="text" placeholder="Custom title" class="w-full bg-slate-800/50 backdrop-blur text-white rounded-xl px-4 py-3 border border-indigo-500/20">
+                <input type="text" placeholder="Custom favicon URL" class="w-full bg-slate-800/50 backdrop-blur text-white rounded-xl px-4 py-3 border border-indigo-500/20">
+              </div>
+            </div>
+
+            <div>
+              <h4 class="text-lg font-medium text-white mb-4">about:blank Cloaking</h4>
+              <button id="about-blank" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center space-x-2">
+                <i class="fas fa-external-link-alt"></i>
+                <span>Open in about:blank</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Security Tab -->
+        <div id="security-tab" class="settings-tab hidden p-8">
+          <h3 class="text-2xl font-semibold text-white mb-6 space-glow">Security</h3>
+          <div class="space-y-6">
+            <div>
+              <h4 class="text-lg font-medium text-white mb-4">Panic Key</h4>
+              <div class="flex items-center space-x-4">
+                <div class="relative flex-1">
+                  <input type="text" id="panic-key" placeholder="Press a key" 
+                    class="w-full bg-slate-800/50 backdrop-blur text-white px-4 py-3 rounded-xl border border-indigo-500/20 hover:border-indigo-500/40 transition-all duration-300" readonly>
+                  <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                    <i class="fas fa-keyboard"></i>
+                  </div>
+                </div>
+                <button id="clear-panic" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 p-3 rounded-xl transition-all duration-300">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <h4 class="text-lg font-medium text-white mb-4">Panic URL</h4>
+              <select class="w-full bg-slate-800/50 backdrop-blur text-white rounded-xl px-4 py-3 border border-indigo-500/20">
+                <option value="classroom">Google Classroom</option>
+                <option value="drive">Google Drive</option>
+                <option value="canvas">Canvas</option>
+                <option value="home">Home Page</option>
+              </select>
+            </div>
+
+            <div>
+              <h4 class="text-lg font-medium text-white mb-4">Auto-Clear History</h4>
+              <label class="flex items-center space-x-3">
+                <input type="checkbox" class="w-6 h-6 rounded bg-slate-800/50 border border-indigo-500/20">
+                <span class="text-gray-300">Clear browser history on exit</span>
+              </label>
+            </div>
+
+            <div>
+              <h4 class="text-lg font-medium text-white mb-4">Local Data</h4>
+              <button class="w-full bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center space-x-2">
+                <i class="fas fa-trash-alt"></i>
+                <span>Clear All Local Data</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- About Tab -->
+        <div id="about-tab" class="settings-tab hidden p-8">
+          <h3 class="text-2xl font-semibold text-white mb-6 space-glow">About</h3>
+          <div class="space-y-6">
+            <div class="p-6 bg-slate-800/30 rounded-xl border border-indigo-500/20">
+              <h4 class="text-lg font-medium text-white mb-2">Version Information</h4>
+              <p class="text-gray-300">Version: 1.0.0</p>
+              <p class="text-gray-300">Build: 2024.01</p>
+              <p class="text-gray-300">Last Updated: January 2024</p>
+            </div>
+
+            <div class="p-6 bg-slate-800/30 rounded-xl border border-indigo-500/20">
+              <h4 class="text-lg font-medium text-white mb-2">Credits</h4>
+              <p class="text-gray-300">Created with ❤️ by SwiftWaves Team</p>
+              <p class="text-gray-300">Powered by Ultraviolet</p>
+            </div>
+
+            <div class="p-6 bg-slate-800/30 rounded-xl border border-indigo-500/20">
+              <h4 class="text-lg font-medium text-white mb-2">Support</h4>
+              <a href="#" class="text-indigo-400 hover:text-indigo-300 flex items-center space-x-2">
+                <i class="fab fa-discord"></i>
+                <span>Join our Discord</span>
+              </a>
+              <a href="#" class="text-indigo-400 hover:text-indigo-300 flex items-center space-x-2 mt-2">
+                <i class="fab fa-github"></i>
+                <span>GitHub Repository</span>
+              </a>
+            </div>
+
+            <div class="p-6 bg-slate-800/30 rounded-xl border border-indigo-500/20">
+              <h4 class="text-lg font-medium text-white mb-2">System Status</h4>
+              <div class="space-y-2">
+                <div class="flex justify-between">
+                  <span class="text-gray-300">Server Status</span>
+                  <span class="text-green-400">Online</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-300">Proxy Service</span>
+                  <span class="text-green-400">Operational</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -351,18 +580,18 @@
     </div>
   </div>
 
-  <!-- Fullscreen View -->
-  <div id="fullscreen-view" class="fixed inset-0 bg-slate-900 z-50 hidden">
-    <button id="close-fullscreen" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeFullscreenView()">
+  <!-- Side Panel -->
+  <div id="side-panel" class="side-panel">
+    <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
       <i class="fas fa-times"></i>
     </button>
-    <iframe id="fullscreen-iframe" class="w-full h-full border-none"></iframe>
+    <iframe id="panel-iframe" class="w-full h-full"></iframe>
   </div>
 
   <script>
     function openCategory(category) {
-      const fullscreenView = document.getElementById('fullscreen-view');
-      const fullscreenIframe = document.getElementById('fullscreen-iframe');
+      const sidePanel = document.getElementById('side-panel');
+      const panelIframe = document.getElementById('panel-iframe');
       
       let url = '';
       switch(category) {
@@ -379,15 +608,14 @@
           url = 'https://movies.usewaves.site/';
           break;
         case 'apps':
-          return openAppsModal(); 
+          return openAppsModal();
       }
 
       if (url) {
-        // Safely encode URL using Ultraviolet
         try {
           const encodedUrl = __uv$config.prefix + __uv$config.encodeUrl(url);
-          fullscreenIframe.src = encodedUrl;
-          fullscreenView.classList.remove('hidden');
+          panelIframe.src = encodedUrl;
+          sidePanel.classList.add('active');
         } catch (error) {
           console.error('Error encoding URL:', error);
           alert('Could not open the selected category. Please try again.');
@@ -395,11 +623,21 @@
       }
     }
 
-    function openAppsModal() {
-      const fullscreenView = document.getElementById('fullscreen-view');
-      const fullscreenIframe = document.getElementById('fullscreen-iframe');
+    function closeSidePanel() {
+      const sidePanel = document.getElementById('side-panel');
+      const panelIframe = document.getElementById('panel-iframe');
       
-      fullscreenIframe.srcdoc = `
+      sidePanel.classList.remove('active');
+      setTimeout(() => {
+        panelIframe.src = '';
+      }, 300);
+    }
+
+    function openAppsModal() {
+      const sidePanel = document.getElementById('side-panel');
+      const panelIframe = document.getElementById('panel-iframe');
+      
+      panelIframe.srcdoc = `
         <html>
         <head>
           <style>
@@ -475,11 +713,19 @@
         </html>
       `;
       
-      fullscreenView.classList.remove('hidden');
+      sidePanel.classList.add('active');
     }
 
-    window.openCategory = openCategory;
-    window.openAppsModal = openAppsModal;
+    window.openAppUrl = function(url) {
+      const panelIframe = document.getElementById('panel-iframe');
+      try {
+        const encodedUrl = __uv$config.prefix + __uv$config.encodeUrl(url);
+        panelIframe.src = encodedUrl;
+      } catch (error) {
+        console.error('Error encoding URL:', error);
+        alert('Could not open the app. Please try again.');
+      }
+    }
 
     if (typeof __uv$config === 'undefined') {
       window.__uv$config = {
@@ -494,16 +740,6 @@
       };
     }
 
-    function closeFullscreenView() {
-        const fullscreenView = document.getElementById('fullscreen-view');
-        const fullscreenIframe = document.getElementById('fullscreen-iframe');
-        
-        fullscreenView.classList.add('hidden');
-        fullscreenIframe.src = '';
-    }
-
-    window.closeFullscreenView = closeFullscreenView;
-
     document.addEventListener('DOMContentLoaded', () => {
       getTimeGreeting();
       
@@ -516,14 +752,14 @@
 
       const savedTheme = localStorage.getItem('theme');
       if (savedTheme) {
-        document.body.style.backgroundColor = savedTheme;
+        document.body.style.background = getThemeColor(savedTheme);
       }
 
       const savedCloak = localStorage.getItem('tabCloak');
       if (savedCloak) {
         document.getElementById('tab-cloak').value = savedCloak;
         const titles = {
-          default: 'SwiftGuard',
+          default: 'Void',
           google: 'Google',
           drive: 'Google Drive',
           docs: 'Google Docs',
@@ -593,7 +829,7 @@
 
       document.getElementById('tab-cloak').addEventListener('change', (e) => {
         const titles = {
-          default: 'SwiftGuard',
+          default: 'Void',
           google: 'Google',
           drive: 'Google Drive',
           docs: 'Google Docs',
@@ -631,10 +867,38 @@
 
       document.querySelectorAll('.theme-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-          document.body.style.backgroundColor = getComputedStyle(btn).backgroundColor;
-          localStorage.setItem('theme', getComputedStyle(btn).backgroundColor);
+          const theme = btn.getAttribute('data-theme');
+          document.body.style.background = getThemeColor(theme);
+          localStorage.setItem('theme', theme);
         });
       });
+
+      function getThemeColor(theme) {
+        const themes = {
+          default: 'linear-gradient(135deg, #0a0f1f 0%, #1a1f3f 100%)',
+          purple: 'linear-gradient(135deg, #4a1d96 0%, #6b21a8 100%)',
+          blue: 'linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%)',
+          emerald: 'linear-gradient(135deg, #065f46 0%, #047857 100%)',
+          rose: 'linear-gradient(135deg, #9f1239 0%, #be123c 100%)',
+          amber: 'linear-gradient(135deg, #92400e 0%, #b45309 100%)'
+        };
+        return themes[theme];
+      }
+
+      const particlesEnabled = localStorage.getItem('particlesEnabled') === null ? true : localStorage.getItem('particlesEnabled') === 'true';
+      document.getElementById('particles-toggle').checked = particlesEnabled;
+      toggleParticles(particlesEnabled);
+
+      if (particlesEnabled) {
+        const savedAmount = localStorage.getItem('particlesAmount') || '100';
+        const savedSpeed = localStorage.getItem('particlesSpeed') || '2';
+        
+        document.getElementById('particles-amount').value = savedAmount;
+        document.getElementById('particles-speed').value = savedSpeed;
+        
+        updateParticlesAmount(savedAmount);
+        updateParticlesSpeed(savedSpeed);
+      }
 
       particlesJS('particles-js', {
         particles: {
@@ -699,91 +963,103 @@
           requestFullScreen();
         }
       });
-
-      function handleSearch(event) {
-        if (event.key === 'Enter') {
-          const searchInput = document.getElementById('search-input');
-          let url = searchInput.value.trim();
-          
-          if (!url.startsWith('http://') && !url.startsWith('https://')) {
-            if (!url.includes('.')) {
-              url = `https://www.bing.com/search?q=${encodeURIComponent(url)}`;
-            } else {
-              url = `https://${url}`;
-            }
-          }
-
-          // Safely encode URL using Ultraviolet
-          try {
-            const encodedUrl = __uv$config.prefix + __uv$config.encodeUrl(url);
-            
-            const fullscreenView = document.getElementById('fullscreen-view');
-            const fullscreenIframe = document.getElementById('fullscreen-iframe');
-            
-            fullscreenIframe.src = encodedUrl;
-            fullscreenView.classList.remove('hidden');
-            searchInput.value = '';
-          } catch (error) {
-            console.error('Error encoding URL:', error);
-            alert('Could not process the URL. Please try again.');
-          }
-        }
-      }
-
-      window.openAppUrl = function(url) {
-        const fullscreenIframe = document.getElementById('fullscreen-iframe');
-        fullscreenIframe.src = url;
-      }
-
-      function submitName() {
-        const nameInput = document.getElementById('name-input');
-        const name = nameInput.value.trim();
-        
-        if (name) {
-          localStorage.setItem('userName', name);
-          const welcomeModal = document.getElementById('welcome-modal');
-          const timeGreetingDisplay = document.getElementById('time-greeting-display');
-          
-          timeGreetingDisplay.textContent = `${getTimeGreeting()}, ${name}`;
-          
-          welcomeModal.classList.add('opacity-0', 'pointer-events-none');
-          setTimeout(() => {
-            welcomeModal.style.display = 'none';
-          }, 300);
-        } else {
-          alert('Please enter your name');
-        }
-      }
-
-      // Add sidebar toggle function
-      function toggleSidebar() {
-        const sidebar = document.querySelector('.sidebar');
-        sidebar.classList.toggle('active');
-      }
-
-      // Close sidebar when clicking outside on mobile
-      document.addEventListener('click', (e) => {
-        const sidebar = document.querySelector('.sidebar');
-        const sidebarToggle = document.querySelector('.sidebar-toggle');
-        
-        if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target) && window.innerWidth < 768) {
-          sidebar.classList.remove('active');
-        }
-      });
-
-      // Update the body padding to account for sidebar on desktop
-      function updateLayout() {
-        const mainContent = document.querySelector('.max-w-4xl');
-        if (window.innerWidth >= 768) {
-          mainContent.classList.add('main-content');
-        } else {
-          mainContent.classList.remove('main-content');
-        }
-      }
-
-      window.addEventListener('resize', updateLayout);
-      document.addEventListener('DOMContentLoaded', updateLayout);
     });
+
+    function updateFontSize(size) {
+      document.documentElement.style.fontSize = size + 'px';
+      document.getElementById('font-size-display').textContent = size + 'px';
+      localStorage.setItem('fontSize', size);
+    }
+
+    function resetFontSize() {
+      const defaultSize = 16;
+      document.getElementById('font-size-slider').value = defaultSize;
+      updateFontSize(defaultSize);
+    }
+
+    function toggleParticles(enabled) {
+      const particlesEl = document.getElementById('particles-js');
+      const particlesSettings = document.getElementById('particles-settings');
+      
+      if (enabled) {
+        particlesEl.style.display = 'block';
+        particlesSettings.style.display = 'block';
+        initParticles();
+      } else {
+        particlesEl.style.display = 'none';
+        particlesSettings.style.display = 'none';
+      }
+      
+      localStorage.setItem('particlesEnabled', enabled);
+    }
+
+    function updateParticlesAmount(amount) {
+      if (window.pJSDom && window.pJSDom[0]) {
+        window.pJSDom[0].pJS.particles.number.value = parseInt(amount);
+        window.pJSDom[0].pJS.fn.particlesRefresh();
+      }
+      localStorage.setItem('particlesAmount', amount);
+    }
+
+    function updateParticlesSpeed(speed) {
+      if (window.pJSDom && window.pJSDom[0]) {
+        window.pJSDom[0].pJS.particles.move.speed = parseInt(speed);
+      }
+      localStorage.setItem('particlesSpeed', speed);
+    }
+
+    function initParticles() {
+      particlesJS('particles-js', {
+        particles: {
+          number: { value: 100, density: { enable: true, value_area: 800 } },
+          color: { value: '#6366f1' },
+          shape: { 
+            type: 'circle',
+            stroke: { width: 0, color: '#000000' },
+          },
+          opacity: { 
+            value: 0.5, 
+            random: true,
+            anim: { enable: true, speed: 1, opacity_min: 0.1, sync: false }
+          },
+          size: {
+            value: 3,
+            random: true,
+            anim: { enable: true, speed: 2, size_min: 0.1, sync: false }
+          },
+          line_linked: {
+            enable: true,
+            distance: 150,
+            color: '#6366f1',
+            opacity: 0.4,
+            width: 1
+          },
+          move: {
+            enable: true,
+            speed: 2,
+            direction: 'none',
+            random: true,
+            straight: false,
+            out_mode: 'out',
+            bounce: false,
+            attract: { enable: true, rotateX: 600, rotateY: 1200 }
+          }
+        },
+        interactivity: {
+          detect_on: 'canvas',
+          events: {
+            onhover: { enable: true, mode: 'repulse' },
+            onclick: { enable: true, mode: 'push' },
+            resize: true
+          },
+          modes: {
+            repulse: { distance: 100, duration: 0.4 },
+            push: { particles_nb: 4 }
+          }
+        },
+        retina_detect: true
+      });
+    }
 
     function getTimeGreeting() {
       const hour = new Date().getHours();
@@ -823,6 +1099,26 @@
 
     function closeSettings() {
       document.getElementById('settings-modal').classList.add('hidden');
+    }
+  </script>
+
+  <script>
+    function switchSettingsTab(tabName) {
+      // Hide all tabs
+      document.querySelectorAll('.settings-tab').forEach(tab => {
+        tab.classList.add('hidden');
+      });
+      
+      // Show selected tab
+      document.getElementById(`${tabName}-tab`).classList.remove('hidden');
+      
+      // Update active state of tab buttons
+      document.querySelectorAll('.settings-tab-btn').forEach(btn => {
+        btn.classList.remove('bg-indigo-500/10', 'text-white');
+      });
+      
+      // Add active state to clicked button
+      event.currentTarget.classList.add('bg-indigo-500/10', 'text-white');
     }
   </script>
 
@@ -872,7 +1168,6 @@
         erase();
     }
     
-    // Start the animation when the page loads
     typeMessage(messages[currentMessageIndex], typingText);
   </script>
 </body>
