@@ -1375,8 +1375,8 @@
           // If it's a valid URL, proxy the direct URL
           searchUrl = query.startsWith('http') ? query : `https://${query}`;
         } else {
-          // If it's a search term, use Torry.io
-          searchUrl = `https://www.torry.io/search?q=${encodeURIComponent(query)}`;
+          // If it's a search term, use DuckDuckGo
+          searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
         }
         
         // Open in side panel instead of new tab
