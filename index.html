@@ -2,7 +2,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Void</title>
+  <title>Void - A Unblocked Proxy</title>
   <link rel="icon" type="image/png" href="/favicon.png">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
@@ -238,6 +238,18 @@
       height: 100%;
       border: none;
     }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+    .shake {
+      animation: shake 0.2s ease-in-out;
+    }
+    #welcome-modal {
+      opacity: 1;
+      transition: opacity 0.3s ease-in-out;
+    }
   </style>
 </head>
 <body class="bg-slate-900 h-screen flex flex-col items-center justify-center overflow-hidden">
@@ -252,10 +264,6 @@
       <i class="fas fa-gamepad"></i>
     </a>
     
-    <a href="#" class="sidebar-item" onclick="openCategory('apps')">
-      <i class="fas fa-th"></i>
-    </a>
-    
     <a href="#" class="sidebar-item" onclick="openCategory('proxy')">
       <i class="fas fa-globe"></i>
     </a>
@@ -263,6 +271,12 @@
     <a href="#" class="sidebar-item" onclick="openCategory('movies')">
       <i class="fas fa-film"></i>
     </a>
+
+    <!-- AI option remains -->
+    <a href="#" class="sidebar-item" onclick="openCategory('ai')">
+      <i class="fas fa-robot"></i>
+    </a>
+    
     <a href="#" class="sidebar-item" onclick="openSettings()">
       <i class="fas fa-cog"></i>
     </a>
@@ -273,20 +287,20 @@
   
   <!-- Welcome Modal -->
   <div id="welcome-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 
-    text-center transition-all duration-300">
-    <div class="bg-slate-800 rounded-2xl p-8 max-w-md w-full shadow-2xl border border-slate-700">
-      <h2 id="time-greeting" class="text-2xl font-bold text-white mb-4"></h2>
+    text-center transition-all duration-300 bg-black/50 backdrop-blur-lg">
+    <div class="bg-slate-800/90 backdrop-blur rounded-2xl p-8 max-w-md w-full shadow-2xl border border-indigo-500/20">
+      <h2 id="time-greeting" class="text-2xl font-bold text-white mb-4 space-glow"></h2>
       <p class="text-gray-300 mb-6">Welcome to Void. What's your name?</p>
       <input 
         type="text" 
         id="name-input" 
         placeholder="Enter your name" 
-        class="w-full px-4 py-2 rounded-lg bg-slate-700 text-white mb-4 
-        focus:outline-none focus:ring-2 focus:ring-blue-500"
+        class="w-full px-4 py-2 rounded-lg bg-slate-700/50 backdrop-blur text-white mb-4 
+        border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none"
       >
       <button 
         onclick="submitName()" 
-        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg 
+        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg 
         transition duration-300 ease-in-out"
       >
         Continue
@@ -311,10 +325,6 @@
     <a href="#" class="mobile-nav-item" onclick="openCategory('movies')">
       <i class="fas fa-film"></i>
       <span class="text-xs">Movies</span>
-    </a>
-    <a href="#" class="mobile-nav-item" onclick="openCategory('apps')">
-      <i class="fas fa-th"></i>
-      <span class="text-xs">Apps</span>
     </a>
   </nav>
 
@@ -532,7 +542,7 @@
 
             <div class="p-6 bg-slate-800/30 rounded-xl border border-indigo-500/20">
               <h4 class="text-lg font-medium text-white mb-2">Credits</h4>
-              <p class="text-gray-300">Created with ❤️ by SwiftWaves Team</p>
+              <p class="text-gray-300">Created with by SwiftWaves Team</p>
               <p class="text-gray-300">Powered by Ultraviolet</p>
             </div>
 
@@ -607,8 +617,6 @@
         case 'movies':
           url = 'https://movies.usewaves.site/';
           break;
-        case 'apps':
-          return openAppsModal();
       }
 
       if (url) {
@@ -631,100 +639,6 @@
       setTimeout(() => {
         panelIframe.src = '';
       }, 300);
-    }
-
-    function openAppsModal() {
-      const sidePanel = document.getElementById('side-panel');
-      const panelIframe = document.getElementById('panel-iframe');
-      
-      panelIframe.srcdoc = `
-        <html>
-        <head>
-          <style>
-            body { 
-              font-family: 'Arial', sans-serif; 
-              background-color: #1e293b; 
-              color: white; 
-              display: flex; 
-              flex-wrap: wrap; 
-              justify-content: center; 
-              align-items: center; 
-              height: 100vh; 
-              margin: 0; 
-              gap: 20px; 
-              background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            }
-            .app-button {
-              background-color: rgba(255,255,255,0.1);
-              border: 2px solid rgba(255,255,255,0.2);
-              border-radius: 15px;
-              padding: 20px;
-              width: 200px;
-              text-align: center;
-              transition: all 0.3s ease;
-              cursor: pointer;
-            }
-            .app-button:hover {
-              background-color: rgba(255,255,255,0.2);
-              transform: scale(1.05);
-            }
-            .app-button img {
-              width: 100px;
-              height: 100px;
-              object-fit: contain;
-              margin-bottom: 10px;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="app-button" onclick="parent.openAppUrl('https://discord.com/app')">
-            <img src="/discord_icon.png" alt="Discord">
-            <h3>Discord</h3>
-          </div>
-          <div class="app-button" onclick="parent.openAppUrl('https://open.spotify.com')">
-            <img src="https://cdn.iconscout.com/icon/free/png-256/spotify-11-432546.png" alt="Spotify">
-            <h3>Spotify</h3>
-          </div>
-          <div class="app-button" onclick="parent.openAppUrl('https://www.tiktok.com')">
-            <img src="/tiktok_icon.png" alt="TikTok">
-            <h3>TikTok</h3>
-          </div>
-          <div class="app-button" onclick="parent.openAppUrl('https://www.twitch.tv')">
-            <img src="/twitch_icon.png" alt="Twitch">
-            <h3>Twitch</h3>
-          </div>
-          <div class="app-button" onclick="parent.openAppUrl('https://www.y8.com')">
-            <img src="https://www.y8.com/favicon.ico" alt="Y8 Games">
-            <h3>Y8 Games</h3>
-          </div>
-          <div class="app-button" onclick="parent.openAppUrl('https://www.crazygames.com')">
-            <img src="/crazygames_icon.png" alt="Crazy Games">
-            <h3>Crazy Games</h3>
-          </div>
-          <div class="app-button" onclick="parent.openAppUrl('https://www.chess.com')">
-            <img src="https://www.chess.com/favicon.ico" alt="Chess.com">
-            <h3>Chess.com</h3>
-          </div>
-          <div class="app-button" onclick="parent.openAppUrl('https://chat.openai.com')">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/800px-ChatGPT_logo.svg.png" alt="ChatGPT">
-            <h3>ChatGPT</h3>
-          </div>
-        </body>
-        </html>
-      `;
-      
-      sidePanel.classList.add('active');
-    }
-
-    window.openAppUrl = function(url) {
-      const panelIframe = document.getElementById('panel-iframe');
-      try {
-        const encodedUrl = __uv$config.prefix + __uv$config.encodeUrl(url);
-        panelIframe.src = encodedUrl;
-      } catch (error) {
-        console.error('Error encoding URL:', error);
-        alert('Could not open the app. Please try again.');
-      }
     }
 
     if (typeof __uv$config === 'undefined') {
@@ -1120,6 +1034,60 @@
       // Add active state to clicked button
       event.currentTarget.classList.add('bg-indigo-500/10', 'text-white');
     }
+  </script>
+
+  <script>
+    function submitName() {
+      const nameInput = document.getElementById('name-input');
+      const name = nameInput.value.trim();
+      
+      if (name) {
+        // Save the name
+        localStorage.setItem('userName', name);
+        
+        // Hide the welcome modal with a fade out effect
+        const welcomeModal = document.getElementById('welcome-modal');
+        welcomeModal.style.opacity = '0';
+        
+        // After animation, hide the modal completely
+        setTimeout(() => {
+          welcomeModal.style.display = 'none';
+        }, 300);
+        
+        // Update the greeting
+        const personalizedGreeting = document.getElementById('time-greeting-display');
+        const timeGreeting = getTimeGreeting();
+        personalizedGreeting.textContent = `${timeGreeting}, ${name}`;
+      } else {
+        // Add a subtle shake animation to the input if empty
+        nameInput.classList.add('shake');
+        setTimeout(() => nameInput.classList.remove('shake'), 500);
+      }
+    }
+
+    // Add event listener for Enter key
+    document.getElementById('name-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        submitName();
+      }
+    });
+
+    document.head.insertAdjacentHTML('beforeend', `
+      <style>
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-5px); }
+          75% { transform: translateX(5px); }
+        }
+        .shake {
+          animation: shake 0.2s ease-in-out;
+        }
+        #welcome-modal {
+          opacity: 1;
+          transition: opacity 0.3s ease-in-out;
+        }
+      </style>
+    `);
   </script>
 
   <script>
