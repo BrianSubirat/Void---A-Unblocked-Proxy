@@ -2,7 +2,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Void - A Unblocked Proxy</title>
+  <title>Void</title>
   <link rel="icon" type="image/png" href="/favicon.png">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
@@ -238,18 +238,6 @@
       height: 100%;
       border: none;
     }
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      75% { transform: translateX(5px); }
-    }
-    .shake {
-      animation: shake 0.2s ease-in-out;
-    }
-    #welcome-modal {
-      opacity: 1;
-      transition: opacity 0.3s ease-in-out;
-    }
   </style>
 </head>
 <body class="bg-slate-900 h-screen flex flex-col items-center justify-center overflow-hidden">
@@ -285,20 +273,20 @@
   
   <!-- Welcome Modal -->
   <div id="welcome-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 
-    text-center transition-all duration-300 bg-black/50 backdrop-blur-lg">
-    <div class="bg-slate-800/90 backdrop-blur rounded-2xl p-8 max-w-md w-full shadow-2xl border border-indigo-500/20">
-      <h2 id="time-greeting" class="text-2xl font-bold text-white mb-4 space-glow"></h2>
+    text-center transition-all duration-300">
+    <div class="bg-slate-800 rounded-2xl p-8 max-w-md w-full shadow-2xl border border-slate-700">
+      <h2 id="time-greeting" class="text-2xl font-bold text-white mb-4"></h2>
       <p class="text-gray-300 mb-6">Welcome to Void. What's your name?</p>
       <input 
         type="text" 
         id="name-input" 
         placeholder="Enter your name" 
-        class="w-full px-4 py-2 rounded-lg bg-slate-700/50 backdrop-blur text-white mb-4 
-        border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none"
+        class="w-full px-4 py-2 rounded-lg bg-slate-700 text-white mb-4 
+        focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
       <button 
         onclick="submitName()" 
-        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg 
+        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg 
         transition duration-300 ease-in-out"
       >
         Continue
@@ -544,7 +532,7 @@
 
             <div class="p-6 bg-slate-800/30 rounded-xl border border-indigo-500/20">
               <h4 class="text-lg font-medium text-white mb-2">Credits</h4>
-              <p class="text-gray-300">Created with by SwiftWaves Team</p>
+              <p class="text-gray-300">Created with ❤️ by SwiftWaves Team</p>
               <p class="text-gray-300">Powered by Ultraviolet</p>
             </div>
 
@@ -1132,60 +1120,6 @@
       // Add active state to clicked button
       event.currentTarget.classList.add('bg-indigo-500/10', 'text-white');
     }
-  </script>
-
-  <script>
-    function submitName() {
-      const nameInput = document.getElementById('name-input');
-      const name = nameInput.value.trim();
-      
-      if (name) {
-        // Save the name
-        localStorage.setItem('userName', name);
-        
-        // Hide the welcome modal with a fade out effect
-        const welcomeModal = document.getElementById('welcome-modal');
-        welcomeModal.style.opacity = '0';
-        
-        // After animation, hide the modal completely
-        setTimeout(() => {
-          welcomeModal.style.display = 'none';
-        }, 300);
-        
-        // Update the greeting
-        const personalizedGreeting = document.getElementById('time-greeting-display');
-        const timeGreeting = getTimeGreeting();
-        personalizedGreeting.textContent = `${timeGreeting}, ${name}`;
-      } else {
-        // Add a subtle shake animation to the input if empty
-        nameInput.classList.add('shake');
-        setTimeout(() => nameInput.classList.remove('shake'), 500);
-      }
-    }
-
-    // Add event listener for Enter key
-    document.getElementById('name-input').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        submitName();
-      }
-    });
-
-    document.head.insertAdjacentHTML('beforeend', `
-      <style>
-        @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          25% { transform: translateX(-5px); }
-          75% { transform: translateX(5px); }
-        }
-        .shake {
-          animation: shake 0.2s ease-in-out;
-        }
-        #welcome-modal {
-          opacity: 1;
-          transition: opacity 0.3s ease-in-out;
-        }
-      </style>
-    `);
   </script>
 
   <script>
