@@ -238,6 +238,36 @@
       height: 100%;
       border: none;
     }
+
+    @media (max-width: 768px) {
+      .side-panel {
+        left: 0; /* Start from the left edge on mobile */
+        width: 100%; /* Take full width */
+        top: 0;
+        bottom: 56px; /* Leave space for mobile nav bar */
+        transform: translateX(100%);
+        border-left: none;
+      }
+
+      .side-panel.active {
+        transform: translateX(0);
+      }
+
+      #close-panel {
+        top: 1rem;
+        right: 1rem;
+        font-size: 2rem;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 0.5rem;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
       25% { transform: translateX(-5px); }
@@ -612,7 +642,7 @@
           url = 'http://gemini.google.com/';
           break;
         case 'proxy':
-          url = 'https://swiftguard-com.pages.dev';
+          url = window.location.href;
           break;
         case 'movies':
           url = 'https://movies.usewaves.site/';
