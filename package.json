@@ -1,0 +1,19 @@
+{
+  "name": "void",
+  "version": "1.0.0",
+  "description": "A web proxy integration using Ultraviolet and libricul",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "@tomphttp/bare-server-node": "^2.0.1",
+    "@tomphttp/libricul": "^1.0.0",
+    "@titaniumnetwork-dev/ultraviolet": "^1.0.10",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
