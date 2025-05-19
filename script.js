@@ -247,26 +247,26 @@ document.addEventListener('DOMContentLoaded', () => {
   try {
     initMusicPlayer();
     
-    // Restore volume and visibility settings
+    // Restore volume and visibility settings, but default to hidden
     const savedVolume = localStorage.getItem('playerVolume');
-    // By default, set player to be hidden unless explicitly saved as visible
-    const savedVisibility = localStorage.getItem('playerVisible') === 'true';
+    const savedVisibility = localStorage.getItem('playerVisible');
     
     const audio = document.getElementById('audio-player');
     const player = document.getElementById('music-player');
-    const playerToggle = document.getElementById('music-player-toggle');
+    const musicPlayerToggle = document.getElementById('music-player-toggle');
     
     if (audio && savedVolume) {
       audio.volume = parseFloat(savedVolume);
       document.querySelector('input[type="range"]').value = savedVolume;
     }
     
+    // If no saved visibility exists, default to hidden
     if (player) {
-      // By default, hide the player
-      player.style.display = savedVisibility ? 'flex' : 'none';
+      const isVisible = savedVisibility === 'true';
+      toggleMusicPlayer(isVisible);
       
-      if (playerToggle) {
-        playerToggle.checked = savedVisibility;
+      if (musicPlayerToggle) {
+        musicPlayerToggle.checked = isVisible;
       }
     }
   } catch (error) {

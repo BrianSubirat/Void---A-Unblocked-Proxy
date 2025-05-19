@@ -1086,8 +1086,8 @@
                     type="checkbox" 
                     id="music-player-toggle" 
                     class="hidden"
-                    onchange="toggleMusicPlayer(this.checked)"
                     checked
+                    onchange="toggleMusicPlayer(this.checked)"
                   >
                   <i class="fas fa-check checkmark text-xl"></i>
                 </label>
@@ -1673,15 +1673,11 @@
             <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
               <i class="fas fa-times"></i>
             </button>
-            <div class="w-full h-full flex items-center justify-center p-6">
-              <div class="max-w-2xl w-full">
-                <iframe 
-                  id="category-iframe" 
-                  src="${url}" 
-                  class="w-full h-full border-none"
-                ></iframe>
-              </div>
-            </div>
+            <iframe 
+              id="category-iframe" 
+              src="${url}" 
+              class="w-full h-full border-none"
+            ></iframe>
           `;
           sidePanel.classList.add('active');
           updateNotificationBtn.style.display = 'none';
@@ -2448,51 +2444,17 @@
   </script>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const typingTextElement = document.getElementById('typing-text');
-      const messages = [
-        "Welcome to your dream site.",
-        "Unleash boundless browsing.",
-        "Your gateway to the internet.",
-        "Breaking barriers, one site at a time.",
-        "Freedom to explore without limits."
-      ];
-      
-      let currentMessageIndex = 0;
-      
-      function typeText(message) {
-        let index = 0;
-        typingTextElement.textContent = '';
-        
-        function addChar() {
-          if (index < message.length) {
-            typingTextElement.textContent += message.charAt(index);
-            index++;
-            setTimeout(addChar, 50);
-          } else {
-            // Wait before deleting
-            setTimeout(deleteText, 2000);
-          }
-        }
-        
-        function deleteText() {
-          if (index > 0) {
-            typingTextElement.textContent = message.substring(0, index - 1);
-            index--;
-            setTimeout(deleteText, 30);
-          } else {
-            // Move to next message
-            currentMessageIndex = (currentMessageIndex + 1) % messages.length;
-            typeText(messages[currentMessageIndex]);
-          }
-        }
-        
-        addChar();
+    function filterMusicByCategory(category) {
+      if (category === 'all') {
+        loadTrack(0);
+        return;
       }
       
-      // Start the typing animation
-      typeText(messages[currentMessageIndex]);
-    });
+      const trackIndex = musicTracks.findIndex(track => track.category === category);
+      if (trackIndex !== -1) {
+        loadTrack(trackIndex);
+      }
+    }
   </script>
 
   <script src="/script.js"></script>
