@@ -985,8 +985,8 @@
             <div>
               <h4 class="text-lg font-medium text-white mb-4">Custom Tab</h4>
               <div class="space-y-4">
-                <input type="text" placeholder="Custom title" class="w-full bg-slate-800/50 backdrop-blur text-white rounded-xl px-4 py-3 border border-indigo-500/20">
-                <input type="text" placeholder="Custom favicon URL" class="w-full bg-slate-800/50 backdrop-blur text-white rounded-xl px-4 py-3 border border-indigo-500/20">
+                <input type="text" id="custom-title" placeholder="Custom title" class="w-full bg-slate-800/50 backdrop-blur text-white rounded-xl px-4 py-3 border border-indigo-500/20">
+                <input type="text" id="custom-icon" placeholder="Custom favicon URL" class="w-full bg-slate-800/50 backdrop-blur text-white rounded-xl px-4 py-3 border border-indigo-500/20">
               </div>
             </div>
 
@@ -1777,7 +1777,142 @@
       }
     }
 
+    // Tab cloaking functionality
+    function updateTabCloak(type) {
+      const customTitle = document.getElementById('custom-title');
+      const customIcon = document.getElementById('custom-icon');
+      
+      let title = '';
+      let icon = '';
+      
+      switch(type) {
+        case 'google':
+          title = 'Google';
+          icon = 'https://www.google.com/favicon.ico';
+          break;
+        case 'drive':
+          title = 'Google Drive';
+          icon = 'https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png';
+          break;
+        case 'docs':
+          title = 'Google Docs';
+          icon = 'https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico';
+          break;
+        case 'classroom':
+          title = 'Google Classroom';
+          icon = 'https://ssl.gstatic.com/classroom/ic_product_classroom_32.png';
+          break;
+        case 'canvas':
+          title = 'Canvas';
+          icon = 'https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico';
+          break;
+        case 'zoom':
+          title = 'Zoom';
+          icon = 'https://st1.zoom.us/zoom.ico';
+          break;
+        case 'default':
+          title = 'Void - A Unblocked Proxy';
+          icon = '/Screenshot_2025-05-18_11.25.04_AM-removebg-preview.png';
+          break;
+        default:
+          if (customTitle && customTitle.value) {
+            title = customTitle.value;
+          }
+          if (customIcon && customIcon.value) {
+            icon = customIcon.value;
+          }
+          break;
+      }
+
+      // Update the page title and favicon
+      document.title = title;
+      
+      // Update favicon
+      let favicon = document.querySelector("link[rel~='icon']");
+      if (!favicon) {
+        favicon = document.createElement('link');
+        favicon.rel = 'icon';
+        document.head.appendChild(favicon);
+      }
+      favicon.href = icon;
+      
+      // Save the cloak settings to localStorage
+      localStorage.setItem('tabCloak', type);
+      localStorage.setItem('customTitle', customTitle ? customTitle.value : '');
+      localStorage.setItem('customIcon', customIcon ? customIcon.value : '');
+    }
+
+    // Handle about:blank cloaking
+    function openInAboutBlank() {
+      const win = window.open('about:blank', '_blank');
+      if (win) {
+        win.document.write(`
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <title>${document.title}</title>
+              <link rel="icon" type="image/x-icon" href="${document.querySelector("link[rel~='icon']").href}">
+            </head>
+            <body>
+              <iframe src="${window.location.href}" frameborder="0" style="position:fixed;top:0;left:0;width:100%;height:100%;border:none;"></iframe>
+            </body>
+          </html>
+        `);
+      } else {
+        alert('Please enable popups for about:blank cloaking to work');
+      }
+    }
+
+    // Load saved cloak settings on page load
     document.addEventListener('DOMContentLoaded', () => {
+      const savedCloak = localStorage.getItem('tabCloak');
+      const savedTitle = localStorage.getItem('customTitle');
+      const savedIcon = localStorage.getItem('customIcon');
+      
+      if (savedCloak) {
+        // Update the select element to match saved setting
+        const select = document.getElementById('tab-cloak');
+        if (select) {
+          select.value = savedCloak;
+        }
+        
+        // Apply the saved cloak
+        updateTabCloak(savedCloak);
+      }
+      
+      // Set up custom fields if they exist
+      const customTitle = document.getElementById('custom-title');
+      const customIcon = document.getElementById('custom-icon');
+      
+      if (customTitle && savedTitle) {
+        customTitle.value = savedTitle;
+      }
+      if (customIcon && savedIcon) {
+        customIcon.value = savedIcon;
+      }
+      
+      // Set up event listeners for the cloak selector
+      const tabCloak = document.getElementById('tab-cloak');
+      if (tabCloak) {
+        tabCloak.addEventListener('change', (e) => {
+          updateTabCloak(e.target.value);
+        });
+      }
+      
+      // Set up event listener for about:blank button
+      const aboutBlankBtn = document.getElementById('about-blank');
+      if (aboutBlankBtn) {
+        aboutBlankBtn.addEventListener('click', openInAboutBlank);
+      }
+      
+      // Set up event listeners for custom fields
+      if (customTitle) {
+        customTitle.addEventListener('input', () => updateTabCloak('custom'));
+      }
+      if (customIcon) {
+        customIcon.addEventListener('input', () => updateTabCloak('custom'));
+      }
+
       // Set particles to be on by default
       const particlesToggle = document.getElementById('particles-toggle');
       if (particlesToggle) {
@@ -1814,8 +1949,6 @@
       // Initial time greeting
       getTimeGreeting();
     });
-
-    // ... rest of the existing code ...
   </script>
 </body>
 </html>
