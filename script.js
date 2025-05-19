@@ -249,18 +249,25 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Restore volume and visibility settings
     const savedVolume = localStorage.getItem('playerVolume');
-    const savedVisibility = localStorage.getItem('playerVisible');
+    // By default, set player to be hidden unless explicitly saved as visible
+    const savedVisibility = localStorage.getItem('playerVisible') === 'true';
     
     const audio = document.getElementById('audio-player');
     const player = document.getElementById('music-player');
+    const playerToggle = document.getElementById('music-player-toggle');
     
     if (audio && savedVolume) {
       audio.volume = parseFloat(savedVolume);
       document.querySelector('input[type="range"]').value = savedVolume;
     }
     
-    if (player && savedVisibility) {
-      toggleMusicPlayer(savedVisibility === 'true');
+    if (player) {
+      // By default, hide the player
+      player.style.display = savedVisibility ? 'flex' : 'none';
+      
+      if (playerToggle) {
+        playerToggle.checked = savedVisibility;
+      }
     }
   } catch (error) {
     console.error('Music player initialization error:', error);
