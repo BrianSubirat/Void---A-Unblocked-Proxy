@@ -947,6 +947,10 @@
             <i class="fas fa-info-circle w-5"></i>
             <span>About</span>
           </button>
+          <button onclick="switchSettingsTab('lab')" class="settings-tab-btn w-full text-left px-4 py-3 rounded-lg flex items-center space-x-3 text-gray-300 hover:bg-indigo-500/10 hover:text-white transition-all duration-300">
+            <i class="fas fa-flask w-5"></i>
+            <span>Lab</span>
+          </button>
         </div>
       </div>
 
@@ -1306,6 +1310,84 @@
                   <span class="text-gray-300">Proxy Service</span>
                   <span class="text-green-400">Operational</span>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lab Tab -->
+        <div id="lab-tab" class="settings-tab hidden p-8">
+          <h3 class="text-2xl font-semibold text-white mb-6 space-glow">Experimental Features</h3>
+          <div class="space-y-6">
+            <div>
+              <h4 class="text-lg font-medium text-white mb-4">Beta Features</h4>
+              <div class="space-y-4">
+                <div class="flex justify-between items-center bg-slate-800/30 p-4 rounded-xl border border-indigo-500/20">
+                  <div>
+                    <h5 class="text-white font-medium">Performance Mode</h5>
+                    <p class="text-gray-400 text-sm">Optimize UI for low-end devices</p>
+                  </div>
+                  <label class="flex items-center space-x-3 cursor-pointer toggle-checkbox">
+                    <input 
+                      type="checkbox" 
+                      id="performance-mode" 
+                      class="hidden"
+                      onchange="togglePerformanceMode(this.checked)"
+                    >
+                    <i class="fas fa-check checkmark text-xl"></i>
+                  </label>
+                </div>
+
+                <div class="flex justify-between items-center bg-slate-800/30 p-4 rounded-xl border border-indigo-500/20">
+                  <div>
+                    <h5 class="text-white font-medium">Dark Reader Compatibility</h5>
+                    <p class="text-gray-400 text-sm">Improve theme compatibility with browser extensions</p>
+                  </div>
+                  <label class="flex items-center space-x-3 cursor-pointer toggle-checkbox">
+                    <input 
+                      type="checkbox" 
+                      id="dark-reader-compat" 
+                      class="hidden"
+                      onchange="toggleDarkReaderCompat(this.checked)"
+                    >
+                    <i class="fas fa-check checkmark text-xl"></i>
+                  </label>
+                </div>
+
+                <div class="flex justify-between items-center bg-slate-800/30 p-4 rounded-xl border border-indigo-500/20">
+                  <div>
+                    <h5 class="text-white font-medium">Advanced Proxy Settings</h5>
+                    <p class="text-gray-400 text-sm">Experimental proxy configuration options</p>
+                  </div>
+                  <button 
+                    onclick="openAdvancedProxySettings()" 
+                    class="bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 px-4 py-2 rounded-lg"
+                  >
+                    Configure
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="w-8 h-[1px] bg-indigo-500/30 my-6"></div>
+
+            <div>
+              <h4 class="text-lg font-medium text-white mb-4">Feedback & Reporting</h4>
+              <div class="space-y-4">
+                <button 
+                  onclick="openBugReportModal()" 
+                  class="w-full bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center space-x-2"
+                >
+                  <i class="fas fa-bug"></i>
+                  <span>Report a Bug</span>
+                </button>
+                <button 
+                  onclick="shareFeatureIdea()" 
+                  class="w-full bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 hover:text-emerald-300 py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center space-x-2"
+                >
+                  <i class="fas fa-lightbulb"></i>
+                  <span>Share Feature Idea</span>
+                </button>
               </div>
             </div>
           </div>

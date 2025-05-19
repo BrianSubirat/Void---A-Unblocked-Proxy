@@ -626,3 +626,546 @@ function initializeTimer(widget) {
   
   updateDisplay();
 }
+
+function openAdvancedProxySettings() {
+  try {
+    // Check if modal already exists to prevent multiple creations
+    if (document.querySelector('.advanced-proxy-settings-modal')) {
+      return;
+    }
+
+    // Create a modal or side panel for advanced proxy settings
+    const settingsModal = document.createElement('div');
+    settingsModal.className = 'advanced-proxy-settings-modal fixed inset-0 z-[100] bg-black/80 backdrop-blur-lg flex items-center justify-center p-4';
+    settingsModal.innerHTML = `
+      <div class="bg-slate-800/90 rounded-2xl p-8 max-w-2xl w-full shadow-2xl border border-indigo-500/20">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-bold text-white space-glow">Advanced Proxy Settings</h2>
+          <button class="close-modal text-gray-400 hover:text-white transition-colors">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="space-y-4">
+          <div class="bg-slate-700/50 p-4 rounded-xl border border-indigo-500/20">
+            <h3 class="text-lg font-medium text-white mb-2">Proxy Method</h3>
+            <select class="w-full bg-slate-800/50 text-white rounded-lg px-4 py-2 border border-indigo-500/20">
+              <option>Ultraviolet (Default)</option>
+              <option>libricul</option>
+              <option>Custom Bare Server</option>
+            </select>
+          </div>
+          
+          <div class="bg-slate-700/50 p-4 rounded-xl border border-indigo-500/20">
+            <h3 class="text-lg font-medium text-white mb-2">Connection Settings</h3>
+            <div class="flex items-center justify-between mb-4">
+              <label class="text-gray-300">Retry Attempts</label>
+              <input 
+                type="number" 
+                min="1" 
+                max="5" 
+                value="3" 
+                class="w-20 bg-slate-800/50 text-white rounded-lg px-2 py-1 border border-indigo-500/20"
+              >
+            </div>
+            <div class="flex items-center justify-between">
+              <label class="text-gray-300">Connection Timeout (seconds)</label>
+              <input 
+                type="number" 
+                min="5" 
+                max="30" 
+                value="15" 
+                class="w-20 bg-slate-800/50 text-white rounded-lg px-2 py-1 border border-indigo-500/20"
+              >
+            </div>
+          </div>
+          
+          <div class="bg-slate-700/50 p-4 rounded-xl border border-indigo-500/20">
+            <h3 class="text-lg font-medium text-white mb-2">Experimental Features</h3>
+            <div class="space-y-2">
+              <label class="flex items-center space-x-2">
+                <input 
+                  type="checkbox" 
+                  class="form-checkbox text-indigo-600 bg-slate-800/50 border-indigo-500/20"
+                >
+                <span class="text-gray-300">Enable WebSocket Proxy</span>
+              </label>
+              <label class="flex items-center space-x-2">
+                <input 
+                  type="checkbox" 
+                  class="form-checkbox text-indigo-600 bg-slate-800/50 border-indigo-500/20"
+                >
+                <span class="text-gray-300">Optimize for Low Bandwidth</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mt-6 flex justify-end space-x-4">
+          <button 
+            class="close-modal bg-slate-700/50 hover:bg-slate-700/70 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            Cancel
+          </button>
+          <button 
+            class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            Save Changes
+          </button>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(settingsModal);
+
+    // Add event listeners to close buttons
+    const closeButtons = settingsModal.querySelectorAll('.close-modal');
+    closeButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        settingsModal.remove();
+      });
+    });
+  } catch (error) {
+    console.error('Error creating advanced proxy settings modal:', error);
+  }
+}
+
+// Ensure this function is added to the global scope
+window.openAdvancedProxySettings = openAdvancedProxySettings;
+
+// Add event listener to ensure the function is bound to the button after page load
+document.addEventListener('DOMContentLoaded', () => {
+  const advancedProxySettingsBtn = document.querySelector('[onclick="openAdvancedProxySettings()"]');
+  if (advancedProxySettingsBtn) {
+    advancedProxySettingsBtn.addEventListener('click', openAdvancedProxySettings);
+  } else {
+    console.warn('Advanced proxy settings button not found');
+  }
+});
+
+// Performance Mode Management
+function togglePerformanceMode(enabled) {
+  try {
+    // Save performance mode setting
+    localStorage.setItem('performanceMode', enabled);
+
+    if (enabled) {
+      // Apply performance optimizations
+      document.body.classList.add('performance-mode');
+      
+      // Disable or reduce resource-intensive features
+      if (window.pJSDom && window.pJSDom[0]) {
+        // Reduce particle count and speed
+        window.pJSDom[0].pJS.particles.number.value = 50;
+        window.pJSDom[0].pJS.particles.move.speed = 1;
+        window.pJSDom[0].pJS.fn.particlesRefresh();
+      }
+
+      // Disable background animations
+      const backgroundCanvases = [
+        'waves-bg', 
+        'stars-bg', 
+        'matrix-bg', 
+        'bubbles-bg'
+      ];
+      backgroundCanvases.forEach(id => {
+        const canvas = document.getElementById(id);
+        if (canvas) {
+          canvas.style.display = 'none';
+          if (canvas.getContext) {
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+          }
+        }
+      });
+
+      // Optional: Reduce CSS transitions and animations
+      document.documentElement.style.setProperty('--transition-speed', '0.1s');
+      
+      // Disable virtual pet if it exists
+      if (virtualPet) {
+        virtualPet.element.remove();
+        virtualPet = null;
+      }
+
+    } else {
+      // Restore normal settings
+      document.body.classList.remove('performance-mode');
+      
+      // Restore default particle settings
+      if (window.pJSDom && window.pJSDom[0]) {
+        window.pJSDom[0].pJS.particles.number.value = 100;
+        window.pJSDom[0].pJS.particles.move.speed = 2;
+        window.pJSDom[0].pJS.fn.particlesRefresh();
+      }
+
+      // Restore background if it was previously selected
+      const currentBackground = localStorage.getItem('background') || 'particles';
+      setBackground(currentBackground);
+
+      // Reset transition speed
+      document.documentElement.style.removeProperty('--transition-speed');
+    }
+
+    // Optional: Provide user feedback
+    const performanceModeToggle = document.getElementById('performance-mode');
+    if (performanceModeToggle) {
+      performanceModeToggle.checked = enabled;
+    }
+  } catch (error) {
+    console.error('Performance mode toggle error:', error);
+  }
+}
+
+// Restore performance mode setting on page load
+document.addEventListener('DOMContentLoaded', () => {
+  const savedPerformanceMode = localStorage.getItem('performanceMode') === 'true';
+  const performanceModeToggle = document.getElementById('performance-mode');
+  
+  if (performanceModeToggle) {
+    performanceModeToggle.checked = savedPerformanceMode;
+    togglePerformanceMode(savedPerformanceMode);
+  }
+});
+
+// Add Dark Reader Compatibility Toggle
+function toggleDarkReaderCompat(enabled) {
+  try {
+    // Save the setting to localStorage
+    localStorage.setItem('darkReaderCompat', enabled);
+
+    if (enabled) {
+      // Add a class to the body to signal Dark Reader compatibility
+      document.body.classList.add('dark-reader-compat');
+
+      // Optional: Add specific styles to improve Dark Reader integration
+      const styleTag = document.createElement('style');
+      styleTag.id = 'dark-reader-compat-styles';
+      styleTag.textContent = `
+        /* Improve Dark Reader compatibility */
+        body.dark-reader-compat {
+          background-color: #0a0f1f !important;
+          color: #e2e8f0 !important;
+        }
+        
+        .dark-reader-compat .sidebar {
+          background-color: rgba(15, 23, 42, 0.9) !important;
+        }
+        
+        .dark-reader-compat .app-card,
+        .dark-reader-compat .category-card {
+          background-color: rgba(79, 70, 229, 0.05) !important;
+          border-color: rgba(79, 70, 229, 0.2) !important;
+        }
+      `;
+      document.head.appendChild(styleTag);
+    } else {
+      // Remove compatibility class and styles
+      document.body.classList.remove('dark-reader-compat');
+      
+      const compatStyles = document.getElementById('dark-reader-compat-styles');
+      if (compatStyles) {
+        compatStyles.remove();
+      }
+    }
+
+    // Update checkbox to match state
+    const checkbox = document.getElementById('dark-reader-compat');
+    if (checkbox) {
+      checkbox.checked = enabled;
+    }
+  } catch (error) {
+    console.error('Dark Reader compatibility toggle error:', error);
+  }
+}
+
+// Restore Dark Reader compatibility setting on page load
+document.addEventListener('DOMContentLoaded', () => {
+  const savedDarkReaderCompat = localStorage.getItem('darkReaderCompat') === 'true';
+  const darkReaderCompatToggle = document.getElementById('dark-reader-compat');
+  
+  if (darkReaderCompatToggle) {
+    darkReaderCompatToggle.checked = savedDarkReaderCompat;
+    toggleDarkReaderCompat(savedDarkReaderCompat);
+  }
+});
+
+function shareFeatureIdea() {
+  try {
+    // Check if modal already exists to prevent multiple creations
+    if (document.querySelector('.feature-idea-modal')) {
+      return;
+    }
+
+    // Create a modal for sharing feature ideas
+    const ideaModal = document.createElement('div');
+    ideaModal.className = 'feature-idea-modal fixed inset-0 z-[100] bg-black/80 backdrop-blur-lg flex items-center justify-center p-4';
+    ideaModal.innerHTML = `
+      <div class="bg-slate-800/90 rounded-2xl p-8 max-w-2xl w-full shadow-2xl border border-indigo-500/20">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-bold text-white space-glow">Share a Feature Idea</h2>
+          <button class="close-modal text-gray-400 hover:text-white transition-colors">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <label class="block text-white mb-2">Feature Title</label>
+            <input 
+              type="text" 
+              id="feature-title" 
+              placeholder="Summarize your feature idea" 
+              class="w-full bg-slate-800/50 text-white rounded-lg px-4 py-2 border border-indigo-500/20"
+              maxlength="100"
+            >
+          </div>
+          
+          <div>
+            <label class="block text-white mb-2">Detailed Description</label>
+            <textarea 
+              id="feature-description" 
+              placeholder="Provide more details about your feature" 
+              rows="4" 
+              class="w-full bg-slate-800/50 text-white rounded-lg px-4 py-2 border border-indigo-500/20"
+              maxlength="500"
+            ></textarea>
+          </div>
+          
+          <div>
+            <label class="block text-white mb-2">Category</label>
+            <select 
+              id="feature-category" 
+              class="w-full bg-slate-800/50 text-white rounded-lg px-4 py-2 border border-indigo-500/20"
+            >
+              <option value="ui">UI/UX</option>
+              <option value="proxy">Proxy</option>
+              <option value="performance">Performance</option>
+              <option value="security">Security</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="mt-6 flex justify-end space-x-4">
+          <button 
+            class="close-modal bg-slate-700/50 hover:bg-slate-700/70 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            Cancel
+          </button>
+          <button 
+            id="submit-feature-idea"
+            class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            Submit Idea
+          </button>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(ideaModal);
+
+    // Add event listeners to close buttons
+    const closeButtons = ideaModal.querySelectorAll('.close-modal');
+    closeButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        ideaModal.remove();
+      });
+    });
+
+    // Add submit event listener
+    const submitButton = ideaModal.querySelector('#submit-feature-idea');
+    submitButton.addEventListener('click', () => {
+      const title = document.getElementById('feature-title').value.trim();
+      const description = document.getElementById('feature-description').value.trim();
+      const category = document.getElementById('feature-category').value;
+
+      if (!title || !description) {
+        alert('Please fill in both title and description.');
+        return;
+      }
+
+      // In a real-world scenario, you would send this to a backend service
+      // For now, we'll log to console and show a success message
+      console.log('Feature Idea Submitted:', {
+        title,
+        description,
+        category
+      });
+
+      alert('Thank you for your feature idea! We appreciate your feedback.');
+      ideaModal.remove();
+    });
+  } catch (error) {
+    console.error('Error creating feature idea modal:', error);
+    alert('An error occurred while opening the feature idea modal.');
+  }
+}
+
+// Ensure this function is added to the global scope
+window.shareFeatureIdea = shareFeatureIdea;
+
+// Add event listener to ensure the function is bound after page load
+document.addEventListener('DOMContentLoaded', () => {
+  const shareFeatureIdeaBtn = document.querySelector('[onclick="shareFeatureIdea()"]');
+  if (shareFeatureIdeaBtn) {
+    shareFeatureIdeaBtn.addEventListener('click', shareFeatureIdea);
+  } else {
+    console.warn('Share feature idea button not found');
+  }
+});
+
+function openBugReportModal() {
+  try {
+    // Check if modal already exists to prevent multiple creations
+    if (document.querySelector('.bug-report-modal')) {
+      return;
+    }
+
+    // Create a modal for reporting bugs
+    const bugReportModal = document.createElement('div');
+    bugReportModal.className = 'bug-report-modal fixed inset-0 z-[100] bg-black/80 backdrop-blur-lg flex items-center justify-center p-4';
+    bugReportModal.innerHTML = `
+      <div class="bg-slate-800/90 rounded-2xl p-8 max-w-2xl w-full shadow-2xl border border-indigo-500/20">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-bold text-white space-glow">Report a Bug</h2>
+          <button class="close-modal text-gray-400 hover:text-white transition-colors">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <label class="block text-white mb-2">Bug Title</label>
+            <input 
+              type="text" 
+              id="bug-title" 
+              placeholder="Briefly describe the issue" 
+              class="w-full bg-slate-800/50 text-white rounded-lg px-4 py-2 border border-indigo-500/20"
+              maxlength="100"
+            >
+          </div>
+          
+          <div>
+            <label class="block text-white mb-2">Detailed Description</label>
+            <textarea 
+              id="bug-description" 
+              placeholder="Provide more details about the bug, including steps to reproduce" 
+              rows="4" 
+              class="w-full bg-slate-800/50 text-white rounded-lg px-4 py-2 border border-indigo-500/20"
+              maxlength="500"
+            ></textarea>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-white mb-2">Severity</label>
+              <select 
+                id="bug-severity" 
+                class="w-full bg-slate-800/50 text-white rounded-lg px-4 py-2 border border-indigo-500/20"
+              >
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+                <option value="critical">Critical</option>
+              </select>
+            </div>
+            
+            <div>
+              <label class="block text-white mb-2">Browser</label>
+              <select 
+                id="bug-browser" 
+                class="w-full bg-slate-800/50 text-white rounded-lg px-4 py-2 border border-indigo-500/20"
+              >
+                <option value="chrome">Chrome</option>
+                <option value="firefox">Firefox</option>
+                <option value="safari">Safari</option>
+                <option value="edge">Edge</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+          
+          <div>
+            <label class="block text-white mb-2">Additional Information</label>
+            <textarea 
+              id="bug-additional-info" 
+              placeholder="Any other relevant details (e.g., browser version, operating system)" 
+              rows="2" 
+              class="w-full bg-slate-800/50 text-white rounded-lg px-4 py-2 border border-indigo-500/20"
+              maxlength="250"
+            ></textarea>
+          </div>
+        </div>
+        
+        <div class="mt-6 flex justify-end space-x-4">
+          <button 
+            class="close-modal bg-slate-700/50 hover:bg-slate-700/70 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            Cancel
+          </button>
+          <button 
+            id="submit-bug-report"
+            class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            Submit Bug Report
+          </button>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(bugReportModal);
+
+    // Add event listeners to close buttons
+    const closeButtons = bugReportModal.querySelectorAll('.close-modal');
+    closeButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        bugReportModal.remove();
+      });
+    });
+
+    // Add submit event listener
+    const submitButton = bugReportModal.querySelector('#submit-bug-report');
+    submitButton.addEventListener('click', () => {
+      const title = document.getElementById('bug-title').value.trim();
+      const description = document.getElementById('bug-description').value.trim();
+      const severity = document.getElementById('bug-severity').value;
+      const browser = document.getElementById('bug-browser').value;
+      const additionalInfo = document.getElementById('bug-additional-info').value.trim();
+
+      if (!title || !description) {
+        alert('Please fill in at least the bug title and description.');
+        return;
+      }
+
+      // In a real-world scenario, you would send this to a backend service
+      // For now, we'll log to console and show a success message
+      console.log('Bug Report Submitted:', {
+        title,
+        description,
+        severity,
+        browser,
+        additionalInfo
+      });
+
+      alert('Thank you for reporting the bug! We will investigate and address the issue.');
+      bugReportModal.remove();
+    });
+  } catch (error) {
+    console.error('Error creating bug report modal:', error);
+    alert('An error occurred while opening the bug report modal.');
+  }
+}
+
+// Ensure this function is added to the global scope
+window.openBugReportModal = openBugReportModal;
+
+// Add event listener to ensure the function is bound after page load
+document.addEventListener('DOMContentLoaded', () => {
+  const openBugReportModalBtn = document.querySelector('[onclick="openBugReportModal()"]');
+  if (openBugReportModalBtn) {
+    openBugReportModalBtn.addEventListener('click', openBugReportModal);
+  } else {
+    console.warn('Open bug report modal button not found');
+  }
+});
