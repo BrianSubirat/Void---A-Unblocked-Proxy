@@ -13,49 +13,6 @@
   <script src="/uv/uv.config.js"></script>
   <script src="/uv/uv.sw.js"></script>
 
-  <script>
-    // Ensure __uv$config is defined before any proxy functions
-    if (typeof __uv$config === 'undefined') {
-      // Fallback configuration if not loaded
-      self.__uv$config = {
-        prefix: '/service/',
-        bare: '/bare/',
-        encodeUrl: (url) => {
-          // Simple URL encoding fallback
-          return encodeURIComponent(url);
-        },
-        decodeUrl: (url) => {
-          // Simple URL decoding fallback
-          return decodeURIComponent(url);
-        },
-        handler: '/uv/uv.handler.js',
-        bundle: '/uv/uv.bundle.js',
-        config: '/uv/uv.config.js',
-        sw: '/uv/uv.sw.js',
-      };
-    }
-
-    function proxyApp(url) {
-      // Instead of using window.open(), we'll use the side panel iframe
-      const sidePanel = document.getElementById('side-panel');
-      const updateNotificationBtn = document.getElementById('update-notification-btn');
-      
-      sidePanel.innerHTML = `
-        <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
-          <i class="fas fa-times"></i>
-        </button>
-        <iframe 
-          id="app-iframe" 
-          src="${url}" 
-          class="w-full h-full border-none"
-        ></iframe>
-      `;
-      
-      sidePanel.classList.add('active');
-      updateNotificationBtn.style.display = 'none';
-    }
-  </script>
-
   <style>
     body {
       background: linear-gradient(135deg, #0a0f1f 0%, #1a1f3f 100%);
@@ -63,65 +20,132 @@
       color: #e2e8f0;
     }
     .category-card {
-      transition: all 0.3s ease;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      position: relative;
+      overflow: hidden;
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(79, 70, 229, 0.3);
-      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+      box-shadow: 0 8px 12px -3px rgba(0,0,0,0.1);
       backdrop-filter: blur(10px);
     }
+
     .category-card:hover {
-      transform: scale(1.05) translateY(-10px);
-      background: rgba(79, 70, 229, 0.1);
-      border-color: rgba(79, 70, 229, 0.5);
-      box-shadow: 0 0 20px rgba(79, 70, 229, 0.3);
+      transform: translateY(-5px);
+      background: rgba(79, 70, 229, 0.05);
+      border-color: rgba(79, 70, 229, 0.2);
+      box-shadow: 0 0 15px rgba(79, 70, 229, 0.1);
     }
-    .search-container {
-      backdrop-filter: blur(10px);
+
+    .sidebar-item::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background-color: #6366f1;
+      transition: width 0.3s ease;
+    }
+
+    .app-card {
       background: rgba(79, 70, 229, 0.05);
       border: 1px solid rgba(79, 70, 229, 0.2);
-      border-radius: 1.5rem;
-      padding: 1.5rem;
-      box-shadow: 0 0 30px rgba(79, 70, 229, 0.1);
-      width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-    .search-bar {
-      background: rgba(79, 70, 229, 0.1);
-      border: 2px solid rgba(79, 70, 229, 0.2);
       border-radius: 1rem;
-      padding: 1rem 1.5rem;
-      font-size: 1.1rem;
+      padding: 1.25rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .app-card:hover {
+      transform: translateY(-5px);
+      background: rgba(79, 70, 229, 0.1);
+      border-color: rgba(79, 70, 229, 0.3);
+      box-shadow: 0 8px 12px rgba(79, 70, 229, 0.1);
+    }
+
+    .app-icon {
+      font-size: 1.75rem;
+      margin-bottom: 0.5rem;
+      transition: transform 0.3s ease;
+    }
+
+    .app-card:hover .app-icon {
+      transform: scale(1.1);
+    }
+
+    .app-name {
+      color: #e2e8f0;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .app-card:hover .app-name {
       color: white;
+    }
+
+    /* Update Search Container styles */
+    .search-container {
+      backdrop-filter: blur(12px);
+      background: rgba(79, 70, 229, 0.03);
+      border: 1px solid rgba(79, 70, 229, 0.15);
+      border-radius: 1.25rem;
+      padding: 1.25rem;
+      box-shadow: 0 4px 20px rgba(79, 70, 229, 0.05);
+      margin-bottom: 2rem;
+    }
+
+    .search-bar {
+      background: rgba(79, 70, 229, 0.05);
+      border: 1px solid rgba(79, 70, 229, 0.2);
+      border-radius: 0.75rem;
+      padding: 0.875rem 1.25rem;
+      font-size: 1rem;
+      color: #e2e8f0;
       width: 100%;
       transition: all 0.3s ease;
     }
+
     .search-bar:focus {
-      border-color: rgba(79, 70, 229, 0.5);
-      box-shadow: 0 0 20px rgba(79, 70, 229, 0.2);
-      outline: none;
+      border-color: rgba(79, 70, 229, 0.4);
+      box-shadow: 0 0 15px rgba(79, 70, 229, 0.1);
+      color: white;
     }
-    .search-button {
-      position: absolute;
-      right: 1rem;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      color: rgba(79, 70, 229, 0.6);
-      font-size: 1.2rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
+
+    /* Update grid layout */
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 1.25rem;
+      padding: 1rem;
     }
-    .search-button:hover {
-      color: rgba(79, 70, 229, 1);
-      transform: translateY(-50%) scale(1.1);
+
+    @media (min-width: 640px) {
+      .app-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
     }
+
+    /* Category indicators */
+    .category-label {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      padding: 0.25rem 0.75rem;
+      border-radius: 1rem;
+      background: rgba(79, 70, 229, 0.05);
+      margin-top: 0.5rem;
+      display: inline-block;
+    }
+
     .nav-link {
       position: relative;
       transition: all 0.3s ease;
       color: #a5b4fc;
     }
+
     .nav-link::after {
       content: '';
       position: absolute;
@@ -132,6 +156,7 @@
       background-color: #6366f1;
       transition: width 0.3s ease;
     }
+
     .nav-link:hover::after {
       width: 100%;
     }
@@ -216,11 +241,23 @@
       width: 48px;
       height: 48px;
       transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
     }
 
-    .sidebar-item:hover {
-      background: rgba(79, 70, 229, 0.2);
-      color: white;
+    .sidebar-item::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #6366f1;
+      transition: width 0.3s ease;
+    }
+
+    .sidebar-item:hover::after {
+      width: 100%;
     }
 
     .sidebar-item i {
@@ -243,11 +280,15 @@
     }
 
     .typing-text {
-      display: inline-block;
-      overflow: hidden;
+      animation: typing 2s steps(40, end), blink-caret 0.75s step-end infinite;
       white-space: nowrap;
-      margin: 0;
+      overflow: hidden;
       border-right: 3px solid #6366f1;
+    }
+    
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
     }
     
     @keyframes blink-caret {
@@ -255,10 +296,6 @@
       50% { border-color: #6366f1 }
     }
     
-    .typing-text {
-      animation: blink-caret 0.75s step-end infinite;
-    }
-
     #settings-modal .border-indigo-500/20 {
       border-color: rgba(99, 102, 241, 0.2);
     }
@@ -293,12 +330,16 @@
       bottom: 0;
       width: calc(100% - 64px); /* Full width minus sidebar width */
       background: rgba(15, 23, 42, 0.95);
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(15px);
       transform: translateX(100%);
       transition: transform 0.3s ease-in-out;
       z-index: 40;
       overflow: hidden;
       border-left: 1px solid rgba(79, 70, 229, 0.2);
+      border: 1px solid rgba(79, 70, 229, 0.1);
+      box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.2), 
+        inset 0 1px 5px rgba(79, 70, 229, 0.1);
     }
 
     .side-panel.active {
@@ -342,55 +383,96 @@
 
     .app-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 1.5rem;
-      margin-top: 2rem;
-      max-width: 800px;
-      margin: 2rem auto;
-      padding: 0 1rem;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 1.25rem;
+      padding: 1rem;
+    }
+
+    @media (min-width: 640px) {
+      .app-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
     }
 
     .app-card {
-      background: rgba(79, 70, 229, 0.1);
+      background: rgba(79, 70, 229, 0.05);
       border: 1px solid rgba(79, 70, 229, 0.2);
       border-radius: 1rem;
-      padding: 1.5rem;
+      padding: 1.25rem;
       text-align: center;
       transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
       cursor: pointer;
     }
 
     .app-card:hover {
       transform: translateY(-5px);
-      background: rgba(79, 70, 229, 0.2);
-      border-color: rgba(79, 70, 229, 0.4);
-      box-shadow: 0 10px 20px rgba(79, 70, 229, 0.1);
+      background: rgba(79, 70, 229, 0.1);
+      border-color: rgba(79, 70, 229, 0.3);
+      box-shadow: 0 8px 12px rgba(79, 70, 229, 0.1);
     }
 
     .app-icon {
-      font-size: 2rem;
+      font-size: 1.75rem;
       margin-bottom: 0.5rem;
+      transition: transform 0.3s ease;
+    }
+
+    .app-card:hover .app-icon {
+      transform: scale(1.1);
     }
 
     .app-name {
-      color: white;
+      color: #e2e8f0;
       font-size: 0.9rem;
       font-weight: 500;
+      transition: color 0.3s ease;
     }
 
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      75% { transform: translateX(5px); }
+    .app-card:hover .app-name {
+      color: white;
     }
-    .shake {
-      animation: shake 0.2s ease-in-out;
+
+    /* Category indicators */
+    .category-label {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      padding: 0.25rem 0.75rem;
+      border-radius: 1rem;
+      background: rgba(79, 70, 229, 0.05);
+      margin-top: 0.5rem;
+      display: inline-block;
     }
-    #welcome-modal {
-      opacity: 1;
-      transition: opacity 0.3s ease-in-out;
+
+    /* Update Search Container styles */
+    .search-container {
+      backdrop-filter: blur(12px);
+      background: rgba(79, 70, 229, 0.03);
+      border: 1px solid rgba(79, 70, 229, 0.15);
+      border-radius: 1.25rem;
+      padding: 1.25rem;
+      box-shadow: 0 4px 20px rgba(79, 70, 229, 0.05);
+      margin-bottom: 2rem;
     }
-    
+
+    .search-bar {
+      background: rgba(79, 70, 229, 0.05);
+      border: 1px solid rgba(79, 70, 229, 0.2);
+      border-radius: 0.75rem;
+      padding: 0.875rem 1.25rem;
+      font-size: 1rem;
+      color: #e2e8f0;
+      width: 100%;
+      transition: all 0.3s ease;
+    }
+
+    .search-bar:focus {
+      border-color: rgba(79, 70, 229, 0.4);
+      box-shadow: 0 0 15px rgba(79, 70, 229, 0.1);
+      color: white;
+    }
+
     .sidebar-logo {
       display: flex;
       align-items: center;
@@ -472,6 +554,12 @@
       transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s;
       display: flex;
       flex-direction: column;
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(79, 70, 229, 0.1);
+      box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.2), 
+        inset 0 1px 5px rgba(79, 70, 229, 0.1);
     }
 
     #update-notification-modal.show {
@@ -592,6 +680,79 @@
 
     #update-notification-modal .modal-footer a:hover {
       color: #4f46e5;
+    }
+
+    /* Toggle checkbox styles */
+    .toggle-checkbox {
+      position: relative;
+      width: 4rem; 
+      height: 2rem; 
+      background: rgba(79, 70, 229, 0.1);
+      border-radius: 1rem; 
+      border: 1px solid rgba(79, 70, 229, 0.2);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .toggle-checkbox::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 2px;
+      transform: translateY(-50%);
+      width: 1.5rem; 
+      height: 1.5rem; 
+      background: white;
+      border-radius: 50%;
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .toggle-checkbox input {
+      opacity: 0;
+      position: absolute;
+      cursor: pointer;
+      height: 0;
+      width: 0;
+    }
+
+    .toggle-checkbox input:checked ~ .slider {
+      background-color: rgba(79, 70, 229, 0.3);
+    }
+
+    .toggle-checkbox input:checked ~ .slider::before {
+      transform: translateX(calc(4rem - 1.75rem)) translateY(-50%); 
+    }
+
+    .checkmark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      color: #6366f1;
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+
+    .toggle-checkbox input:checked + .checkmark {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+
+    @keyframes checkmarkAppear {
+      0%, 100% { 
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes togglePulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .toggle-checkbox input:checked ~ .slider {
+      animation: togglePulse 0.3s ease-in-out;
     }
   </style>
 </head>
@@ -764,14 +925,14 @@
             <div>
               <h4 class="text-lg font-medium text-white mb-4">Particles Effect</h4>
               <div class="flex flex-col space-y-4">
-                <label class="flex items-center space-x-3">
+                <label class="flex items-center space-x-3 cursor-pointer toggle-checkbox">
                   <input 
                     type="checkbox" 
                     id="particles-toggle" 
-                    class="w-6 h-6 rounded bg-slate-800/50 border border-indigo-500/20"
+                    class="hidden"
                     onchange="toggleParticles(this.checked)"
                   >
-                  <span class="text-gray-300">Enable particles background</span>
+                  <i class="fas fa-check checkmark text-xl"></i>
                 </label>
                 <div class="space-y-2" id="particles-settings" style="display: none;">
                   <div class="flex justify-between items-center">
@@ -810,7 +971,7 @@
           <div class="space-y-6">
             <div>
               <h4 class="text-lg font-medium text-white mb-4">Tab Appearance</h4>
-              <select id="tab-cloak" class="w-full bg-slate-800/50 backdrop-blur text-white rounded-xl px-4 py-3 border border-indigo-500/20 hover:border-indigo-500/40 transition-all duration-300">
+              <select id="tab-cloak" class="w-full bg-slate-800/50 backdrop-blur text-white rounded-xl px-4 py-3 border border-indigo-500/20">
                 <option value="default">Default</option>
                 <option value="google">Google</option>
                 <option value="drive">Google Drive</option>
@@ -871,9 +1032,14 @@
 
             <div>
               <h4 class="text-lg font-medium text-white mb-4">Auto-Clear History</h4>
-              <label class="flex items-center space-x-3">
-                <input type="checkbox" class="w-6 h-6 rounded bg-slate-800/50 border border-indigo-500/20">
-                <span class="text-gray-300">Clear browser history on exit</span>
+              <label class="flex items-center space-x-3 cursor-pointer toggle-checkbox">
+                <input 
+                  type="checkbox" 
+                  id="auto-clear-history" 
+                  class="hidden"
+                  onchange="toggleAutoClearHistory(this.checked)"
+                >
+                <i class="fas fa-check checkmark text-xl"></i>
               </label>
             </div>
 
@@ -1053,6 +1219,49 @@
     </button>
     <iframe id="panel-iframe" class="w-full h-full"></iframe>
   </div>
+
+  <script>
+    // Ensure __uv$config is defined before any proxy functions
+    if (typeof __uv$config === 'undefined') {
+      // Fallback configuration if not loaded
+      self.__uv$config = {
+        prefix: '/service/',
+        bare: '/bare/',
+        encodeUrl: (url) => {
+          // Simple URL encoding fallback
+          return encodeURIComponent(url);
+        },
+        decodeUrl: (url) => {
+          // Simple URL decoding fallback
+          return decodeURIComponent(url);
+        },
+        handler: '/uv/uv.handler.js',
+        bundle: '/uv/uv.bundle.js',
+        config: '/uv/uv.config.js',
+        sw: '/uv/uv.sw.js',
+      };
+    }
+
+    function proxyApp(url) {
+      // Instead of using window.open(), we'll use the side panel iframe
+      const sidePanel = document.getElementById('side-panel');
+      const updateNotificationBtn = document.getElementById('update-notification-btn');
+      
+      sidePanel.innerHTML = `
+        <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
+          <i class="fas fa-times"></i>
+        </button>
+        <iframe 
+          id="app-iframe" 
+          src="${url}" 
+          class="w-full h-full border-none"
+        ></iframe>
+      `;
+      
+      sidePanel.classList.add('active');
+      updateNotificationBtn.style.display = 'none';
+    }
+  </script>
 
   <script>
     function openCategory(category) {
@@ -1400,17 +1609,19 @@
 
     function searchApps() {
       const searchInput = document.getElementById('app-search');
+      if (!searchInput) return;
+      
       const query = searchInput.value.trim().toLowerCase();
       const appGrid = document.getElementById('app-grid');
-      const apps = appGrid.querySelectorAll('.app-card');
+      if (!appGrid) return;
       
+      const apps = appGrid.getElementsByClassName('app-card');
       let visibleAppsCount = 0;
       
-      apps.forEach(app => {
-        const appName = app.querySelector('.app-name').textContent.toLowerCase();
-        const appCategory = app.querySelector('.text-xs').textContent.toLowerCase();
+      Array.from(apps).forEach(app => {
+        const appName = app.querySelector('.app-name')?.textContent.toLowerCase() || '';
+        const appCategory = app.querySelector('.text-xs')?.textContent.toLowerCase() || '';
         
-        // Check if the query matches the app name or category
         if (appName.includes(query) || appCategory.includes(query)) {
           app.style.display = 'flex';
           visibleAppsCount++;
@@ -1419,90 +1630,42 @@
         }
       });
 
-      // Add a no results message if no apps match the search
-      const noResultsMessage = document.getElementById('no-results-message');
-      if (visibleAppsCount === 0) {
-        if (!noResultsMessage) {
-          const message = document.createElement('div');
-          message.id = 'no-results-message';
-          message.className = 'text-center text-gray-400 w-full py-8';
-          message.textContent = 'No apps found matching your search.';
-          appGrid.parentNode.insertBefore(message, appGrid.nextSibling);
-        }
-      } else if (noResultsMessage) {
-        noResultsMessage.remove();
+      // Remove existing no results message if it exists
+      const existingMessage = document.getElementById('no-results-message');
+      if (existingMessage) {
+        existingMessage.remove();
+      }
+
+      // Show no results message if needed
+      if (visibleAppsCount === 0 && query !== '') {
+        const message = document.createElement('div');
+        message.id = 'no-results-message';
+        message.className = 'col-span-full text-center py-8 text-gray-400';
+        message.innerHTML = `
+          <i class="fas fa-search mb-2 text-2xl"></i>
+          <p>No apps found matching "${query}"</p>
+        `;
+        appGrid.appendChild(message);
       }
     }
 
+    // Add event listeners for search input
     document.addEventListener('DOMContentLoaded', () => {
-      const nameInput = document.getElementById('name-input');
-      const proxySearchInput = document.getElementById('proxy-search');
       const appSearchInput = document.getElementById('app-search');
-
-      if (nameInput) {
-        nameInput.addEventListener('keypress', (e) => {
-          if (e.key === 'Enter') {
-            submitName();
-          }
-        });
-      } else {
-        console.warn('Name input element not found');
-      }
-
-      if (proxySearchInput) {
-        proxySearchInput.addEventListener('keypress', (e) => {
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            proxySearchInput.blur(); // Remove focus
-            proxySearch(); // Trigger search
-            proxySearchInput.focus(); // Return focus
-          }
-        });
-      } else {
-        console.warn('Proxy search input element not found');
-      }
-
       if (appSearchInput) {
-        appSearchInput.addEventListener('input', searchApps);
-      } else {
-        console.warn('App search input element not found');
-      }
+        // Real-time search as user types
+        appSearchInput.addEventListener('input', () => {
+          searchApps();
+        });
 
-      initFirstTimeVisit();
-      getTimeGreeting();
+        // Search when Enter key is pressed
+        appSearchInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            searchApps();
+          }
+        });
+      }
     });
-
-    function initFirstTimeVisit() {
-      const hasVisitedBefore = localStorage.getItem('userName');
-      const welcomeModal = document.getElementById('welcome-modal');
-      const particlesToggle = document.getElementById('particles-toggle');
-
-      if (!welcomeModal) {
-        console.warn('Welcome modal element not found');
-        return;
-      }
-
-      if (!particlesToggle) {
-        console.warn('Particles toggle element not found');
-        return;
-      }
-
-      if (localStorage.getItem('particlesEnabled') === null) {
-        localStorage.setItem('particlesEnabled', 'true');
-        particlesToggle.checked = true;
-      }
-
-      const particlesEnabled = localStorage.getItem('particlesEnabled') === 'true';
-      toggleParticles(particlesEnabled);
-      particlesToggle.checked = particlesEnabled;
-
-      if (!hasVisitedBefore) {
-        welcomeModal.style.display = 'flex';
-      } else {
-        welcomeModal.style.display = 'none';
-        getTimeGreeting();
-      }
-    }
 
     function proxySearch() {
       const searchInput = document.getElementById('proxy-search');
@@ -1566,6 +1729,93 @@
         closeUpdateNotification();
       }
     });
+
+    function toggleAutoClearHistory(enabled) {
+      localStorage.setItem('autoClearHistory', enabled);
+      
+      if (enabled) {
+        // Set up event listener for browser exit
+        window.addEventListener('beforeunload', clearBrowserData);
+      } else {
+        // Remove event listener if disabled
+        window.removeEventListener('beforeunload', clearBrowserData);
+      }
+    }
+
+    function clearBrowserData() {
+      try {
+        // Clear local storage
+        localStorage.clear();
+        
+        // Clear session storage
+        sessionStorage.clear();
+        
+        // Clear IndexedDB databases
+        if (window.indexedDB) {
+          const request = indexedDB.databases();
+          request.then((databases) => {
+            databases.forEach((database) => {
+              indexedDB.deleteDatabase(database.name);
+            });
+          }).catch((error) => {
+            console.error('Error clearing IndexedDB databases:', error);
+          });
+        }
+        
+        // Clear browser cache via service workers (limited effectiveness)
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistrations().then((registrations) => {
+            registrations.forEach((registration) => {
+              registration.unregister();
+            });
+          }).catch((error) => {
+            console.error('Error unregistering service workers:', error);
+          });
+        }
+      } catch (error) {
+        console.error('Error in clearBrowserData:', error);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Set particles to be on by default
+      const particlesToggle = document.getElementById('particles-toggle');
+      if (particlesToggle) {
+        particlesToggle.checked = true;
+        toggleParticles(true);
+      }
+
+      // Retrieve and apply saved settings
+      const savedFontSize = localStorage.getItem('fontSize') || 16;
+      const savedParticlesEnabled = localStorage.getItem('particlesEnabled') !== null 
+        ? localStorage.getItem('particlesEnabled') === 'true' 
+        : true; // Default to true
+      const savedParticlesAmount = localStorage.getItem('particlesAmount') || 100;
+      const savedParticlesSpeed = localStorage.getItem('particlesSpeed') || 2;
+
+      // Apply font size
+      document.getElementById('font-size-slider').value = savedFontSize;
+      updateFontSize(savedFontSize);
+
+      // Apply particles settings
+      if (particlesToggle) {
+        particlesToggle.checked = savedParticlesEnabled;
+        toggleParticles(savedParticlesEnabled);
+      }
+
+      // Apply particles amount and speed if particles are enabled
+      if (savedParticlesEnabled) {
+        document.getElementById('particles-amount').value = savedParticlesAmount;
+        document.getElementById('particles-speed').value = savedParticlesSpeed;
+        updateParticlesAmount(savedParticlesAmount);
+        updateParticlesSpeed(savedParticlesSpeed);
+      }
+
+      // Initial time greeting
+      getTimeGreeting();
+    });
+
+    // ... rest of the existing code ...
   </script>
 </body>
 </html>
