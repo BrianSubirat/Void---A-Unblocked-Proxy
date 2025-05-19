@@ -22,6 +22,110 @@ const musicTracks = [
   }
 ];
 
+// Pet animations
+const petAnimations = {
+  idle: [
+    {x: 0, y: 0, duration: 1000},
+    {x: 0, y: -5, duration: 1000}
+  ],
+  walk: [
+    {x: 10, y: 0, duration: 200},
+    {x: 20, y: -5, duration: 200},
+    {x: 30, y: 0, duration: 200},
+    {x: 40, y: -5, duration: 200}
+  ]
+};
+
+class VirtualPet {
+  constructor() {
+    this.element = document.createElement('div');
+    this.element.className = 'virtual-pet';
+    this.element.innerHTML = `
+      <img src="/pet-cat.png" alt="Virtual Pet" class="w-12 h-12 filter drop-shadow-lg">
+    `;
+    document.body.appendChild(this.element);
+    
+    this.x = Math.random() * (window.innerWidth - 50);
+    this.y = Math.random() * (window.innerHeight - 50);
+    this.targetX = this.x;
+    this.targetY = this.y;
+    this.speed = 2;
+    this.state = 'idle';
+    
+    this.updatePosition();
+    this.startBehavior();
+
+    // Make pet draggable
+    this.element.addEventListener('mousedown', (e) => {
+      this.isDragging = true;
+      this.dragOffsetX = e.clientX - this.x;
+      this.dragOffsetY = e.clientY - this.y;
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (this.isDragging) {
+        this.x = e.clientX - this.dragOffsetX;
+        this.y = e.clientY - this.dragOffsetY;
+        this.updatePosition();
+      }
+    });
+
+    document.addEventListener('mouseup', () => {
+      this.isDragging = false;
+    });
+  }
+
+  updatePosition() {
+    this.element.style.transform = `translate(${this.x}px, ${this.y}px) scale(${this.direction || 1}, 1)`;
+  }
+
+  async startBehavior() {
+    while (true) {
+      if (!this.isDragging) {
+        if (Math.random() < 0.3) {
+          // Random walk
+          this.targetX = Math.random() * (window.innerWidth - 50);
+          this.targetY = Math.random() * (window.innerHeight - 50);
+          this.state = 'walk';
+          
+          // Set direction
+          this.direction = this.targetX > this.x ? 1 : -1;
+          
+          while (Math.abs(this.x - this.targetX) > 5 || Math.abs(this.y - this.targetY) > 5) {
+            const dx = this.targetX - this.x;
+            const dy = this.targetY - this.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            this.x += (dx / distance) * this.speed;
+            this.y += (dy / distance) * this.speed;
+            
+            this.updatePosition();
+            await new Promise(r => setTimeout(r, 16));
+          }
+        } else {
+          // Idle animation
+          this.state = 'idle';
+          await new Promise(r => setTimeout(r, 2000 + Math.random() * 2000));
+        }
+      } else {
+        await new Promise(r => setTimeout(r, 100));
+      }
+    }
+  }
+}
+
+let virtualPet = null;
+
+function togglePet(enabled) {
+  if (enabled && !virtualPet) {
+    virtualPet = new VirtualPet();
+  } else if (!enabled && virtualPet) {
+    virtualPet.element.remove();
+    virtualPet = null;
+  }
+  localStorage.setItem('petEnabled', enabled);
+}
+
 // Initialize music player
 let currentTrack = 0;
 let isPlaying = false;
@@ -242,6 +346,12 @@ function toggleMusicPlayer(visible) {
   }
 }
 
+// Add font change function
+function changeFont(fontFamily) {
+  document.body.style.fontFamily = fontFamily;
+  localStorage.setItem('fontFamily', fontFamily);
+}
+
 // Fallback initialization to ensure music player setup
 document.addEventListener('DOMContentLoaded', () => {
   try {
@@ -269,6 +379,24 @@ document.addEventListener('DOMContentLoaded', () => {
         musicPlayerToggle.checked = isVisible;
       }
     }
+
+    // Initialize pet if enabled (default to disabled)
+    const petEnabled = localStorage.getItem('petEnabled') === 'true';
+    const petToggle = document.getElementById('pet-toggle');
+    if (petToggle) {
+      petToggle.checked = petEnabled;
+    }
+    if (petEnabled) {
+      togglePet(true);
+    }
+
+    // Initialize font settings
+    const savedFont = localStorage.getItem('fontFamily') || 'Inter';
+    const fontSelect = document.getElementById('font-select');
+    if (fontSelect) {
+      fontSelect.value = savedFont;
+    }
+    document.body.style.fontFamily = savedFont;
   } catch (error) {
     console.error('Music player initialization error:', error);
   }

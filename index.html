@@ -786,6 +786,41 @@
       color: #6366f1;
       font-size: 1rem;
     }
+    .virtual-pet {
+      position: fixed;
+      z-index: 1000;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      pointer-events: all;
+      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+    }
+
+    .virtual-pet:hover {
+      transform: scale(1.1);
+    }
+
+    .virtual-pet img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+    }
+    
+    body {
+      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10' stroke-opacity='0.7'/%3E%3Ccircle cx='12' cy='12' r='4' fill='%236366f1' fill-opacity='0.5'/%3E%3C/svg%3E"), auto;
+    }
+
+    /* Custom cursor for clickable elements */
+    a, button, .cursor-pointer, 
+    .sidebar-item, .app-card, 
+    .category-card, .widget {
+      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10' stroke-opacity='0.7'/%3E%3Ccircle cx='12' cy='12' r='4' fill='%236366f1' fill-opacity='0.8'/%3E%3C/svg%3E"), pointer;
+    }
+
+    /* Text selection cursor */
+    ::selection {
+      background-color: rgba(99, 102, 241, 0.3);
+      color: white;
+    }
   </style>
 </head>
 <body class="bg-slate-900 h-screen flex flex-col items-center justify-center overflow-hidden">
@@ -855,8 +890,7 @@
       >
       <button 
         onclick="submitName()" 
-        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg 
-        transition duration-300 ease-in-out"
+        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg transition duration-300 ease-in-out"
       >
         Continue
       </button>
@@ -1075,6 +1109,39 @@
                     >
                   </div>
                 </div>
+              </div>
+            </div>
+
+            <div>
+              <h4 class="text-lg font-medium text-white mb-4">Font Settings</h4>
+              <select 
+                id="font-select" 
+                class="w-full bg-slate-800/50 backdrop-blur text-white rounded-xl px-4 py-3 border border-indigo-500/20"
+                onchange="changeFont(this.value)"
+              >
+                <option value="Inter">Inter (Default)</option>
+                <option value="Roboto">Roboto</option>
+                <option value="Open Sans">Open Sans</option>
+                <option value="Montserrat">Montserrat</option>
+                <option value="Poppins">Poppins</option>
+              </select>
+            </div>
+
+            <div class="w-8 h-[1px] bg-indigo-500/30 my-6"></div>
+
+            <div>
+              <h4 class="text-lg font-medium text-white mb-4">Virtual Pet</h4>
+              <div class="flex flex-col space-y-4">
+                <label class="flex items-center space-x-3 cursor-pointer toggle-checkbox">
+                  <input 
+                    type="checkbox" 
+                    id="pet-toggle" 
+                    class="hidden"
+                    onchange="togglePet(this.checked)"
+                  >
+                  <i class="fas fa-check checkmark text-xl"></i>
+                </label>
+                <p class="text-gray-400 text-sm">Show/hide the virtual pet that wanders around your screen</p>
               </div>
             </div>
 
