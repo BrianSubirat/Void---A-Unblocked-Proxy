@@ -754,6 +754,38 @@
     .toggle-checkbox input:checked ~ .slider {
       animation: togglePulse 0.3s ease-in-out;
     }
+    
+    .bg-card {
+      background: rgba(15, 23, 42, 0.3);
+      backdrop-filter: blur(10px);
+    }
+
+    .bg-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .bg-card:hover::before {
+      opacity: 1;
+    }
+
+    .bg-card.active {
+      border-color: rgba(99, 102, 241, 0.5);
+      box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+    }
+
+    .bg-card.active::after {
+      content: '✓';
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      color: #6366f1;
+      font-size: 1rem;
+    }
   </style>
 </head>
 <body class="bg-slate-900 h-screen flex flex-col items-center justify-center overflow-hidden">
@@ -802,6 +834,10 @@
 
   <!-- Particles Background -->
   <div id="particles-js"></div>
+  <canvas id="waves-bg" class="fixed inset-0 w-full h-full z-[-1] hidden"></canvas>
+  <canvas id="stars-bg" class="fixed inset-0 w-full h-full z-[-1] hidden"></canvas>
+  <canvas id="matrix-bg" class="fixed inset-0 w-full h-full z-[-1] hidden"></canvas>
+  <canvas id="bubbles-bg" class="fixed inset-0 w-full h-full z-[-1] hidden"></canvas>
   
   <!-- Welcome Modal -->
   <div id="welcome-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 
@@ -898,6 +934,85 @@
               </div>
             </div>
 
+            <div class="w-8 h-[1px] bg-indigo-500/30 my-6"></div>
+
+            <div>
+              <h4 class="text-lg font-medium text-white mb-4">Animated Background</h4>
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <button 
+                  class="bg-card relative h-24 rounded-xl border border-indigo-500/20 hover:border-indigo-500/50 transition-all duration-300 overflow-hidden group"
+                  data-background="particles"
+                  onclick="setBackground('particles')"
+                >
+                  <div class="absolute inset-0 bg-gradient-to-br from-indigo-600/20 to-indigo-900/20"></div>
+                  <div class="relative z-10 h-full flex flex-col items-center justify-center">
+                    <i class="fas fa-atom text-2xl text-indigo-400 mb-2 group-hover:scale-110 transition-transform duration-300"></i>
+                    <span class="text-sm text-white">Particles</span>
+                  </div>
+                </button>
+
+                <button 
+                  class="bg-card relative h-24 rounded-xl border border-indigo-500/20 hover:border-indigo-500/50 transition-all duration-300 overflow-hidden group"
+                  data-background="waves"
+                  onclick="setBackground('waves')"
+                >
+                  <div class="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-blue-900/20"></div>
+                  <div class="relative z-10 h-full flex flex-col items-center justify-center">
+                    <i class="fas fa-water text-2xl text-blue-400 mb-2 group-hover:scale-110 transition-transform duration-300"></i>
+                    <span class="text-sm text-white">Waves</span>
+                  </div>
+                </button>
+
+                <button 
+                  class="bg-card relative h-24 rounded-xl border border-indigo-500/20 hover:border-indigo-500/50 transition-all duration-300 overflow-hidden group"
+                  data-background="stars"
+                  onclick="setBackground('stars')"
+                >
+                  <div class="absolute inset-0 bg-gradient-to-br from-purple-600/20 to-purple-900/20"></div>
+                  <div class="relative z-10 h-full flex flex-col items-center justify-center">
+                    <i class="fas fa-stars text-2xl text-purple-400 mb-2 group-hover:scale-110 transition-transform duration-300"></i>
+                    <span class="text-sm text-white">Stars</span>
+                  </div>
+                </button>
+
+                <button 
+                  class="bg-card relative h-24 rounded-xl border border-indigo-500/20 hover:border-indigo-500/50 transition-all duration-300 overflow-hidden group"
+                  data-background="matrix"
+                  onclick="setBackground('matrix')"
+                >
+                  <div class="absolute inset-0 bg-gradient-to-br from-green-600/20 to-green-900/20"></div>
+                  <div class="relative z-10 h-full flex flex-col items-center justify-center">
+                    <i class="fas fa-terminal text-2xl text-green-400 mb-2 group-hover:scale-110 transition-transform duration-300"></i>
+                    <span class="text-sm text-white">Matrix</span>
+                  </div>
+                </button>
+
+                <button 
+                  class="bg-card relative h-24 rounded-xl border border-indigo-500/20 hover:border-indigo-500/50 transition-all duration-300 overflow-hidden group"
+                  data-background="bubbles"
+                  onclick="setBackground('bubbles')"
+                >
+                  <div class="absolute inset-0 bg-gradient-to-br from-cyan-600/20 to-cyan-900/20"></div>
+                  <div class="relative z-10 h-full flex flex-col items-center justify-center">
+                    <i class="fas fa-circle text-2xl text-cyan-400 mb-2 group-hover:scale-110 transition-transform duration-300"></i>
+                    <span class="text-sm text-white">Bubbles</span>
+                  </div>
+                </button>
+
+                <button 
+                  class="bg-card relative h-24 rounded-xl border border-indigo-500/20 hover:border-indigo-500/50 transition-all duration-300 overflow-hidden group"
+                  data-background="none"
+                  onclick="setBackground('none')"
+                >
+                  <div class="absolute inset-0 bg-gradient-to-br from-slate-600/20 to-slate-900/20"></div>
+                  <div class="relative z-10 h-full flex flex-col items-center justify-center">
+                    <i class="fas fa-ban text-2xl text-gray-400 mb-2 group-hover:scale-110 transition-transform duration-300"></i>
+                    <span class="text-sm text-white">None</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+
             <div>
               <h4 class="text-lg font-medium text-white mb-4">Font Size</h4>
               <div class="flex flex-col space-y-4">
@@ -960,6 +1075,23 @@
                     >
                   </div>
                 </div>
+              </div>
+            </div>
+
+            <div>
+              <h4 class="text-lg font-medium text-white mb-4">Music Player</h4>
+              <div class="flex flex-col space-y-4">
+                <label class="flex items-center space-x-3 cursor-pointer toggle-checkbox">
+                  <input 
+                    type="checkbox" 
+                    id="music-player-toggle" 
+                    class="hidden"
+                    onchange="toggleMusicPlayer(this.checked)"
+                    checked
+                  >
+                  <i class="fas fa-check checkmark text-xl"></i>
+                </label>
+                <p class="text-gray-400 text-sm">Show/hide the floating music player</p>
               </div>
             </div>
           </div>
@@ -1212,12 +1344,143 @@
     </div>
   </div>
 
+  <!-- Widgets Container -->
+  <div id="widgets-container"></div>
+
+  <!-- Widget Templates -->
+  <template id="calendar-widget-template">
+    <div class="widget calendar-widget bg-slate-800/90 backdrop-blur rounded-xl p-4 shadow-2xl border border-indigo-500/20 cursor-move" style="width: 300px;">
+      <div class="widget-header flex justify-between items-center mb-4">
+        <h3 class="text-white font-semibold">Calendar</h3>
+        <button class="text-gray-400 hover:text-white" onclick="removeWidget(this.closest('.widget'))">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="calendar-content">
+        <div class="month-header flex justify-between items-center mb-4">
+          <button class="text-indigo-400 hover:text-indigo-300" onclick="changeMonth(-1, this)">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <h4 class="text-white month-display"></h4>
+          <button class="text-indigo-400 hover:text-indigo-300" onclick="changeMonth(1, this)">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+        <div class="calendar-grid grid grid-cols-7 gap-1">
+          <!-- Days will be populated by JS -->
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="weather-widget-template">
+    <div class="widget weather-widget bg-slate-800/90 backdrop-blur rounded-xl p-4 shadow-2xl border border-indigo-500/20 cursor-move" style="width: 300px;">
+      <div class="widget-header flex justify-between items-center mb-4">
+        <h3 class="text-white font-semibold">Weather</h3>
+        <button class="text-gray-400 hover:text-white" onclick="removeWidget(this.closest('.widget'))">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="weather-content text-center">
+        <div class="weather-location text-indigo-300 mb-2">Loading...</div>
+        <div class="weather-temp text-3xl text-white mb-2">--°C</div>
+        <div class="weather-desc text-gray-300">
+          <i class="fas fa-cloud"></i>
+          <span>Updating...</span>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="timer-widget-template">
+    <div class="widget timer-widget bg-slate-800/90 backdrop-blur rounded-xl p-4 shadow-2xl border border-indigo-500/20 cursor-move" style="width: 300px;">
+      <div class="widget-header flex justify-between items-center mb-4">
+        <h3 class="text-white font-semibold">Timer</h3>
+        <button class="text-gray-400 hover:text-white" onclick="removeWidget(this.closest('.widget'))">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="timer-content text-center">
+        <div class="timer-display text-4xl text-white mb-4">00:00:00</div>
+        <div class="timer-controls flex justify-center gap-4">
+          <button class="start-timer bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 px-4 py-2 rounded-lg">
+            <i class="fas fa-play"></i>
+          </button>
+          <button class="pause-timer bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 px-4 py-2 rounded-lg" disabled>
+            <i class="fas fa-pause"></i>
+          </button>
+          <button class="reset-timer bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 px-4 py-2 rounded-lg">
+            <i class="fas fa-redo"></i>
+          </button>
+        </div>
+        <div class="timer-input mt-4">
+          <input type="number" placeholder="Minutes" class="bg-slate-700/50 text-white px-3 py-2 rounded-lg w-20 text-center">
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <!-- Context Menu -->
+  <div id="context-menu" class="fixed hidden bg-slate-800/90 backdrop-blur rounded-lg border border-indigo-500/20 shadow-xl z-50 overflow-hidden">
+    <div class="p-2">
+      <div class="context-menu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer">
+        <span class="font-medium">Add Widget</span>
+      </div>
+      <div class="widget-submenu hidden pl-4">
+        <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="addWidget('calendar')">
+          <i class="far fa-calendar mr-2"></i>Calendar
+        </div>
+        <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="addWidget('weather')">
+          <i class="fas fa-cloud mr-2"></i>Weather
+        </div>
+        <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="addWidget('timer')">
+          <i class="fas fa-clock mr-2"></i>Timer
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Side Panel -->
   <div id="side-panel" class="side-panel">
     <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
       <i class="fas fa-times"></i>
     </button>
     <iframe id="panel-iframe" class="w-full h-full"></iframe>
+  </div>
+
+  <!-- Music Player -->
+  <div id="music-player" class="fixed bottom-4 left-4 bg-slate-800/90 backdrop-blur rounded-xl p-4 shadow-2xl border border-indigo-500/20 flex flex-col items-center space-y-2 cursor-move z-[60] w-64">
+    <div class="w-full flex items-center justify-between mb-2">
+      <span id="track-title" class="text-white text-sm truncate flex-1 text-center">Loading...</span>
+    </div>
+    
+    <audio id="audio-player"></audio>
+    
+    <div class="flex items-center justify-center space-x-4">
+      <button onclick="prevTrack()" class="text-indigo-400 hover:text-indigo-300 transition-colors">
+        <i class="fas fa-backward"></i>
+      </button>
+      <button id="play-btn" onclick="togglePlay()" class="w-10 h-10 rounded-full bg-indigo-500/20 text-indigo-400 hover:text-indigo-300 flex items-center justify-center transition-all hover:bg-indigo-500/30">
+        <i class="fas fa-play"></i>
+      </button>
+      <button onclick="nextTrack()" class="text-indigo-400 hover:text-indigo-300 transition-colors">
+        <i class="fas fa-forward"></i>
+      </button>
+    </div>
+    
+    <div class="w-full flex items-center space-x-2">
+      <i class="fas fa-volume-down text-indigo-400"></i>
+      <input 
+        type="range" 
+        min="0" 
+        max="1" 
+        step="0.1" 
+        value="0.5"
+        class="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+        oninput="updateVolume(this.value)"
+      >
+      <i class="fas fa-volume-up text-indigo-400"></i>
+    </div>
   </div>
 
   <script>
@@ -1410,11 +1673,15 @@
             <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
               <i class="fas fa-times"></i>
             </button>
-            <iframe 
-              id="category-iframe" 
-              src="${url}" 
-              class="w-full h-full border-none"
-            ></iframe>
+            <div class="w-full h-full flex items-center justify-center p-6">
+              <div class="max-w-2xl w-full">
+                <iframe 
+                  id="category-iframe" 
+                  src="${url}" 
+                  class="w-full h-full border-none"
+                ></iframe>
+              </div>
+            </div>
           `;
           sidePanel.classList.add('active');
           updateNotificationBtn.style.display = 'none';
@@ -1949,6 +2216,319 @@
       // Initial time greeting
       getTimeGreeting();
     });
+  </script>
+
+  <script>
+    let currentBackground = localStorage.getItem('background') || 'particles';
+    let animationFrameId = null;
+
+    function setBackground(type) {
+      // Save selection
+      localStorage.setItem('background', type);
+      currentBackground = type;
+      
+      // Reset all backgrounds
+      document.getElementById('particles-js').style.display = 'none';
+      document.getElementById('waves-bg').style.display = 'none';
+      document.getElementById('stars-bg').style.display = 'none';
+      document.getElementById('matrix-bg').style.display = 'none';
+      document.getElementById('bubbles-bg').style.display = 'none';
+      
+      // Cancel any existing animation
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+      
+      // Update active state of buttons
+      document.querySelectorAll('[data-background]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.background === type);
+      });
+      
+      // Initialize selected background
+      switch(type) {
+        case 'particles':
+          document.getElementById('particles-js').style.display = 'block';
+          if (window.pJSDom && window.pJSDom[0]) {
+            window.pJSDom[0].pJS.fn.vendors.start();
+          }
+          break;
+          
+        case 'waves':
+          initWaves();
+          break;
+          
+        case 'stars':
+          initStars();
+          break;
+          
+        case 'matrix':
+          initMatrix();
+          break;
+          
+        case 'bubbles':
+          initBubbles();
+          break;
+      }
+    }
+
+    function initWaves() {
+      const canvas = document.getElementById('waves-bg');
+      canvas.style.display = 'block';
+      const ctx = canvas.getContext('2d');
+      
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+      
+      let time = 0;
+      function animate() {
+        ctx.fillStyle = 'rgba(10, 15, 31, 0.1)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        for(let i = 0; i < 3; i++) {
+          ctx.beginPath();
+          ctx.strokeStyle = `hsla(${220 + i * 20}, 70%, 60%, 0.2)`;
+          ctx.lineWidth = 2;
+          
+          for(let x = 0; x < canvas.width; x += 5) {
+            const y = Math.sin(x * 0.01 + time + i) * 50 + canvas.height/2;
+            ctx.lineTo(x, y);
+          }
+          
+          ctx.stroke();
+        }
+        
+        time += 0.02;
+        if(currentBackground === 'waves') {
+          animationFrameId = requestAnimationFrame(animate);
+        }
+      }
+      animate();
+    }
+
+    function initStars() {
+      const canvas = document.getElementById('stars-bg');
+      canvas.style.display = 'block';
+      const ctx = canvas.getContext('2d');
+      
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+      
+      const stars = Array.from({length: 200}, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 2,
+        speed: Math.random() * 0.5 + 0.1
+      }));
+      
+      function animate() {
+        ctx.fillStyle = 'rgba(10, 15, 31, 0.1)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        stars.forEach(star => {
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+          ctx.beginPath();
+          ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+          ctx.fill();
+          
+          star.y += star.speed;
+          if(star.y > canvas.height) {
+            star.y = 0;
+            star.x = Math.random() * canvas.width;
+          }
+        });
+        
+        if(currentBackground === 'stars') {
+          animationFrameId = requestAnimationFrame(animate);
+        }
+      }
+      animate();
+    }
+
+    function initMatrix() {
+      const canvas = document.getElementById('matrix-bg');
+      canvas.style.display = 'block';
+      const ctx = canvas.getContext('2d');
+      
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+      
+      const chars = '01'.split('');
+      const drops = [];
+      const fontSize = 14;
+      const columns = canvas.width/fontSize;
+      
+      for(let i = 0; i < columns; i++) {
+        drops[i] = 1;
+      }
+      
+      function animate() {
+        ctx.fillStyle = 'rgba(10, 15, 31, 0.1)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.fillStyle = '#0f0';
+        ctx.font = fontSize + 'px monospace';
+        
+        for(let i = 0; i < drops.length; i++) {
+          const text = chars[Math.floor(Math.random() * chars.length)];
+          ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+          
+          if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+          }
+          drops[i]++;
+        }
+        
+        if(currentBackground === 'matrix') {
+          animationFrameId = requestAnimationFrame(animate);
+        }
+      }
+      animate();
+    }
+
+    function initBubbles() {
+      const canvas = document.getElementById('bubbles-bg');
+      canvas.style.display = 'block';
+      const ctx = canvas.getContext('2d');
+      
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+      
+      const bubbles = Array.from({length: 50}, () => ({
+        x: Math.random() * canvas.width,
+        y: canvas.height + Math.random() * 100,
+        radius: Math.random() * 20 + 5,
+        speed: Math.random() * 2 + 1,
+        hue: Math.random() * 60 + 180
+      }));
+      
+      function animate() {
+        ctx.fillStyle = 'rgba(10, 15, 31, 0.1)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        bubbles.forEach(bubble => {
+          ctx.beginPath();
+          ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
+          ctx.fillStyle = `hsla(${bubble.hue}, 70%, 60%, 0.2)`;
+          ctx.fill();
+          
+          bubble.y -= bubble.speed;
+          if(bubble.y + bubble.radius < 0) {
+            bubble.y = canvas.height + bubble.radius;
+            bubble.x = Math.random() * canvas.width;
+          }
+        });
+        
+        if(currentBackground === 'bubbles') {
+          animationFrameId = requestAnimationFrame(animate);
+        }
+      }
+      animate();
+    }
+
+    // Initialize background on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      setBackground(currentBackground);
+    });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const typingTextElement = document.getElementById('typing-text');
+      const messages = [
+        "Welcome to your dream site.",
+        "Unleash boundless browsing.",
+        "Your gateway to the internet.",
+        "Breaking barriers, one site at a time.",
+        "Freedom to explore without limits."
+      ];
+      
+      let currentMessageIndex = 0;
+      
+      function typeText(message) {
+        let index = 0;
+        typingTextElement.textContent = '';
+        
+        function addChar() {
+          if (index < message.length) {
+            typingTextElement.textContent += message.charAt(index);
+            index++;
+            setTimeout(addChar, 50);
+          } else {
+            // Wait before deleting
+            setTimeout(deleteText, 2000);
+          }
+        }
+        
+        function deleteText() {
+          if (index > 0) {
+            typingTextElement.textContent = message.substring(0, index - 1);
+            index--;
+            setTimeout(deleteText, 30);
+          } else {
+            // Move to next message
+            currentMessageIndex = (currentMessageIndex + 1) % messages.length;
+            typeText(messages[currentMessageIndex]);
+          }
+        }
+        
+        addChar();
+      }
+      
+      // Start the typing animation
+      typeText(messages[currentMessageIndex]);
+    });
+  </script>
+
+  <script src="/script.js"></script>
+  <script>
+    // Initialize music player on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      initMusicPlayer();
+      
+      // Load saved volume
+      const savedVolume = localStorage.getItem('playerVolume');
+      if (savedVolume !== null) {
+        document.getElementById('audio-player').volume = savedVolume;
+        document.querySelector('input[type="range"]').value = savedVolume;
+      }
+      
+      // Load saved visibility state
+      const playerVisible = localStorage.getItem('playerVisible') !== 'false';
+      document.getElementById('music-player').style.display = playerVisible ? 'flex' : 'none';
+      document.getElementById('music-player-toggle').checked = playerVisible;
+      
+      // Set up music player toggle
+      const musicPlayerToggle = document.getElementById('music-player-toggle');
+      const musicPlayer = document.getElementById('music-player');
+      
+      if (musicPlayerToggle && musicPlayer) {
+        const playerVisible = localStorage.getItem('playerVisible') !== 'false';
+        musicPlayerToggle.checked = playerVisible;
+        musicPlayer.style.display = playerVisible ? 'flex' : 'none';
+      }
+    });
+    
+    function toggleMusicPlayer() {
+      const player = document.getElementById('music-player');
+      player.style.display = player.style.display === 'flex' ? 'none' : 'flex';
+      localStorage.setItem('playerVisible', player.style.display === 'flex');
+    }
   </script>
 </body>
 </html>
