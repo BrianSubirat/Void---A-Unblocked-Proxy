@@ -890,419 +890,67 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-function shareFeatureIdea() {
-  try {
-    // Check if modal already exists to prevent multiple creations
-    if (document.querySelector('.feature-idea-modal')) {
-      return;
-    }
-
-    // Create a modal for sharing feature ideas
-    const ideaModal = document.createElement('div');
-    ideaModal.className = 'feature-idea-modal fixed inset-0 z-[100] bg-black/80 backdrop-blur-lg flex items-center justify-center p-4';
-    ideaModal.innerHTML = `
-      <div class="bg-slate-800/90 rounded-2xl p-8 max-w-2xl w-full shadow-2xl border border-indigo-500/20">
-        <div class="flex justify-between items-center mb-6">
-          <h2 class="text-2xl font-bold text-white space-glow">Share a Feature Idea</h2>
-          <button class="close-modal text-gray-400 hover:text-white transition-colors">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        
-        <div class="space-y-4">
-          <div>
-            <label class="block text-white mb-2">Feature Title</label>
-            <input 
-              type="text" 
-              id="feature-title" 
-              placeholder="Summarize your feature idea" 
-              class="w-full bg-slate-800/50 text-white rounded-lg px-4 py-2 border border-indigo-500/20"
-              maxlength="100"
-            >
-          </div>
-          
-          <div>
-            <label class="block text-white mb-2">Detailed Description</label>
-            <textarea 
-              id="feature-description" 
-              placeholder="Provide more details about your feature" 
-              rows="4" 
-              class="w-full bg-slate-800/50 text-white rounded-lg px-4 py-2 border border-indigo-500/20"
-              maxlength="500"
-            ></textarea>
-          </div>
-          
-          <div>
-            <label class="block text-white mb-2">Category</label>
-            <select 
-              id="feature-category" 
-              class="w-full bg-slate-800/50 text-white rounded-lg px-4 py-2 border border-indigo-500/20"
-            >
-              <option value="ui">UI/UX</option>
-              <option value="proxy">Proxy</option>
-              <option value="performance">Performance</option>
-              <option value="security">Security</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-        </div>
-        
-        <div class="mt-6 flex justify-end space-x-4">
-          <button 
-            class="close-modal bg-slate-700/50 hover:bg-slate-700/70 text-white px-4 py-2 rounded-lg transition-colors"
-          >
-            Cancel
-          </button>
-          <button 
-            id="submit-feature-idea"
-            class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition-colors"
-          >
-            Submit Idea
-          </button>
-        </div>
-      </div>
-    `;
-    
-    document.body.appendChild(ideaModal);
-
-    // Add event listeners to close buttons
-    const closeButtons = ideaModal.querySelectorAll('.close-modal');
-    closeButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        ideaModal.remove();
-      });
-    });
-
-    // Add submit event listener
-    const submitButton = ideaModal.querySelector('#submit-feature-idea');
-    submitButton.addEventListener('click', () => {
-      const title = document.getElementById('feature-title').value.trim();
-      const description = document.getElementById('feature-description').value.trim();
-      const category = document.getElementById('feature-category').value;
-
-      if (!title || !description) {
-        alert('Please fill in both title and description.');
-        return;
-      }
-
-      // In a real-world scenario, you would send this to a backend service
-      // For now, we'll log to console and show a success message
-      console.log('Feature Idea Submitted:', {
-        title,
-        description,
-        category
-      });
-
-      alert('Thank you for your feature idea! We appreciate your feedback.');
-      ideaModal.remove();
-    });
-  } catch (error) {
-    console.error('Error creating feature idea modal:', error);
-    alert('An error occurred while opening the feature idea modal.');
-  }
-}
-
-// Ensure this function is added to the global scope
-window.shareFeatureIdea = shareFeatureIdea;
-
-// Add event listener to ensure the function is bound after page load
-document.addEventListener('DOMContentLoaded', () => {
-  const shareFeatureIdeaBtn = document.querySelector('[onclick="shareFeatureIdea()"]');
-  if (shareFeatureIdeaBtn) {
-    shareFeatureIdeaBtn.addEventListener('click', shareFeatureIdea);
-  } else {
-    console.warn('Share feature idea button not found');
-  }
-});
-
-function openBugReportModal() {
-  try {
-    // Check if modal already exists to prevent multiple creations
-    if (document.querySelector('.bug-report-modal')) {
-      return;
-    }
-
-    // Create a modal for reporting bugs
-    const bugReportModal = document.createElement('div');
-    bugReportModal.className = 'bug-report-modal fixed inset-0 z-[100] bg-black/80 backdrop-blur-lg flex items-center justify-center p-4';
-    bugReportModal.innerHTML = `
-      <div class="bg-slate-800/90 rounded-2xl p-8 max-w-2xl w-full shadow-2xl border border-indigo-500/20">
-        <div class="flex justify-between items-center mb-6">
-          <h2 class="text-2xl font-bold text-white space-glow">Report a Bug</h2>
-          <button class="close-modal text-gray-400 hover:text-white transition-colors">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        
-        <div class="space-y-4">
-          <div>
-            <label class="block text-white mb-2">Bug Title</label>
-            <input 
-              type="text" 
-              id="bug-title" 
-              placeholder="Briefly describe the issue" 
-              class="w-full bg-slate-800/50 text-white rounded-lg px-4 py-2 border border-indigo-500/20"
-              maxlength="100"
-            >
-          </div>
-          
-          <div>
-            <label class="block text-white mb-2">Detailed Description</label>
-            <textarea 
-              id="bug-description" 
-              placeholder="Provide more details about the bug, including steps to reproduce" 
-              rows="4" 
-              class="w-full bg-slate-800/50 text-white rounded-lg px-4 py-2 border border-indigo-500/20"
-              maxlength="500"
-            ></textarea>
-          </div>
-          
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label class="block text-white mb-2">Severity</label>
-              <select 
-                id="bug-severity" 
-                class="w-full bg-slate-800/50 text-white rounded-lg px-4 py-2 border border-indigo-500/20"
-              >
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-                <option value="critical">Critical</option>
-              </select>
-            </div>
-            
-            <div>
-              <label class="block text-white mb-2">Browser</label>
-              <select 
-                id="bug-browser" 
-                class="w-full bg-slate-800/50 text-white rounded-lg px-4 py-2 border border-indigo-500/20"
-              >
-                <option value="chrome">Chrome</option>
-                <option value="firefox">Firefox</option>
-                <option value="safari">Safari</option>
-                <option value="edge">Edge</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
-          </div>
-          
-          <div>
-            <label class="block text-white mb-2">Additional Information</label>
-            <textarea 
-              id="bug-additional-info" 
-              placeholder="Any other relevant details (e.g., browser version, operating system)" 
-              rows="2" 
-              class="w-full bg-slate-800/50 text-white rounded-lg px-4 py-2 border border-indigo-500/20"
-              maxlength="250"
-            ></textarea>
-          </div>
-        </div>
-        
-        <div class="mt-6 flex justify-end space-x-4">
-          <button 
-            class="close-modal bg-slate-700/50 hover:bg-slate-700/70 text-white px-4 py-2 rounded-lg transition-colors"
-          >
-            Cancel
-          </button>
-          <button 
-            id="submit-bug-report"
-            class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
-          >
-            Submit Bug Report
-          </button>
-        </div>
-      </div>
-    `;
-    
-    document.body.appendChild(bugReportModal);
-
-    // Add event listeners to close buttons
-    const closeButtons = bugReportModal.querySelectorAll('.close-modal');
-    closeButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        bugReportModal.remove();
-      });
-    });
-
-    // Add submit event listener
-    const submitButton = bugReportModal.querySelector('#submit-bug-report');
-    submitButton.addEventListener('click', () => {
-      const title = document.getElementById('bug-title').value.trim();
-      const description = document.getElementById('bug-description').value.trim();
-      const severity = document.getElementById('bug-severity').value;
-      const browser = document.getElementById('bug-browser').value;
-      const additionalInfo = document.getElementById('bug-additional-info').value.trim();
-
-      if (!title || !description) {
-        alert('Please fill in at least the bug title and description.');
-        return;
-      }
-
-      // In a real-world scenario, you would send this to a backend service
-      // For now, we'll log to console and show a success message
-      console.log('Bug Report Submitted:', {
-        title,
-        description,
-        severity,
-        browser,
-        additionalInfo
-      });
-
-      alert('Thank you for reporting the bug! We will investigate and address the issue.');
-      bugReportModal.remove();
-    });
-  } catch (error) {
-    console.error('Error creating bug report modal:', error);
-    alert('An error occurred while opening the bug report modal.');
-  }
-}
-
-// Ensure this function is added to the global scope
-window.openBugReportModal = openBugReportModal;
-
-// Add event listener to ensure the function is bound after page load
-document.addEventListener('DOMContentLoaded', () => {
-  const openBugReportModalBtn = document.querySelector('[onclick="openBugReportModal()"]');
-  if (openBugReportModalBtn) {
-    openBugReportModalBtn.addEventListener('click', openBugReportModal);
-  } else {
-    console.warn('Open bug report modal button not found');
-  }
-});
-
+// Update the proxy section HTML to include Void Proxy branding
 function openCategory(category) {
   const sidePanel = document.getElementById('side-panel');
-  const updateNotificationBtn = document.getElementById('update-notification-btn');
-  
+  let updateNotificationBtn = document.getElementById('update-notification-btn');
+
   if (category === 'proxy') {
-    // Simplified, centered proxy UI
     sidePanel.innerHTML = `
       <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
         <i class="fas fa-times"></i>
       </button>
       <div class="w-full h-full flex items-center justify-center p-6">
         <div class="max-w-2xl w-full">
-          <!-- Centered Proxy Search Section -->
-          <div class="search-container bg-slate-800/90 backdrop-blur rounded-2xl p-8 border border-indigo-500/20 shadow-xl">
-            <h2 class="text-3xl font-bold text-white mb-6 text-center space-glow">Void Proxy</h2>
-            <div class="relative">
+          <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-white space-glow">Void Proxy</h1>
+            <p class="text-indigo-300 mt-2">Unblock websites seamlessly and securely</p>
+          </div>
+          
+          <div class="search-container mb-12 flex justify-center">
+            <div class="relative w-full max-w-xl">
               <input 
                 type="text" 
                 id="proxy-search" 
-                placeholder="Enter URL or search" 
-                class="w-full px-6 py-4 rounded-xl bg-slate-900/50 backdrop-blur text-white 
-                border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none
-                text-lg placeholder-gray-400"
+                placeholder="Search or enter a URL" 
+                class="w-full px-4 py-3 rounded-lg bg-slate-800/50 backdrop-blur text-white 
+                border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none"
               >
               <button 
                 onclick="proxySearch()" 
-                class="absolute right-4 top-1/2 transform -translate-y-1/2 
-                text-indigo-400 hover:text-indigo-300 text-xl transition-colors"
+                class="absolute right-3 top-1/2 transform -translate-y-1/2 
+                text-indigo-400 hover:text-indigo-300"
               >
-                <i class="fas fa-arrow-right"></i>
+                <i class="fas fa-search"></i>
               </button>
             </div>
           </div>
 
-          <!-- Quick Access Grid -->
-          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-8">
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-center">
             ${[
-              {name: 'YouTube', icon: 'fab fa-youtube', color: 'text-red-500', url: 'https://www.youtube.com'},
-              {name: 'Discord', icon: 'fab fa-discord', color: 'text-indigo-500', url: 'https://discord.com'},
-              {name: 'Reddit', icon: 'fab fa-reddit', color: 'text-orange-500', url: 'https://www.reddit.com'},
-              {name: 'Twitter', icon: 'fab fa-twitter', color: 'text-blue-400', url: 'https://twitter.com'},
-              {name: 'TikTok', icon: 'fab fa-tiktok', color: 'text-white', url: 'https://www.tiktok.com'},
-              {name: 'Instagram', icon: 'fab fa-instagram', color: 'text-pink-500', url: 'https://www.instagram.com'},
-              {name: 'Netflix', icon: 'fas fa-film', color: 'text-red-600', url: 'https://www.netflix.com'},
-              {name: 'Spotify', icon: 'fab fa-spotify', color: 'text-green-500', url: 'https://open.spotify.com'}
-            ].map(site => `
+              { name: 'YouTube', icon: 'fab fa-youtube', color: 'text-red-500', url: 'https://95.217.183.53/?themeRefresh=1&__pot=aHR0cHM6Ly93d3cueW91dHViZS5jb20' },
+              { name: 'Discord', icon: 'fab fa-discord', color: 'text-indigo-500', url: 'https://discord.com/app' },
+              { name: 'TikTok', icon: 'fab fa-tiktok', color: 'text-white', url: 'https://www.tiktok.com' },
+              { name: 'Netflix', icon: 'fas fa-film', color: 'text-red-600', url: 'https://www.netflix.com' },
+              { name: 'Twitch', icon: 'fab fa-twitch', color: 'text-purple-500', url: 'https://www.twitch.tv' },
+              { name: 'Instagram', icon: 'fab fa-instagram', color: 'text-pink-500', url: 'https://www.instagram.com' },
+              { name: 'Facebook', icon: 'fab fa-facebook', color: 'text-blue-500', url: 'https://www.facebook.com' },
+              { name: 'Twitter', icon: 'fab fa-twitter', color: 'text-blue-400', url: 'https://twitter.com' }
+            ].map(app => `
               <div 
-                onclick="proxyApp('${site.url}')" 
-                class="quick-access-card bg-slate-800/50 backdrop-blur rounded-xl p-4 border border-indigo-500/20
-                hover:bg-indigo-500/10 hover:border-indigo-500/40 transition-all duration-300 cursor-pointer
-                flex flex-col items-center justify-center gap-2"
+                onclick="proxyApp('${app.url}')" 
+                class="category-card cursor-pointer flex flex-col items-center justify-center p-4 rounded-xl"
               >
-                <i class="${site.icon} ${site.color} text-2xl"></i>
-                <span class="text-white text-sm">${site.name}</span>
+                <i class="${app.icon} ${app.color} text-4xl mb-2"></i>
+                <span class="text-white text-sm">${app.name}</span>
               </div>
             `).join('')}
           </div>
         </div>
       </div>
     `;
-  } else {
-    // ... rest of the existing code for other categories ...
-  }
-  
-  sidePanel.classList.add('active');
-  updateNotificationBtn.style.display = 'none';
-}
-
-// ... rest of the existing script.js code ...
-
-
-function filterApps(category) {
-  const allApps = document.querySelectorAll('#apps-grid .app-card');
-  const tabs = document.querySelectorAll('.category-tab');
-  
-  // Update active tab
-  tabs.forEach(tab => tab.classList.remove('active'));
-  event.currentTarget.classList.add('active');
-  
-  allApps.forEach(app => {
-    const appCategories = app.dataset.category.split(' ');
-    if (category === 'all' || appCategories.includes(category)) {
-      app.style.display = 'block';
-    } else {
-      app.style.display = 'none';
-    }
-  });
-}
-
-let currentSearchEngine = localStorage.getItem('searchEngine') || 'google';
-
-function setSearchEngine(engine) {
-  currentSearchEngine = engine;
-  localStorage.setItem('searchEngine', engine);
-  
-  // Update UI to show active search engine
-  document.querySelectorAll('.search-engine-btn').forEach(btn => {
-    btn.classList.remove('active');
-  });
-  event.currentTarget.classList.add('active');
-}
-
-function proxySearch() {
-  const input = document.getElementById('proxy-search');
-  const query = input.value.trim();
-  
-  if (!query) return;
-  
-  let url;
-  if (isValidUrl(query)) {
-    url = query.startsWith('http') ? query : `https://${query}`;
-  } else {
-    switch(currentSearchEngine) {
-      case 'google':
-        url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-        break;
-      case 'bing':
-        url = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
-        break;
-      case 'duckduckgo':
-        url = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
-        break;
-    }
-  }
-  
-  proxyApp(url);
-}
-
-function isValidUrl(string) {
-  try {
-    new URL(string);
-    return true;
-  } catch {
-    return /^[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/.test(string);
+    
+    sidePanel.classList.add('active');
+    updateNotificationBtn.style.display = 'none';
   }
 }
