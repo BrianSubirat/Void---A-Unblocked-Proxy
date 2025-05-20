@@ -1169,3 +1169,140 @@ document.addEventListener('DOMContentLoaded', () => {
     console.warn('Open bug report modal button not found');
   }
 });
+
+function openCategory(category) {
+  const sidePanel = document.getElementById('side-panel');
+  const updateNotificationBtn = document.getElementById('update-notification-btn');
+  
+  if (category === 'proxy') {
+    // Simplified, centered proxy UI
+    sidePanel.innerHTML = `
+      <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="w-full h-full flex items-center justify-center p-6">
+        <div class="max-w-2xl w-full">
+          <!-- Centered Proxy Search Section -->
+          <div class="search-container bg-slate-800/90 backdrop-blur rounded-2xl p-8 border border-indigo-500/20 shadow-xl">
+            <h2 class="text-3xl font-bold text-white mb-6 text-center space-glow">Void Proxy</h2>
+            <div class="relative">
+              <input 
+                type="text" 
+                id="proxy-search" 
+                placeholder="Enter URL or search" 
+                class="w-full px-6 py-4 rounded-xl bg-slate-900/50 backdrop-blur text-white 
+                border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none
+                text-lg placeholder-gray-400"
+              >
+              <button 
+                onclick="proxySearch()" 
+                class="absolute right-4 top-1/2 transform -translate-y-1/2 
+                text-indigo-400 hover:text-indigo-300 text-xl transition-colors"
+              >
+                <i class="fas fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Access Grid -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-8">
+            ${[
+              {name: 'YouTube', icon: 'fab fa-youtube', color: 'text-red-500', url: 'https://www.youtube.com'},
+              {name: 'Discord', icon: 'fab fa-discord', color: 'text-indigo-500', url: 'https://discord.com'},
+              {name: 'Reddit', icon: 'fab fa-reddit', color: 'text-orange-500', url: 'https://www.reddit.com'},
+              {name: 'Twitter', icon: 'fab fa-twitter', color: 'text-blue-400', url: 'https://twitter.com'},
+              {name: 'TikTok', icon: 'fab fa-tiktok', color: 'text-white', url: 'https://www.tiktok.com'},
+              {name: 'Instagram', icon: 'fab fa-instagram', color: 'text-pink-500', url: 'https://www.instagram.com'},
+              {name: 'Netflix', icon: 'fas fa-film', color: 'text-red-600', url: 'https://www.netflix.com'},
+              {name: 'Spotify', icon: 'fab fa-spotify', color: 'text-green-500', url: 'https://open.spotify.com'}
+            ].map(site => `
+              <div 
+                onclick="proxyApp('${site.url}')" 
+                class="quick-access-card bg-slate-800/50 backdrop-blur rounded-xl p-4 border border-indigo-500/20
+                hover:bg-indigo-500/10 hover:border-indigo-500/40 transition-all duration-300 cursor-pointer
+                flex flex-col items-center justify-center gap-2"
+              >
+                <i class="${site.icon} ${site.color} text-2xl"></i>
+                <span class="text-white text-sm">${site.name}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+  } else {
+    // ... rest of the existing code for other categories ...
+  }
+  
+  sidePanel.classList.add('active');
+  updateNotificationBtn.style.display = 'none';
+}
+
+// ... rest of the existing script.js code ...
+
+
+function filterApps(category) {
+  const allApps = document.querySelectorAll('#apps-grid .app-card');
+  const tabs = document.querySelectorAll('.category-tab');
+  
+  // Update active tab
+  tabs.forEach(tab => tab.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  
+  allApps.forEach(app => {
+    const appCategories = app.dataset.category.split(' ');
+    if (category === 'all' || appCategories.includes(category)) {
+      app.style.display = 'block';
+    } else {
+      app.style.display = 'none';
+    }
+  });
+}
+
+let currentSearchEngine = localStorage.getItem('searchEngine') || 'google';
+
+function setSearchEngine(engine) {
+  currentSearchEngine = engine;
+  localStorage.setItem('searchEngine', engine);
+  
+  // Update UI to show active search engine
+  document.querySelectorAll('.search-engine-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  event.currentTarget.classList.add('active');
+}
+
+function proxySearch() {
+  const input = document.getElementById('proxy-search');
+  const query = input.value.trim();
+  
+  if (!query) return;
+  
+  let url;
+  if (isValidUrl(query)) {
+    url = query.startsWith('http') ? query : `https://${query}`;
+  } else {
+    switch(currentSearchEngine) {
+      case 'google':
+        url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+        break;
+      case 'bing':
+        url = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
+        break;
+      case 'duckduckgo':
+        url = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
+        break;
+    }
+  }
+  
+  proxyApp(url);
+}
+
+function isValidUrl(string) {
+  try {
+    new URL(string);
+    return true;
+  } catch {
+    return /^[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/.test(string);
+  }
+}
