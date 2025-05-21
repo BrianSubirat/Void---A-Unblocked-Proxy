@@ -1113,3 +1113,25 @@ function shareFeatureIdea() {
 // Ensure these functions are added to the global scope
 window.openBugReportModal = openBugReportModal;
 window.shareFeatureIdea = shareFeatureIdea;
+
+function openCategory(category) {
+  const sidePanel = document.getElementById('side-panel');
+  const updateNotificationBtn = document.getElementById('update-notification-btn');
+  
+  if (category === 'terminal') {
+    sidePanel.innerHTML = `
+      <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
+        <i class="fas fa-times"></i>
+      </button>
+      <iframe 
+        id="terminal-iframe" 
+        src="https://school-terminal-com.pages.dev"
+        class="w-full h-full border-none"
+      ></iframe>
+    `;
+    sidePanel.classList.add('active');
+    updateNotificationBtn.style.display = 'none';
+  } else {
+    // ...existing category handling code...
+  }
+}
