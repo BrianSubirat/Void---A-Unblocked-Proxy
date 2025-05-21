@@ -840,6 +840,10 @@
       <i class="fas fa-gamepad"></i>
     </a>
     
+    <a href="#" class="sidebar-item" onclick="openCategory('ai')">
+      <i class="fas fa-robot"></i>
+    </a>
+    
     <a href="#" class="sidebar-item" onclick="openCategory('proxy')">
       <i class="fas fa-globe"></i>
     </a>
@@ -849,10 +853,6 @@
     </a>
 
     <!-- AI option remains -->
-    <a href="#" class="sidebar-item" onclick="openCategory('ai')">
-      <i class="fas fa-robot"></i>
-    </a>
-    
     <a href="#" class="sidebar-item" onclick="openCategory('apps')">
       <i class="fas fa-th-large"></i>
     </a>
@@ -1056,7 +1056,9 @@
               <div class="flex flex-col space-y-4">
                 <div class="flex justify-between items-center">
                   <span class="text-gray-300">Text Size: <span id="font-size-display">16px</span></span>
-                  <button onclick="resetFontSize()" class="px-3 py-1 bg-indigo-500/20 text-indigo-300 rounded-lg hover:bg-indigo-500/30 transition-all duration-300">Reset</button>
+                  <button onclick="resetFontSize()" class="px-3 py-1 bg-indigo-500/20 text-indigo-300 rounded-lg hover:bg-indigo-500/30 transition-all duration-300">
+                    <i class="fas fa-redo"></i>
+                  </button>
                 </div>
                 <input 
                   type="range" 
@@ -1685,46 +1687,79 @@
           <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
             <i class="fas fa-times"></i>
           </button>
-          <div class="w-full h-full flex items-center justify-center p-6">
+          <div class="w-full h-full flex flex-col items-center p-6">
             <div class="max-w-2xl w-full">
-              <div class="search-container mb-12 flex justify-center">
-                <div class="relative w-full max-w-xl">
+              <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold text-white mb-2 space-glow">Void Proxy</h1>
+                <p class="text-indigo-400">Fast, secure, and reliable web proxy service</p>
+              </div>
+
+              <div class="search-container mb-8">
+                <div class="relative w-full max-w-xl mx-auto">
+                  <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                    <i class="fas fa-globe text-indigo-400"></i>
+                  </div>
                   <input 
                     type="text" 
                     id="proxy-search" 
                     placeholder="Search or enter a URL" 
-                    class="w-full px-4 py-3 rounded-lg bg-slate-800/50 backdrop-blur text-white 
-                    border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none"
+                    class="w-full px-12 py-4 rounded-xl bg-slate-800/50 backdrop-blur text-white 
+                    border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none
+                    placeholder-gray-400"
                   >
                   <button 
                     onclick="proxySearch()" 
-                    class="absolute right-3 top-1/2 transform -translate-y-1/2 
-                    text-indigo-400 hover:text-indigo-300"
+                    class="absolute right-4 top-1/2 transform -translate-y-1/2 
+                    bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg
+                    transition-all duration-300 flex items-center space-x-2"
                   >
                     <i class="fas fa-search"></i>
+                    <span>Search</span>
                   </button>
                 </div>
               </div>
 
-              <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-center">
-                ${[
-                  { name: 'YouTube', icon: 'fab fa-youtube', color: 'text-red-500', url: 'https://95.217.183.53/?themeRefresh=1&__pot=aHR0cHM6Ly93d3cueW91dHViZS5jb20' },
-                  { name: 'Discord', icon: 'fab fa-discord', color: 'text-indigo-500', url: 'https://discord.com/app' },
-                  { name: 'TikTok', icon: 'fab fa-tiktok', color: 'text-white', url: 'https://www.tiktok.com' },
-                  { name: 'Netflix', icon: 'fas fa-film', color: 'text-red-600', url: 'https://www.netflix.com' },
-                  { name: 'Twitch', icon: 'fab fa-twitch', color: 'text-purple-500', url: 'https://www.twitch.tv' },
-                  { name: 'Instagram', icon: 'fab fa-instagram', color: 'text-pink-500', url: 'https://www.instagram.com' },
-                  { name: 'Facebook', icon: 'fab fa-facebook', color: 'text-blue-500', url: 'https://www.facebook.com' },
-                  { name: 'Twitter', icon: 'fab fa-twitter', color: 'text-blue-400', url: 'https://twitter.com' }
-                ].map(app => `
-                  <div 
-                    onclick="proxyApp('${app.url}')" 
-                    class="category-card cursor-pointer flex flex-col items-center justify-center p-4 rounded-xl"
-                  >
-                    <i class="${app.icon} ${app.color} text-4xl mb-2"></i>
-                    <span class="text-white text-sm">${app.name}</span>
-                  </div>
-                `).join('')}
+              <div class="app-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                <div onclick="proxyApp('https://www.youtube.com')" class="app-card flex flex-col items-center">
+                  <i class="fab fa-youtube app-icon text-red-500 text-3xl mb-2"></i>
+                  <span class="app-name">YouTube</span>
+                </div>
+                <div onclick="proxyApp('https://discord.com')" class="app-card flex flex-col items-center">
+                  <i class="fab fa-discord app-icon text-indigo-500 text-3xl mb-2"></i>
+                  <span class="app-name">Discord</span>
+                </div>
+                <div onclick="proxyApp('https://www.tiktok.com')" class="app-card flex flex-col items-center">
+                  <i class="fab fa-tiktok app-icon text-black text-3xl mb-2"></i>
+                  <span class="app-name">TikTok</span>
+                </div>
+                <div onclick="proxyApp('https://www.twitch.tv')" class="app-card flex flex-col items-center">
+                  <i class="fab fa-twitch app-icon text-purple-500 text-3xl mb-2"></i>
+                  <span class="app-name">Twitch</span>
+                </div>
+                <div onclick="proxyApp('https://www.reddit.com')" class="app-card flex flex-col items-center">
+                  <i class="fab fa-reddit app-icon text-orange-500 text-3xl mb-2"></i>
+                  <span class="app-name">Reddit</span>
+                </div>
+                <div onclick="proxyApp('https://twitter.com')" class="app-card flex flex-col items-center">
+                  <i class="fab fa-twitter app-icon text-blue-400 text-3xl mb-2"></i>
+                  <span class="app-name">Twitter</span>
+                </div>
+                <div onclick="proxyApp('https://www.spotify.com')" class="app-card flex flex-col items-center">
+                  <i class="fab fa-spotify app-icon text-green-500 text-3xl mb-2"></i>
+                  <span class="app-name">Spotify</span>
+                </div>
+                <div onclick="proxyApp('https://www.netflix.com')" class="app-card flex flex-col items-center">
+                  <i class="fas fa-film app-icon text-red-600 text-3xl mb-2"></i>
+                  <span class="app-name">Netflix</span>
+                </div>
+                <div onclick="proxyApp('https://www.instagram.com')" class="app-card flex flex-col items-center">
+                  <i class="fab fa-instagram app-icon text-pink-500 text-3xl mb-2"></i>
+                  <span class="app-name">Instagram</span>
+                </div>
+                <div onclick="proxyApp('https://www.facebook.com')" class="app-card flex flex-col items-center">
+                  <i class="fab fa-facebook app-icon text-blue-500 text-3xl mb-2"></i>
+                  <span class="app-name">Facebook</span>
+                </div>
               </div>
             </div>
           </div>
@@ -1737,65 +1772,120 @@
           <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
             <i class="fas fa-times"></i>
           </button>
-          <div class="w-full h-full overflow-y-auto p-6">
-            <div class="max-w-4xl mx-auto">
-              <h2 class="text-3xl font-bold text-white mb-8 space-glow">All Apps</h2>
-              <div class="search-container mb-4">
-                <div class="relative w-full max-w-md">
+          <div class="w-full h-full flex flex-col items-center p-6">
+            <div class="max-w-6xl w-full">
+              <div class="flex items-center justify-between mb-8">
+                <h1 class="text-3xl font-bold text-white space-glow">Apps</h1>
+              </div>
+              
+              <div class="flex justify-center mb-8">
+                <div class="relative w-96">
+                  <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                    <i class="fas fa-search text-indigo-400"></i>
+                  </div>
                   <input 
                     type="text" 
-                    id="app-search" 
-                    placeholder="Search apps by name or category" 
-                    class="w-full px-4 py-3 rounded-lg bg-slate-800/50 backdrop-blur text-white 
-                    border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none"
+                    id="app-search-input" 
+                    placeholder="Search apps..." 
+                    class="w-full px-12 py-3 rounded-xl bg-slate-800/50 backdrop-blur text-white 
+                    border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none
+                    placeholder-gray-400"
+                    oninput="searchApps()"
                   >
-                  <button 
-                    onclick="searchApps()" 
-                    class="absolute right-3 top-1/2 transform -translate-y-1/2 
-                    text-indigo-400 hover:text-indigo-300"
-                  >
-                    <i class="fas fa-search"></i>
-                  </button>
                 </div>
               </div>
-              <div class="app-grid" id="app-grid">
-                ${[
-                  { name: 'Discord', icon: 'fab fa-discord', color: 'text-indigo-500', url: 'https://discord.com/app', category: 'Social' },
-                  { name: 'Messenger', icon: 'fab fa-facebook-messenger', color: 'text-blue-500', url: 'https://www.messenger.com', category: 'Social' },
-                  { name: 'Instagram', icon: 'fab fa-instagram', color: 'text-pink-500', url: 'https://www.instagram.com', category: 'Social' },
-                  { name: 'Twitter', icon: 'fab fa-twitter', color: 'text-blue-400', url: 'https://twitter.com', category: 'Social' },
-                  { name: 'Snapchat', icon: 'fab fa-snapchat-ghost', color: 'text-yellow-500', url: 'https://www.snapchat.com', category: 'Social' },
-                  
-                  { name: 'YouTube', icon: 'fab fa-youtube', color: 'text-red-500', url: 'https://95.217.183.53/?themeRefresh=1&__pot=aHR0cHM6Ly93d3cueW91dHViZS5jb20', category: 'Video' },
-                  { name: 'Netflix', icon: 'fas fa-film', color: 'text-red-600', url: 'https://www.netflix.com', category: 'Video' },
-                  { name: 'Twitch', icon: 'fab fa-twitch', color: 'text-purple-500', url: 'https://www.twitch.tv', category: 'Video' },
-                  { name: 'TikTok', icon: 'fab fa-tiktok', color: 'text-white', url: 'https://www.tiktok.com', category: 'Video' },
-                  
-                  { name: 'GitHub', icon: 'fab fa-github', color: 'text-gray-300', url: 'https://github.com', category: 'Productivity' },
-                  
-                  { name: 'Spotify', icon: 'fab fa-spotify', color: 'text-green-500', url: 'https://open.spotify.com', category: 'Entertainment' },
-                  { name: 'Epic Games', icon: 'fas fa-gamepad', color: 'text-blue-600', url: 'https://www.epicgames.com', category: 'Games' },
-                  { name: 'Steam', icon: 'fab fa-steam', color: 'text-blue-800', url: 'https://store.steampowered.com', category: 'Games' },
-                  
-                  { name: 'Google Drive', icon: 'fab fa-google-drive', color: 'text-green-500', url: 'https://drive.google.com', category: 'Utility' },
-                  { name: 'Gmail', icon: 'fas fa-envelope', color: 'text-red-500', url: 'https://mail.google.com', category: 'Utility' },
-                  
-                  { name: 'ESPN', icon: 'fas fa-basketball-ball', color: 'text-red-500', url: 'https://www.espn.com', category: 'Sports' },
-                  { name: 'Poki', icon: 'fas fa-gamepad', color: 'text-blue-500', url: 'https://poki.com', category: 'Games' },
-                  { name: 'Y8 Games', icon: 'fas fa-chess', color: 'text-green-500', url: 'https://www.y8.com', category: 'Games' },
-                  { name: 'Chess.com', icon: 'fas fa-chess-knight', color: 'text-gray-300', url: 'https://www.chess.com', category: 'Games' },
-                  { name: 'ChatGPT', icon: 'fas fa-robot', color: 'text-emerald-500', url: 'https://chat.openai.com', category: 'AI' },
-                  { name: 'Gemini', icon: 'fas fa-brain', color: 'text-blue-400', url: 'https://gemini.google.com', category: 'AI' }
-                ].map(app => `
-                  <div 
-                    onclick="proxyApp('${app.url}')" 
-                    class="app-card cursor-pointer flex flex-col items-center justify-center p-4 rounded-xl hover:bg-indigo-500/10 transition-all duration-300"
-                  >
-                    <i class="${app.icon} ${app.color} text-2xl mb-2"></i>
-                    <span class="app-name text-white text-sm">${app.name}</span>
-                    <span class="text-xs text-gray-400 mt-1">${app.category}</span>
-                  </div>
-                `).join('')}
+
+              <div class="app-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                <div onclick="proxyApp('https://discord.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fab fa-discord app-icon text-indigo-500 text-3xl mb-2"></i>
+                  <span class="app-name">Discord</span>
+                  <span class="category-label">Social</span>
+                </div>
+                <div onclick="proxyApp('https://youtube.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fab fa-youtube app-icon text-red-500 text-3xl mb-2"></i>
+                  <span class="app-name">YouTube</span>
+                  <span class="category-label">Media</span>
+                </div>
+                <div onclick="proxyApp('https://spotify.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fab fa-spotify app-icon text-green-500 text-3xl mb-2"></i>
+                  <span class="app-name">Spotify</span>
+                  <span class="category-label">Music</span>
+                </div>
+                <div onclick="proxyApp('https://twitch.tv')" class="app-card flex flex-col items-center text-center">
+                  <i class="fab fa-twitch app-icon text-purple-500 text-3xl mb-2"></i>
+                  <span class="app-name">Twitch</span>
+                  <span class="category-label">Streaming</span>
+                </div>
+                <div onclick="proxyApp('https://reddit.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fab fa-reddit app-icon text-orange-500 text-3xl mb-2"></i>
+                  <span class="app-name">Reddit</span>
+                  <span class="category-label">Social</span>
+                </div>
+                <div onclick="proxyApp('https://tiktok.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fab fa-tiktok app-icon text-black text-3xl mb-2"></i>
+                  <span class="app-name">TikTok</span>
+                  <span class="category-label">Social</span>
+                </div>
+                <div onclick="proxyApp('https://twitter.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fab fa-twitter app-icon text-blue-400 text-3xl mb-2"></i>
+                  <span class="app-name">Twitter</span>
+                  <span class="category-label">Social</span>
+                </div>
+                <div onclick="proxyApp('https://netflix.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fas fa-film app-icon text-red-600 text-3xl mb-2"></i>
+                  <span class="app-name">Netflix</span>
+                  <span class="category-label">Streaming</span>
+                </div>
+                <div onclick="proxyApp('https://instagram.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fab fa-instagram app-icon text-pink-500 text-3xl mb-2"></i>
+                  <span class="app-name">Instagram</span>
+                  <span class="category-label">Social</span>
+                </div>
+                <div onclick="proxyApp('https://pinterest.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fab fa-pinterest app-icon text-red-500 text-3xl mb-2"></i>
+                  <span class="app-name">Pinterest</span>
+                  <span class="category-label">Social</span>
+                </div>
+                <div onclick="proxyApp('https://soundcloud.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fab fa-soundcloud app-icon text-orange-500 text-3xl mb-2"></i>
+                  <span class="app-name">SoundCloud</span>
+                  <span class="category-label">Music</span>
+                </div>
+                <div onclick="proxyApp('https://tumblr.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fab fa-tumblr app-icon text-blue-500 text-3xl mb-2"></i>
+                  <span class="app-name">Tumblr</span>
+                  <span class="category-label">Social</span>
+                </div>
+                <div onclick="proxyApp('https://vimeo.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fab fa-vimeo app-icon text-blue-400 text-3xl mb-2"></i>
+                  <span class="app-name">Vimeo</span>
+                  <span class="category-label">Video</span>
+                </div>
+                <div onclick="proxyApp('https://dailymotion.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fas fa-video app-icon text-blue-500 text-3xl mb-2"></i>
+                  <span class="app-name">Dailymotion</span>
+                  <span class="category-label">Video</span>
+                </div>
+                <div onclick="proxyApp('https://amazon.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fab fa-amazon app-icon text-yellow-500 text-3xl mb-2"></i>
+                  <span class="app-name">Amazon</span>
+                  <span class="category-label">Shopping</span>
+                </div>
+                <div onclick="proxyApp('https://ebay.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fab fa-ebay app-icon text-blue-500 text-3xl mb-2"></i>
+                  <span class="app-name">eBay</span>
+                  <span class="category-label">Shopping</span>
+                </div>
+                <div onclick="proxyApp('https://crunchyroll.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fas fa-tv app-icon text-orange-500 text-3xl mb-2"></i>
+                  <span class="app-name">Crunchyroll</span>
+                  <span class="category-label">Anime</span>
+                </div>
+                <div onclick="proxyApp('https://funimation.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fas fa-play-circle app-icon text-purple-500 text-3xl mb-2"></i>
+                  <span class="app-name">Funimation</span>
+                  <span class="category-label">Anime</span>
+                </div>
               </div>
             </div>
           </div>
@@ -2020,7 +2110,7 @@
     }
 
     function searchApps() {
-      const searchInput = document.getElementById('app-search');
+      const searchInput = document.getElementById('app-search-input');
       if (!searchInput) return;
       
       const query = searchInput.value.trim().toLowerCase();
@@ -2063,7 +2153,7 @@
 
     // Add event listeners for search input
     document.addEventListener('DOMContentLoaded', () => {
-      const appSearchInput = document.getElementById('app-search');
+      const appSearchInput = document.getElementById('app-search-input');
       if (appSearchInput) {
         // Real-time search as user types
         appSearchInput.addEventListener('input', () => {

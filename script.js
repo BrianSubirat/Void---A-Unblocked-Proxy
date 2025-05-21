@@ -890,67 +890,226 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Update the proxy section HTML to include Void Proxy branding
-function openCategory(category) {
-  const sidePanel = document.getElementById('side-panel');
-  let updateNotificationBtn = document.getElementById('update-notification-btn');
+// Add search function
+function searchApps() {
+  const searchInput = document.getElementById('app-search-input');
+  if (!searchInput) return;
+  
+  const query = searchInput.value.trim().toLowerCase();
+  const apps = document.querySelectorAll('.app-card');
+  
+  apps.forEach(app => {
+    const appName = app.querySelector('.app-name').textContent.toLowerCase();
+    const appCategory = app.querySelector('.category-label').textContent.toLowerCase();
+    
+    if (appName.includes(query) || appCategory.includes(query)) {
+      app.style.display = 'flex';
+    } else {
+      app.style.display = 'none';
+    }
+  });
+}
 
-  if (category === 'proxy') {
-    sidePanel.innerHTML = `
-      <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
-        <i class="fas fa-times"></i>
-      </button>
-      <div class="w-full h-full flex items-center justify-center p-6">
-        <div class="max-w-2xl w-full">
-          <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-white space-glow">Void Proxy</h1>
-            <p class="text-indigo-300 mt-2">Unblock websites seamlessly and securely</p>
+function openBugReportModal() {
+  try {
+    // Check if modal already exists to prevent multiple creations
+    if (document.querySelector('.bug-report-modal')) {
+      return;
+    }
+
+    // Create a modal for bug reporting
+    const bugReportModal = document.createElement('div');
+    bugReportModal.className = 'bug-report-modal fixed inset-0 z-[100] bg-black/80 backdrop-blur-lg flex items-center justify-center p-4';
+    bugReportModal.innerHTML = `
+      <div class="bg-slate-800/90 rounded-2xl p-8 max-w-2xl w-full shadow-2xl border border-indigo-500/20">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-bold text-white space-glow">Report a Bug</h2>
+          <button class="close-modal text-gray-400 hover:text-white transition-colors">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="space-y-4">
+          <div class="bg-slate-700/50 p-4 rounded-xl border border-indigo-500/20">
+            <h3 class="text-lg font-medium text-white mb-2">Bug Details</h3>
+            <textarea 
+              placeholder="Describe the bug you encountered in detail. What were you doing when it happened? What is the expected vs. actual behavior?"
+              class="w-full bg-slate-800/50 text-white rounded-lg px-4 py-2 border border-indigo-500/20 h-32 resize-none"
+            ></textarea>
           </div>
           
-          <div class="search-container mb-12 flex justify-center">
-            <div class="relative w-full max-w-xl">
-              <input 
-                type="text" 
-                id="proxy-search" 
-                placeholder="Search or enter a URL" 
-                class="w-full px-4 py-3 rounded-lg bg-slate-800/50 backdrop-blur text-white 
-                border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none"
-              >
-              <button 
-                onclick="proxySearch()" 
-                class="absolute right-3 top-1/2 transform -translate-y-1/2 
-                text-indigo-400 hover:text-indigo-300"
-              >
-                <i class="fas fa-search"></i>
-              </button>
-            </div>
+          <div class="bg-slate-700/50 p-4 rounded-xl border border-indigo-500/20">
+            <h3 class="text-lg font-medium text-white mb-2">Bug Category</h3>
+            <select class="w-full bg-slate-800/50 text-white rounded-lg px-4 py-2 border border-indigo-500/20">
+              <option>Performance Issue</option>
+              <option>UI/UX Bug</option>
+              <option>Proxy Functionality</option>
+              <option>Authentication Problem</option>
+              <option>Other</option>
+            </select>
           </div>
-
-          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-center">
-            ${[
-              { name: 'YouTube', icon: 'fab fa-youtube', color: 'text-red-500', url: 'https://95.217.183.53/?themeRefresh=1&__pot=aHR0cHM6Ly93d3cueW91dHViZS5jb20' },
-              { name: 'Discord', icon: 'fab fa-discord', color: 'text-indigo-500', url: 'https://discord.com/app' },
-              { name: 'TikTok', icon: 'fab fa-tiktok', color: 'text-white', url: 'https://www.tiktok.com' },
-              { name: 'Netflix', icon: 'fas fa-film', color: 'text-red-600', url: 'https://www.netflix.com' },
-              { name: 'Twitch', icon: 'fab fa-twitch', color: 'text-purple-500', url: 'https://www.twitch.tv' },
-              { name: 'Instagram', icon: 'fab fa-instagram', color: 'text-pink-500', url: 'https://www.instagram.com' },
-              { name: 'Facebook', icon: 'fab fa-facebook', color: 'text-blue-500', url: 'https://www.facebook.com' },
-              { name: 'Twitter', icon: 'fab fa-twitter', color: 'text-blue-400', url: 'https://twitter.com' }
-            ].map(app => `
-              <div 
-                onclick="proxyApp('${app.url}')" 
-                class="category-card cursor-pointer flex flex-col items-center justify-center p-4 rounded-xl"
-              >
-                <i class="${app.icon} ${app.color} text-4xl mb-2"></i>
-                <span class="text-white text-sm">${app.name}</span>
-              </div>
-            `).join('')}
+          
+          <div class="bg-slate-700/50 p-4 rounded-xl border border-indigo-500/20">
+            <h3 class="text-lg font-medium text-white mb-2">Contact Information (Optional)</h3>
+            <input 
+              type="email" 
+              placeholder="Your email (for follow-up)" 
+              class="w-full bg-slate-800/50 text-white rounded-lg px-4 py-2 border border-indigo-500/20 mb-2"
+            >
+            <p class="text-xs text-gray-400">We'll only use this to contact you about the bug if we need more information.</p>
           </div>
+        </div>
+        
+        <div class="mt-6 flex justify-end space-x-4">
+          <button 
+            class="close-modal bg-slate-700/50 hover:bg-slate-700/70 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            Cancel
+          </button>
+          <button 
+            class="submit-bug bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            Submit Bug Report
+          </button>
         </div>
       </div>
     `;
     
-    sidePanel.classList.add('active');
-    updateNotificationBtn.style.display = 'none';
+    document.body.appendChild(bugReportModal);
+
+    // Add event listeners to close and submit buttons
+    const closeButtons = bugReportModal.querySelectorAll('.close-modal');
+    const submitButton = bugReportModal.querySelector('.submit-bug');
+    
+    closeButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        bugReportModal.remove();
+      });
+    });
+
+    submitButton.addEventListener('click', () => {
+      const bugDescription = bugReportModal.querySelector('textarea').value.trim();
+      const bugCategory = bugReportModal.querySelector('select').value;
+      const contactEmail = bugReportModal.querySelector('input[type="email"]').value.trim();
+
+      if (!bugDescription) {
+        alert('Please provide a description of the bug');
+        return;
+      }
+
+      // Here you would typically send the bug report to a backend service
+      // For now, we'll just log it and show a success message
+      console.log('Bug Report Submitted:', {
+        description: bugDescription,
+        category: bugCategory,
+        email: contactEmail || 'No contact email provided'
+      });
+
+      alert('Thank you for reporting the bug! Our team will investigate soon.');
+      bugReportModal.remove();
+    });
+  } catch (error) {
+    console.error('Error creating bug report modal:', error);
   }
 }
+
+function shareFeatureIdea() {
+  try {
+    // Similar structure to bug report modal, but for feature ideas
+    const featureIdeaModal = document.createElement('div');
+    featureIdeaModal.className = 'feature-idea-modal fixed inset-0 z-[100] bg-black/80 backdrop-blur-lg flex items-center justify-center p-4';
+    featureIdeaModal.innerHTML = `
+      <div class="bg-slate-800/90 rounded-2xl p-8 max-w-2xl w-full shadow-2xl border border-indigo-500/20">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-bold text-white space-glow">Share Feature Idea</h2>
+          <button class="close-modal text-gray-400 hover:text-white transition-colors">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="space-y-4">
+          <div class="bg-slate-700/50 p-4 rounded-xl border border-indigo-500/20">
+            <h3 class="text-lg font-medium text-white mb-2">Feature Description</h3>
+            <textarea 
+              placeholder="Describe your feature idea in detail. How would it improve Void?"
+              class="w-full bg-slate-800/50 text-white rounded-lg px-4 py-2 border border-indigo-500/20 h-32 resize-none"
+            ></textarea>
+          </div>
+          
+          <div class="bg-slate-700/50 p-4 rounded-xl border border-indigo-500/20">
+            <h3 class="text-lg font-medium text-white mb-2">Feature Category</h3>
+            <select class="w-full bg-slate-800/50 text-white rounded-lg px-4 py-2 border border-indigo-500/20">
+              <option>UI/UX Enhancement</option>
+              <option>Proxy Functionality</option>
+              <option>Security Feature</option>
+              <option>Performance Improvement</option>
+              <option>Other</option>
+            </select>
+          </div>
+          
+          <div class="bg-slate-700/50 p-4 rounded-xl border border-indigo-500/20">
+            <h3 class="text-lg font-medium text-white mb-2">Contact Information (Optional)</h3>
+            <input 
+              type="email" 
+              placeholder="Your email (for follow-up)" 
+              class="w-full bg-slate-800/50 text-white rounded-lg px-4 py-2 border border-indigo-500/20 mb-2"
+            >
+            <p class="text-xs text-gray-400">We'll only use this to contact you about the feature idea if needed.</p>
+          </div>
+        </div>
+        
+        <div class="mt-6 flex justify-end space-x-4">
+          <button 
+            class="close-modal bg-slate-700/50 hover:bg-slate-700/70 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            Cancel
+          </button>
+          <button 
+            class="submit-feature bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            Submit Feature Idea
+          </button>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(featureIdeaModal);
+
+    // Add event listeners to close and submit buttons
+    const closeButtons = featureIdeaModal.querySelectorAll('.close-modal');
+    const submitButton = featureIdeaModal.querySelector('.submit-feature');
+    
+    closeButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        featureIdeaModal.remove();
+      });
+    });
+
+    submitButton.addEventListener('click', () => {
+      const featureDescription = featureIdeaModal.querySelector('textarea').value.trim();
+      const featureCategory = featureIdeaModal.querySelector('select').value;
+      const contactEmail = featureIdeaModal.querySelector('input[type="email"]').value.trim();
+
+      if (!featureDescription) {
+        alert('Please provide a description of the feature idea');
+        return;
+      }
+
+      // Here you would typically send the feature idea to a backend service
+      console.log('Feature Idea Submitted:', {
+        description: featureDescription,
+        category: featureCategory,
+        email: contactEmail || 'No contact email provided'
+      });
+
+      alert('Thank you for sharing your feature idea! Our team will review it.');
+      featureIdeaModal.remove();
+    });
+  } catch (error) {
+    console.error('Error creating feature idea modal:', error);
+  }
+}
+
+// Ensure these functions are added to the global scope
+window.openBugReportModal = openBugReportModal;
+window.shareFeatureIdea = shareFeatureIdea;
