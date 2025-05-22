@@ -1576,21 +1576,61 @@
   </template>
 
   <!-- Context Menu -->
-  <div id="context-menu" class="fixed hidden bg-slate-800/90 backdrop-blur rounded-lg border border-indigo-500/20 shadow-xl z-50 overflow-hidden">
-    <div class="p-2">
-      <div class="context-menu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer">
+  <div id="context-menu" class="fixed hidden bg-slate-800/90 backdrop-blur rounded-lg border border-indigo-500/20 shadow-xl z-50 overflow-hidden w-48">
+    <div class="p-2 space-y-1">
+      <div class="context-menu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer flex items-center">
+        <i class="fas fa-plus mr-2"></i>
         <span class="font-medium">Add Widget</span>
       </div>
-      <div class="widget-submenu hidden pl-4">
-        <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="addWidget('calendar')">
+      
+      <div class="widget-submenu hidden pl-4 space-y-1">
+        <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="addWidget('calendar')">
           <i class="far fa-calendar mr-2"></i>Calendar
         </div>
-        <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="addWidget('weather')">
+        <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="addWidget('weather')">
           <i class="fas fa-cloud mr-2"></i>Weather
         </div>
-        <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="addWidget('timer')">
+        <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="addWidget('timer')">
           <i class="fas fa-clock mr-2"></i>Timer
         </div>
+      </div>
+
+      <div class="h-[1px] bg-indigo-500/20 my-1"></div>
+
+      <div class="context-menu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="openInAboutBlank()">
+        <i class="fas fa-external-link-alt mr-2"></i>
+        <span>About:blank Cloak</span>
+      </div>
+
+      <div class="context-menu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="showTabCloakMenu()">
+        <i class="fas fa-mask mr-2"></i>
+        <span>Tab Cloak</span>
+      </div>
+
+      <div class="context-menu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="openSettings()">
+        <i class="fas fa-cog mr-2"></i>
+        <span>View All Settings</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Cloak Submenu -->
+  <div id="tab-cloak-menu" class="fixed hidden bg-slate-800/90 backdrop-blur rounded-lg border border-indigo-500/20 shadow-xl z-50 overflow-hidden w-48">
+    <div class="p-2 space-y-1">
+      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="updateTabCloak('google')">
+        <i class="fab fa-google mr-2"></i>Google
+      </div>
+      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="updateTabCloak('drive')">
+        <i class="fab fa-google-drive mr-2"></i>Google Drive
+      </div>
+      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="updateTabCloak('classroom')">
+        <i class="fas fa-school mr-2"></i>Google Classroom
+      </div>
+      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="updateTabCloak('canvas')">
+        <i class="fas fa-graduation-cap mr-2"></i>Canvas
+      </div>
+      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="updateTabCloak('zoom')">
+        <i class="fas fa-video mr-2"></i>Zoom
       </div>
     </div>
   </div>
@@ -1791,8 +1831,7 @@
                     type="text" 
                     id="app-search-input" 
                     placeholder="Search apps..." 
-                    class="w-full px-12 py-3 rounded-xl bg-slate-800/50 backdrop-blur text-white 
-                    border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none
+                    class="w-full bg-slate-800/50 backdrop-blur text-white px-4 py-3 rounded-xl border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none
                     placeholder-gray-400"
                     oninput="searchApps()"
                   >
@@ -1893,6 +1932,20 @@
               </div>
             </div>
           </div>
+        `;
+        
+        sidePanel.classList.add('active');
+        updateNotificationBtn.style.display = 'none';
+      } else if (category === 'terminal') {
+        sidePanel.innerHTML = `
+          <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
+            <i class="fas fa-times"></i>
+          </button>
+          <iframe 
+            id="terminal-iframe" 
+            src="https://school-terminal-com.pages.dev" 
+            class="w-full h-full border-none"
+          ></iframe>
         `;
         
         sidePanel.classList.add('active');
@@ -2735,5 +2788,6 @@
       localStorage.setItem('playerVisible', player.style.display === 'flex');
     }
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
 </body>
 </html>

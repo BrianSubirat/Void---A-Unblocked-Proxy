@@ -175,10 +175,8 @@ function initMusicPlayer() {
       e.preventDefault();
       currentX = e.clientX - initialX;
       currentY = e.clientY - initialY;
-
       xOffset = currentX;
       yOffset = currentY;
-
       setTranslate(currentX, currentY, player);
     }
   }
@@ -406,16 +404,26 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('contextmenu', function(e) {
   e.preventDefault();
   const contextMenu = document.getElementById('context-menu');
+  const tabCloakMenu = document.getElementById('tab-cloak-menu');
+  
   contextMenu.style.display = 'block';
   contextMenu.style.left = e.pageX + 'px';
   contextMenu.style.top = e.pageY + 'px';
+  
+  // Hide the tab cloak menu when opening context menu
+  tabCloakMenu.style.display = 'none';
+  tabCloakMenuVisible = false;
 });
 
 document.addEventListener('click', function(e) {
   const contextMenu = document.getElementById('context-menu');
-  if (!contextMenu.contains(e.target)) {
+  const tabCloakMenu = document.getElementById('tab-cloak-menu');
+  
+  if (!contextMenu.contains(e.target) && !tabCloakMenu.contains(e.target)) {
     contextMenu.style.display = 'none';
+    tabCloakMenu.style.display = 'none';
     document.querySelector('.widget-submenu').classList.add('hidden');
+    tabCloakMenuVisible = false;
   }
 });
 
@@ -425,6 +433,26 @@ document.querySelector('.context-menu-item').addEventListener('mouseenter', func
 
 document.querySelector('#context-menu').addEventListener('mouseleave', function() {
   document.querySelector('.widget-submenu').classList.add('hidden');
+});
+
+let tabCloakMenuVisible = false;
+
+function showTabCloakMenu() {
+  const contextMenu = document.getElementById('context-menu');
+  const tabCloakMenu = document.getElementById('tab-cloak-menu');
+  const contextRect = contextMenu.getBoundingClientRect();
+  
+  // Position the tab cloak menu next to the context menu
+  tabCloakMenu.style.left = (contextRect.right + 5) + 'px';
+  tabCloakMenu.style.top = contextRect.top + 'px';
+  tabCloakMenu.style.display = 'block';
+  tabCloakMenuVisible = true;
+}
+
+document.getElementById('tab-cloak-menu').addEventListener('mouseleave', function() {
+  if (!tabCloakMenuVisible) {
+    this.style.display = 'none';
+  }
 });
 
 // Widget Management
@@ -934,7 +962,7 @@ function openBugReportModal() {
             <h3 class="text-lg font-medium text-white mb-2">Bug Details</h3>
             <textarea 
               placeholder="Describe the bug you encountered in detail. What were you doing when it happened? What is the expected vs. actual behavior?"
-              class="w-full bg-slate-800/50 text-white rounded-lg px-4 py-2 border border-indigo-500/20 h-32 resize-none"
+              class="w-full bg-slate-800/50 text-white rounded-lg px-4 py-2 border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none text-sm h-32 resize-none"
             ></textarea>
           </div>
           
@@ -1114,24 +1142,277 @@ function shareFeatureIdea() {
 window.openBugReportModal = openBugReportModal;
 window.shareFeatureIdea = shareFeatureIdea;
 
-function openCategory(category) {
-  const sidePanel = document.getElementById('side-panel');
-  const updateNotificationBtn = document.getElementById('update-notification-btn');
+function addProxyNavBar(sidePanel, url) {
+  // Create nav bar container
+  const navBar = document.createElement('div');
+  navBar.className = 'flex items-center space-x-2 bg-slate-800/90 backdrop-blur border-b border-indigo-500/20 p-2 sticky top-0 z-50 h-11';
+  navBar.id = 'proxy-nav-bar';
+  navBar.style.position = 'absolute';
+  navBar.style.top = '0';
+  navBar.style.left = '0';
+  navBar.style.right = '0';
   
-  if (category === 'terminal') {
-    sidePanel.innerHTML = `
-      <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
-        <i class="fas fa-times"></i>
+  // Add navigation buttons and address bar
+  navBar.innerHTML = `
+    <button onclick="proxyGoBack()" class="text-gray-400 hover:text-white p-2 rounded-lg transition-colors">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+    <button onclick="proxyGoForward()" class="text-gray-400 hover:text-white p-2 rounded-lg transition-colors">
+      <i class="fas fa-arrow-right"></i>
+    </button>
+    <button onclick="proxyReload()" class="text-gray-400 hover:text-white p-2 rounded-lg transition-colors">
+      <i class="fas fa-redo"></i>
+    </button>
+    <div class="flex-1 relative">
+      <input 
+        type="text" 
+        id="proxy-url-bar"
+        value="${url}"
+        class="w-full bg-slate-700/50 text-white px-4 py-2 rounded-lg border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none text-sm"
+        onkeydown="if(event.key === 'Enter') proxyNavigate(this.value)"
+      >
+    </div>
+    <button onclick="toggleProxyMenu()" class="text-gray-400 hover:text-white p-2 rounded-lg transition-colors">
+      <i class="fas fa-bars"></i>
+    </button>
+  `;
+
+  // Create dropdown menu (hidden by default)
+  const menu = document.createElement('div');
+  menu.className = 'hidden absolute right-2 top-14 bg-slate-800/90 backdrop-blur rounded-lg border border-indigo-500/20 shadow-xl z-50';
+  menu.id = 'proxy-menu';
+  menu.innerHTML = `
+    <div class="py-2">
+      <button onclick="proxyOpenInNewTab()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 flex items-center">
+        <i class="fas fa-external-link-alt mr-2"></i>
+        Open in New Tab
       </button>
+      <button onclick="proxyCopyUrl()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 flex items-center">
+        <i class="fas fa-copy mr-2"></i>
+        Copy URL
+      </button>
+      <button onclick="proxyViewSource()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 flex items-center">
+        <i class="fas fa-code mr-2"></i>
+        View Source
+      </button>
+      <button onclick="toggleProxyBar()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 flex items-center">
+        <i class="fas fa-eye-slash mr-2"></i>
+        Hide Bar
+      </button>
+      <button onclick="toggleFullscreen()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 flex items-center">
+        <i class="fas fa-expand mr-2"></i>
+        Fullscreen
+      </button>
+    </div>
+  `;
+  navBar.appendChild(menu);
+
+  // Insert nav bar at the top of side panel
+  sidePanel.insertBefore(navBar, sidePanel.firstChild);
+}
+
+function proxySearch() {
+  const searchInput = document.getElementById('proxy-search');
+  const query = searchInput.value.trim();
+  
+  if (query) {
+    const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+    
+    let searchUrl;
+    if (urlPattern.test(query)) {
+      searchUrl = query.startsWith('http') ? query : `https://${query}`;
+    } else {
+      searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
+    }
+    
+    const sidePanel = document.getElementById('side-panel');
+    const updateNotificationBtn = document.getElementById('update-notification-btn');
+    
+    // Create an intermediate HTML file that loads both the target URL and Eruda
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+          <script>
+            // Initialize Eruda but keep it hidden initially
+            eruda.init({
+              tool: ['console', 'elements', 'network', 'resources', 'sources'],
+              useShadowDom: true,
+              autoScale: true,
+              defaults: {
+                displaySize: 50,
+                transparency: 0.9,
+                theme: 'Dark'
+              }
+            });
+            eruda.hide();
+
+            // Listen for messages from parent window
+            window.addEventListener('message', (event) => {
+              if (event.data.type === 'injectEruda') {
+                // Toggle Eruda visibility
+                if (eruda.get('elements').isShow) {
+                  eruda.hide();
+                } else {
+                  eruda.show();
+                }
+              }
+            });
+          </script>
+          <style>
+            body, html {
+              margin: 0;
+              padding: 0;
+              width: 100%;
+              height: 100%;
+              overflow: hidden;
+            }
+            iframe {
+              width: 100%;
+              height: 100%;
+              border: none;
+            }
+          </style>
+        </head>
+        <body>
+          <iframe src="${searchUrl}" id="content-frame"></iframe>
+        </body>
+      </html>
+    `;
+
+    // Create blob URL from HTML
+    const blob = new Blob([html], { type: 'text/html' });
+    const blobUrl = URL.createObjectURL(blob);
+    
+    sidePanel.innerHTML = `
       <iframe 
-        id="terminal-iframe" 
-        src="https://school-terminal-com.pages.dev"
-        class="w-full h-full border-none"
+        id="search-iframe" 
+        src="${blobUrl}" 
+        class="w-full h-[calc(100%-44px)] border-none mt-[44px]"
+        style="margin-top: 44px;"
       ></iframe>
     `;
+    
+    // Add the navigation bar
+    addProxyNavBar(sidePanel, searchUrl);
+    
     sidePanel.classList.add('active');
     updateNotificationBtn.style.display = 'none';
-  } else {
-    // ...existing category handling code...
+
+    // Clean up blob URL after iframe loads
+    const iframe = document.getElementById('search-iframe');
+    iframe.onload = () => URL.revokeObjectURL(blobUrl);
   }
+}
+
+function proxyViewSource() {
+  const iframe = document.querySelector('#search-iframe');
+  if (iframe) {
+    // Instead of using view-source, inject Eruda into the iframe
+    iframe.contentWindow.postMessage({
+      type: 'injectEruda'
+    }, '*');
+  }
+  toggleProxyMenu();
+}
+
+function toggleProxyBar() {
+  const navBar = document.getElementById('proxy-nav-bar');
+  const iframe = document.querySelector('#search-iframe');
+  if (navBar && iframe) {
+    navBar.style.display = navBar.style.display === 'none' ? 'flex' : 'none';
+    iframe.style.height = navBar.style.display === 'none' ? '100%' : 'calc(100% - 44px)';
+    iframe.style.marginTop = navBar.style.display === 'none' ? '0' : '44px';
+  }
+  toggleProxyMenu();
+}
+
+function toggleProxyMenu() {
+  const menu = document.querySelector('#proxy-menu');
+  if (menu) {
+    menu.classList.toggle('hidden');
+  }
+}
+
+function toggleFullscreen() {
+  const sidePanel = document.getElementById('side-panel');
+  if (!document.fullscreenElement) {
+    sidePanel.requestFullscreen().catch(err => {
+      console.log(`Error attempting to enable fullscreen: ${err.message}`);
+    });
+  } else {
+    document.exitFullscreen();
+  }
+  toggleProxyMenu();
+}
+
+function proxyGoBack() {
+  const iframe = document.querySelector('#search-iframe');
+  if (iframe) {
+    iframe.contentWindow.postMessage({ type: 'goBack' }, '*');
+  }
+}
+
+function proxyGoForward() {
+  const iframe = document.querySelector('#search-iframe');
+  if (iframe) {
+    iframe.contentWindow.postMessage({ type: 'goForward' }, '*');
+  }
+}
+
+function proxyReload() {
+  const iframe = document.querySelector('#search-iframe');
+  if (iframe) {
+    iframe.contentWindow.postMessage({ type: 'reload' }, '*');
+  }
+}
+
+function proxyNavigate(url) {
+  const iframe = document.querySelector('#search-iframe');
+  if (iframe) {
+    // Add https:// if not present
+    if (!/^https?:\/\//i.test(url)) {
+      url = 'https://' + url;
+    }
+    iframe.src = url;
+    document.querySelector('#proxy-url-bar').value = url;
+  }
+}
+
+// Add an event listener to handle cross-origin messaging
+window.addEventListener('message', (event) => {
+  // Optional: Add origin checking for additional security
+  // if (event.origin !== "https://expected-origin.com") return;
+
+  switch(event.data.type) {
+    case 'urlChanged':
+      const proxyUrlBar = document.querySelector('#proxy-url-bar');
+      if (proxyUrlBar) {
+        proxyUrlBar.value = event.data.url;
+      }
+      break;
+  }
+}, false);
+
+function proxyOpenInNewTab() {
+  const iframe = document.querySelector('#search-iframe');
+  if (iframe) {
+    window.open(iframe.src, '_blank');
+  }
+  toggleProxyMenu();
+}
+
+function proxyCopyUrl() {
+  const iframe = document.querySelector('#search-iframe');
+  if (iframe) {
+    navigator.clipboard.writeText(iframe.src);
+    // Show feedback toast
+    const toast = document.createElement('div');
+    toast.className = 'fixed bottom-4 right-4 bg-green-500/90 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+    toast.textContent = 'URL copied to clipboard';
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2000);
+  }
+  toggleProxyMenu();
 }
