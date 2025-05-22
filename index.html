@@ -1578,36 +1578,36 @@
   <!-- Context Menu -->
   <div id="context-menu" class="fixed hidden bg-slate-800/90 backdrop-blur rounded-lg border border-indigo-500/20 shadow-xl z-50 overflow-hidden w-48">
     <div class="p-2 space-y-1">
-      <div class="context-menu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer flex items-center">
+      <div class="context-menu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer flex items-center">
         <i class="fas fa-plus mr-2"></i>
         <span class="font-medium">Add Widget</span>
       </div>
       
       <div class="widget-submenu hidden pl-4 space-y-1">
-        <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="addWidget('calendar')">
+        <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="addWidget('calendar')">
           <i class="far fa-calendar mr-2"></i>Calendar
         </div>
-        <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="addWidget('weather')">
+        <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="addWidget('weather')">
           <i class="fas fa-cloud mr-2"></i>Weather
         </div>
-        <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="addWidget('timer')">
+        <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="addWidget('timer')">
           <i class="fas fa-clock mr-2"></i>Timer
         </div>
       </div>
 
       <div class="h-[1px] bg-indigo-500/20 my-1"></div>
 
-      <div class="context-menu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="openInAboutBlank()">
+      <div class="context-menu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="openInAboutBlank()">
         <i class="fas fa-external-link-alt mr-2"></i>
         <span>About:blank Cloak</span>
       </div>
 
-      <div class="context-menu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="showTabCloakMenu()">
+      <div class="context-menu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="showTabCloakMenu()">
         <i class="fas fa-mask mr-2"></i>
         <span>Tab Cloak</span>
       </div>
 
-      <div class="context-menu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="openSettings()">
+      <div class="context-menu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="openSettings()">
         <i class="fas fa-cog mr-2"></i>
         <span>View All Settings</span>
       </div>
@@ -1617,19 +1617,19 @@
   <!-- Tab Cloak Submenu -->
   <div id="tab-cloak-menu" class="fixed hidden bg-slate-800/90 backdrop-blur rounded-lg border border-indigo-500/20 shadow-xl z-50 overflow-hidden w-48">
     <div class="p-2 space-y-1">
-      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="updateTabCloak('google')">
+      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="updateTabCloak('google')">
         <i class="fab fa-google mr-2"></i>Google
       </div>
-      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="updateTabCloak('drive')">
+      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="updateTabCloak('drive')">
         <i class="fab fa-google-drive mr-2"></i>Google Drive
       </div>
-      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="updateTabCloak('classroom')">
+      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="updateTabCloak('classroom')">
         <i class="fas fa-school mr-2"></i>Google Classroom
       </div>
-      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="updateTabCloak('canvas')">
+      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="updateTabCloak('canvas')">
         <i class="fas fa-graduation-cap mr-2"></i>Canvas
       </div>
-      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="updateTabCloak('zoom')">
+      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="updateTabCloak('zoom')">
         <i class="fas fa-video mr-2"></i>Zoom
       </div>
     </div>
@@ -2788,6 +2788,5 @@
       localStorage.setItem('playerVisible', player.style.display === 'flex');
     }
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
 </body>
 </html>

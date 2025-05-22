@@ -1228,67 +1228,10 @@ function proxySearch() {
     const sidePanel = document.getElementById('side-panel');
     const updateNotificationBtn = document.getElementById('update-notification-btn');
     
-    // Create an intermediate HTML file that loads both the target URL and Eruda
-    const html = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-          <script>
-            // Initialize Eruda but keep it hidden initially
-            eruda.init({
-              tool: ['console', 'elements', 'network', 'resources', 'sources'],
-              useShadowDom: true,
-              autoScale: true,
-              defaults: {
-                displaySize: 50,
-                transparency: 0.9,
-                theme: 'Dark'
-              }
-            });
-            eruda.hide();
-
-            // Listen for messages from parent window
-            window.addEventListener('message', (event) => {
-              if (event.data.type === 'injectEruda') {
-                // Toggle Eruda visibility
-                if (eruda.get('elements').isShow) {
-                  eruda.hide();
-                } else {
-                  eruda.show();
-                }
-              }
-            });
-          </script>
-          <style>
-            body, html {
-              margin: 0;
-              padding: 0;
-              width: 100%;
-              height: 100%;
-              overflow: hidden;
-            }
-            iframe {
-              width: 100%;
-              height: 100%;
-              border: none;
-            }
-          </style>
-        </head>
-        <body>
-          <iframe src="${searchUrl}" id="content-frame"></iframe>
-        </body>
-      </html>
-    `;
-
-    // Create blob URL from HTML
-    const blob = new Blob([html], { type: 'text/html' });
-    const blobUrl = URL.createObjectURL(blob);
-    
     sidePanel.innerHTML = `
       <iframe 
         id="search-iframe" 
-        src="${blobUrl}" 
+        src="${searchUrl}" 
         class="w-full h-[calc(100%-44px)] border-none mt-[44px]"
         style="margin-top: 44px;"
       ></iframe>
@@ -1299,22 +1242,7 @@ function proxySearch() {
     
     sidePanel.classList.add('active');
     updateNotificationBtn.style.display = 'none';
-
-    // Clean up blob URL after iframe loads
-    const iframe = document.getElementById('search-iframe');
-    iframe.onload = () => URL.revokeObjectURL(blobUrl);
   }
-}
-
-function proxyViewSource() {
-  const iframe = document.querySelector('#search-iframe');
-  if (iframe) {
-    // Instead of using view-source, inject Eruda into the iframe
-    iframe.contentWindow.postMessage({
-      type: 'injectEruda'
-    }, '*');
-  }
-  toggleProxyMenu();
 }
 
 function toggleProxyBar() {
@@ -1413,6 +1341,14 @@ function proxyCopyUrl() {
     toast.textContent = 'URL copied to clipboard';
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 2000);
+  }
+  toggleProxyMenu();
+}
+
+function proxyViewSource() {
+  const iframe = document.querySelector('#search-iframe');
+  if (iframe) {
+    window.open('view-source:' + iframe.src);
   }
   toggleProxyMenu();
 }
