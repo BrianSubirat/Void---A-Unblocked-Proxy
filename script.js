@@ -419,6 +419,7 @@ document.addEventListener('click', function(e) {
   const contextMenu = document.getElementById('context-menu');
   const tabCloakMenu = document.getElementById('tab-cloak-menu');
   
+  // Only hide if clicking outside both menus and not in the widget submenu
   if (!contextMenu.contains(e.target) && !tabCloakMenu.contains(e.target)) {
     contextMenu.style.display = 'none';
     tabCloakMenu.style.display = 'none';
@@ -427,11 +428,11 @@ document.addEventListener('click', function(e) {
   }
 });
 
-document.querySelector('.context-menu-item').addEventListener('mouseenter', function() {
+document.querySelector('.widget-parent').addEventListener('mouseenter', function() {
   document.querySelector('.widget-submenu').classList.remove('hidden');
 });
 
-document.querySelector('#context-menu').addEventListener('mouseleave', function() {
+document.querySelector('.widget-parent').addEventListener('mouseleave', function() {
   document.querySelector('.widget-submenu').classList.add('hidden');
 });
 
@@ -1143,7 +1144,6 @@ window.openBugReportModal = openBugReportModal;
 window.shareFeatureIdea = shareFeatureIdea;
 
 function addProxyNavBar(sidePanel, url) {
-  // Create nav bar container
   const navBar = document.createElement('div');
   navBar.className = 'flex items-center space-x-2 bg-slate-800/90 backdrop-blur border-b border-indigo-500/20 p-2 sticky top-0 z-50 h-11';
   navBar.id = 'proxy-nav-bar';
@@ -1152,7 +1152,6 @@ function addProxyNavBar(sidePanel, url) {
   navBar.style.left = '0';
   navBar.style.right = '0';
   
-  // Add navigation buttons and address bar
   navBar.innerHTML = `
     <button onclick="proxyGoBack()" class="text-gray-400 hover:text-white p-2 rounded-lg transition-colors">
       <i class="fas fa-arrow-left"></i>
@@ -1164,11 +1163,12 @@ function addProxyNavBar(sidePanel, url) {
       <i class="fas fa-redo"></i>
     </button>
     <div class="flex-1 relative">
+      <i class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-green-500"></i>
       <input 
         type="text" 
         id="proxy-url-bar"
         value="${url}"
-        class="w-full bg-slate-700/50 text-white px-4 py-2 rounded-lg border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none text-sm"
+        class="w-full bg-slate-700/50 text-white pl-10 pr-4 py-2 rounded-lg border border-green-500/20 focus:border-green-500/50 focus:outline-none text-sm"
         onkeydown="if(event.key === 'Enter') proxyNavigate(this.value)"
       >
     </div>

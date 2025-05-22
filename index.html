@@ -1472,6 +1472,37 @@
           <span class="update-tag bg-purple-500/20 text-purple-300">💡 Design</span>
         </div>
       </div>
+      
+      <div class="update-item">
+        <div class="update-header">
+          <div class="update-icon bg-blue-600">
+            <i class="fas fa-globe"></i>
+          </div>
+          <div class="update-details">
+            <h3>Proxy Enhancements</h3>
+            <p>Added advanced proxy navigation features</p>
+          </div>
+        </div>
+        <div class="update-tags">
+          <span class="update-tag bg-blue-500/20 text-blue-300">🌐 Proxy</span>
+          <span class="update-tag bg-yellow-500/20 text-yellow-300">Beta</span>
+        </div>
+      </div>
+      
+      <div class="update-item">
+        <div class="update-header">
+          <div class="update-icon bg-red-600">
+            <i class="fas fa-bug"></i>
+          </div>
+          <div class="update-details">
+            <h3>Bug Fixes</h3>
+            <p>Multiple stability and performance fixes</p>
+          </div>
+        </div>
+        <div class="update-tags">
+          <span class="update-tag bg-red-500/20 text-red-300">🐛 Fixes</span>
+        </div>
+      </div>
     </div>
     
     <div class="modal-footer">
@@ -1488,7 +1519,7 @@
 
   <div class="max-w-4xl w-full px-4 text-center py-8 mt-20 md:mt-32 main-content">
     <div class="flex flex-col items-center justify-center space-y-4">
-      <h1 class="typing-text text-4xl font-bold text-white space-glow mb-4" id="typing-text">Welcome to your dream site.</h1>
+      <h1 class="typing-text text-4xl font-bold text-white space-glow mb-4" id="typing-text"></h1>
       <h2 class="text-2xl text-indigo-300 space-glow"></h2>
       <p class="text-xl text-indigo-400 space-glow">Start your unblocking journey today!</p>
     </div>
@@ -1578,25 +1609,6 @@
   <!-- Context Menu -->
   <div id="context-menu" class="fixed hidden bg-slate-800/90 backdrop-blur rounded-lg border border-indigo-500/20 shadow-xl z-50 overflow-hidden w-48">
     <div class="p-2 space-y-1">
-      <div class="context-menu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer flex items-center">
-        <i class="fas fa-plus mr-2"></i>
-        <span class="font-medium">Add Widget</span>
-      </div>
-      
-      <div class="widget-submenu hidden pl-4 space-y-1">
-        <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="addWidget('calendar')">
-          <i class="far fa-calendar mr-2"></i>Calendar
-        </div>
-        <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="addWidget('weather')">
-          <i class="fas fa-cloud mr-2"></i>Weather
-        </div>
-        <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="addWidget('timer')">
-          <i class="fas fa-clock mr-2"></i>Timer
-        </div>
-      </div>
-
-      <div class="h-[1px] bg-indigo-500/20 my-1"></div>
-
       <div class="context-menu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="openInAboutBlank()">
         <i class="fas fa-external-link-alt mr-2"></i>
         <span>About:blank Cloak</span>
@@ -1610,6 +1622,28 @@
       <div class="context-menu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="openSettings()">
         <i class="fas fa-cog mr-2"></i>
         <span>View All Settings</span>
+      </div>
+
+      <div class="h-[1px] bg-indigo-500/20 my-1"></div>
+
+      <!-- Move widgets to bottom -->
+      <div class="widget-parent">
+        <div class="context-menu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer flex items-center">
+          <i class="fas fa-plus mr-2"></i>
+          <span class="font-medium">Add Widget</span>
+        </div>
+        
+        <div class="widget-submenu hidden pl-4 space-y-1">
+          <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="addWidget('calendar')">
+            <i class="far fa-calendar mr-2"></i>Calendar
+          </div>
+          <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="addWidget('weather')">
+            <i class="fas fa-cloud mr-2"></i>Weather
+          </div>
+          <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="addWidget('timer')">
+            <i class="fas fa-clock mr-2"></i>Timer
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1831,7 +1865,7 @@
                     type="text" 
                     id="app-search-input" 
                     placeholder="Search apps..." 
-                    class="w-full bg-slate-800/50 backdrop-blur text-white px-4 py-3 rounded-xl border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none
+                    class="w-full bg-slate-800/50 backdrop-blur text-white rounded-xl px-4 py-3 border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none
                     placeholder-gray-400"
                     oninput="searchApps()"
                   >
@@ -2751,6 +2785,50 @@
         loadTrack(trackIndex);
       }
     }
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const typingText = document.getElementById('typing-text');
+      const texts = [
+        'Welcome to perfection.',
+        'Welcome to Void.',
+        'Welcome to freedom.'
+      ];
+      let currentTextIndex = 0;
+
+      function typeText(text) {
+        let charIndex = 0;
+        typingText.textContent = '';
+        
+        function type() {
+          if (charIndex < text.length) {
+            typingText.textContent += text.charAt(charIndex);
+            charIndex++;
+            setTimeout(type, 100);
+          } else {
+            // Wait before starting deletion
+            setTimeout(deleteText, 2000);
+          }
+        }
+
+        function deleteText() {
+          if (typingText.textContent.length > 0) {
+            typingText.textContent = typingText.textContent.slice(0, -1);
+            setTimeout(deleteText, 50);
+          } else {
+            // Move to next text
+            currentTextIndex = (currentTextIndex + 1) % texts.length;
+            setTimeout(() => typeText(texts[currentTextIndex]), 500);
+          }
+        }
+
+        type();
+      }
+
+      // Start the animation
+      typeText(texts[0]);
+    });
   </script>
 
   <script src="/script.js"></script>
