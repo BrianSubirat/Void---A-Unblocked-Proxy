@@ -330,19 +330,59 @@ function toggleMusicPlayer(visible) {
         visible = player.style.display === 'none';
       }
       
-      player.style.display = visible ? 'flex' : 'none';
-      localStorage.setItem('playerVisible', visible);
-      
-      // Update checkbox if it exists
-      const checkbox = document.getElementById('music-player-toggle');
-      if (checkbox) {
-        checkbox.checked = visible;
+      // Only toggle visibility if not on mobile
+      if (window.innerWidth >= 768) {
+        player.style.display = visible ? 'flex' : 'none';
+        localStorage.setItem('playerVisible', visible);
+        
+        // Update checkbox if it exists
+        const checkbox = document.getElementById('music-player-toggle');
+        if (checkbox) {
+          checkbox.checked = visible;
+        }
+      } else {
+        // Always hide on mobile
+        player.style.display = 'none';
+        localStorage.setItem('playerVisible', false);
       }
     } catch (error) {
       console.error('Toggle music player error:', error);
     }
   }
 }
+
+// Add responsive listener to handle music player visibility
+document.addEventListener('DOMContentLoaded', () => {
+  const player = document.getElementById('music-player');
+  const musicPlayerToggle = document.getElementById('music-player-toggle');
+
+  function handleMobileVisibility() {
+    if (player) {
+      if (window.innerWidth < 768) {
+        player.style.display = 'none';
+        localStorage.setItem('playerVisible', false);
+        
+        if (musicPlayerToggle) {
+          musicPlayerToggle.checked = false;
+        }
+      } else {
+        // Restore saved visibility on desktop
+        const savedVisibility = localStorage.getItem('playerVisible') !== 'false';
+        player.style.display = savedVisibility ? 'flex' : 'none';
+        
+        if (musicPlayerToggle) {
+          musicPlayerToggle.checked = savedVisibility;
+        }
+      }
+    }
+  }
+
+  // Initial call
+  handleMobileVisibility();
+
+  // Add resize listener
+  window.addEventListener('resize', handleMobileVisibility);
+});
 
 // Add font change function
 function changeFont(fontFamily) {
@@ -1143,7 +1183,114 @@ function shareFeatureIdea() {
 window.openBugReportModal = openBugReportModal;
 window.shareFeatureIdea = shareFeatureIdea;
 
+let bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
+
+function toggleBookmark() {
+  const iframe = document.querySelector('#search-iframe');
+  const starIcon = document.querySelector('#bookmark-star');
+  
+  if (!iframe || !starIcon) {
+    console.warn('Iframe or bookmark star not found');
+    return;
+  }
+  
+  const url = iframe.src;
+  const title = document.querySelector('#proxy-url-bar')?.value || url;
+  
+  const isBookmarked = bookmarks.some(b => b.url === url);
+  
+  if (isBookmarked) {
+    bookmarks = bookmarks.filter(b => b.url !== url);
+    starIcon.classList.remove('text-yellow-400');
+    starIcon.classList.add('text-gray-400');
+  } else {
+    bookmarks.push({ url, title, timestamp: Date.now() });
+    starIcon.classList.remove('text-gray-400');
+    starIcon.classList.add('text-yellow-400');
+  }
+  
+  localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+}
+
+function updateBookmarkStar(url) {
+  const starIcon = document.querySelector('#bookmark-star');
+  if (!starIcon) return;
+  
+  const isBookmarked = bookmarks.some(b => b.url === url);
+  starIcon.classList.toggle('text-yellow-400', isBookmarked);
+  starIcon.classList.toggle('text-gray-400', !isBookmarked);
+}
+
+function showBookmarks() {
+  const menu = document.querySelector('#proxy-menu');
+  const bookmarksList = menu.querySelector('#bookmarks-list');
+  
+  if (!menu || !bookmarksList) {
+    console.warn('Proxy menu or bookmarks list not found');
+    return;
+  }
+  
+  if (bookmarks.length === 0) {
+    bookmarksList.innerHTML = `
+      <div class="px-4 py-2 text-gray-400 text-center">
+        No bookmarks yet
+      </div>
+    `;
+  } else {
+    bookmarksList.innerHTML = bookmarks.map(bookmark => `
+      <div class="px-4 py-2 hover:bg-indigo-500/20 flex items-center justify-between group">
+        <button 
+          onclick="proxyNavigate('${bookmark.url}')" 
+          class="flex-1 text-left text-gray-300 truncate"
+        >
+          ${bookmark.title}
+        </button>
+        <button 
+          onclick="removeBookmark('${bookmark.url}')" 
+          class="text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    `).join('');
+  }
+  
+  // Ensure menu is visible
+  toggleProxyMenu();
+}
+
+function removeBookmark(url) {
+  bookmarks = bookmarks.filter(b => b.url !== url);
+  localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+  showBookmarks();
+  updateBookmarkStar(url);
+}
+
+function updateBookmarkStar(url) {
+  const starIcon = document.querySelector('#bookmark-star');
+  if (!starIcon) return;
+  
+  const isBookmarked = bookmarks.some(b => b.url === url);
+  starIcon.classList.toggle('text-yellow-400', isBookmarked);
+  starIcon.classList.toggle('text-gray-400', !isBookmarked);
+}
+
+function toggleProxyMenu() {
+  const menu = document.querySelector('#proxy-menu');
+  if (menu) {
+    menu.classList.toggle('hidden');
+  } else {
+    console.warn('Proxy menu element not found');
+  }
+}
+
 function addProxyNavBar(sidePanel, url) {
+  // Defensive checks
+  if (!sidePanel) {
+    console.error('Side panel is null or undefined');
+    return;
+  }
+
   const navBar = document.createElement('div');
   navBar.className = 'flex items-center space-x-2 bg-slate-800/90 backdrop-blur border-b border-indigo-500/20 p-2 sticky top-0 z-50 h-11';
   navBar.id = 'proxy-nav-bar';
@@ -1162,15 +1309,22 @@ function addProxyNavBar(sidePanel, url) {
     <button onclick="proxyReload()" class="text-gray-400 hover:text-white p-2 rounded-lg transition-colors">
       <i class="fas fa-redo"></i>
     </button>
-    <div class="flex-1 relative">
+    <div class="flex-1 relative flex items-center">
       <i class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-green-500"></i>
       <input 
         type="text" 
         id="proxy-url-bar"
         value="${url}"
-        class="w-full bg-slate-700/50 text-white pl-10 pr-4 py-2 rounded-lg border border-green-500/20 focus:border-green-500/50 focus:outline-none text-sm"
+        class="w-full bg-slate-700/50 text-white pl-10 pr-10 py-2 rounded-lg border border-green-500/20 focus:border-green-500/50 focus:outline-none text-sm"
         onkeydown="if(event.key === 'Enter') proxyNavigate(this.value)"
       >
+      <button 
+        id="bookmark-star" 
+        onclick="toggleBookmark()" 
+        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-yellow-400 transition-colors"
+      >
+        <i class="fas fa-star"></i>
+      </button>
     </div>
     <button onclick="toggleProxyMenu()" class="text-gray-400 hover:text-white p-2 rounded-lg transition-colors">
       <i class="fas fa-bars"></i>
@@ -1179,10 +1333,14 @@ function addProxyNavBar(sidePanel, url) {
 
   // Create dropdown menu (hidden by default)
   const menu = document.createElement('div');
-  menu.className = 'hidden absolute right-2 top-14 bg-slate-800/90 backdrop-blur rounded-lg border border-indigo-500/20 shadow-xl z-50';
+  menu.className = 'hidden absolute right-2 top-[44px] w-64 bg-slate-800/90 backdrop-blur rounded-lg border border-indigo-500/20 shadow-xl z-50';
   menu.id = 'proxy-menu';
   menu.innerHTML = `
     <div class="py-2">
+      <button onclick="showBookmarks()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 flex items-center">
+        <i class="fas fa-bookmark mr-2"></i>
+        Bookmarks
+      </button>
       <button onclick="proxyOpenInNewTab()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 flex items-center">
         <i class="fas fa-external-link-alt mr-2"></i>
         Open in New Tab
@@ -1203,13 +1361,320 @@ function addProxyNavBar(sidePanel, url) {
         <i class="fas fa-expand mr-2"></i>
         Fullscreen
       </button>
+      <div id="bookmarks-list" class="max-h-60 overflow-y-auto border-t border-indigo-500/20"></div>
     </div>
   `;
-  navBar.appendChild(menu);
 
-  // Insert nav bar at the top of side panel
+  // Append menu to the document body if it doesn't exist
+  const existingMenu = document.getElementById('proxy-menu');
+  if (!existingMenu) {
+    sidePanel.appendChild(menu);
+  }
+
   sidePanel.insertBefore(navBar, sidePanel.firstChild);
+  
+  // Add click event listener to close menu when clicking outside
+  const menuCloseHandler = function(event) {
+    const menu = document.getElementById('proxy-menu');
+    const menuButton = document.querySelector('button:has(i.fa-bars)');
+    
+    if (menu && menuButton && 
+        !menu.contains(event.target) && 
+        !menuButton.contains(event.target)) {
+      menu.classList.add('hidden');
+    }
+  };
+
+  // Remove previous listeners to prevent multiple attachments
+  document.removeEventListener('click', menuCloseHandler);
+  document.addEventListener('click', menuCloseHandler);
+  
+  // Update bookmark star state
+  updateBookmarkStar(url);
 }
+
+// Define achievements
+const achievements = {
+  explorer: {
+    id: 'explorer',
+    name: 'Explorer',
+    description: 'Visit 5 different websites',
+    icon: 'fas fa-compass',
+    progress: 0,
+    goal: 5,
+    reward: 'Custom theme unlock',
+    completed: false
+  },
+  socialButterfly: {
+    id: 'socialButterfly', 
+    name: 'Social Butterfly',
+    description: 'Use 3 different social media apps',
+    icon: 'fas fa-users',
+    progress: 0,
+    goal: 3,
+    reward: 'Special profile badge',
+    completed: false
+  },
+  customizer: {
+    id: 'customizer',
+    name: 'Customizer',
+    description: 'Try all available themes',
+    icon: 'fas fa-paint-brush',
+    progress: 0,
+    goal: 6,
+    reward: 'Custom theme creator unlock',
+    completed: false
+  },
+  widgetMaster: {
+    id: 'widgetMaster',
+    name: 'Widget Master',
+    description: 'Add all types of widgets',
+    icon: 'fas fa-th-large',
+    progress: 0,
+    goal: 3,
+    reward: 'Custom widget position save',
+    completed: false
+  },
+  petLover: {
+    id: 'petLover',
+    name: 'Pet Lover',
+    description: 'Play with virtual pet for 5 minutes',
+    icon: 'fas fa-paw',
+    progress: 0,
+    goal: 300,
+    reward: 'Pet customization options',
+    completed: false
+  },
+  musicEnthusiast: {
+    id: 'musicEnthusiast',
+    name: 'Music Enthusiast',
+    description: 'Listen to 10 different tracks',
+    icon: 'fas fa-music',
+    progress: 0,
+    goal: 10,
+    reward: 'Custom playlist feature',
+    completed: false
+  },
+  securityPro: {
+    id: 'securityPro',
+    name: 'Security Pro',
+    description: 'Use all security features',
+    icon: 'fas fa-shield-alt',
+    progress: 0,
+    goal: 4,
+    reward: 'Advanced security options',
+    completed: false
+  },
+  earlyBird: {
+    id: 'earlyBird',
+    name: 'Early Bird',
+    description: 'Use Void in the morning',
+    icon: 'fas fa-sun',
+    progress: 0,
+    goal: 1,
+    reward: 'Morning theme unlock',
+    completed: false
+  },
+  nightOwl: {
+    id: 'nightOwl',
+    name: 'Night Owl',
+    description: 'Use Void late at night',
+    icon: 'fas fa-moon',
+    progress: 0,
+    goal: 1,
+    reward: 'Dark mode enhancements',
+    completed: false
+  },
+  shareEnthusiast: {
+    id: 'shareEnthusiast',
+    name: 'Share Enthusiast',
+    description: 'Share feedback or report bugs',
+    icon: 'fas fa-share-alt',
+    progress: 0,
+    goal: 3,
+    reward: 'Beta tester status',
+    completed: false
+  }
+};
+
+// Initialize achievements
+function initAchievements() {
+  // Load saved achievements from localStorage
+  const savedAchievements = JSON.parse(localStorage.getItem('achievements')) || {};
+  
+  // Update achievements with saved data
+  Object.keys(achievements).forEach(key => {
+    if (savedAchievements[key]) {
+      achievements[key] = {...achievements[key], ...savedAchievements[key]};
+    }
+  });
+  
+  // Check for time-based achievements
+  checkTimeAchievements();
+}
+
+function checkTimeAchievements() {
+  const hour = new Date().getHours();
+  
+  if (hour >= 5 && hour <= 9) {
+    updateAchievementProgress('earlyBird', 1);
+  }
+  
+  if (hour >= 22 || hour <= 4) {
+    updateAchievementProgress('nightOwl', 1);
+  }
+}
+
+function updateAchievementProgress(achievementId, increment = 1) {
+  const achievement = achievements[achievementId];
+  if (!achievement || achievement.completed) return;
+
+  achievement.progress = Math.min(achievement.progress + increment, achievement.goal);
+  
+  if (achievement.progress >= achievement.goal && !achievement.completed) {
+    achievement.completed = true;
+    showAchievementNotification(achievement);
+  }
+  
+  // Save achievements
+  localStorage.setItem('achievements', JSON.stringify(achievements));
+  
+  // Update UI if achievements tab is open
+  updateAchievementsUI();
+}
+
+function showAchievementNotification(achievement) {
+  const notification = document.createElement('div');
+  notification.className = 'fixed top-4 right-4 bg-indigo-600/90 text-white px-6 py-4 rounded-xl shadow-2xl z-[100] flex items-center space-x-4 transform translate-y-[-100%]';
+  notification.innerHTML = `
+    <i class="${achievement.icon} text-2xl"></i>
+    <div>
+      <h3 class="font-bold">${achievement.name} Unlocked!</h3>
+      <p class="text-sm opacity-90">Reward: ${achievement.reward}</p>
+    </div>
+  `;
+  
+  document.body.appendChild(notification);
+  
+  // Animate in
+  requestAnimationFrame(() => {
+    notification.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+    notification.style.transform = 'translateY(0)';
+  });
+  
+  // Remove after delay
+  setTimeout(() => {
+    notification.style.transform = 'translateY(-100%)';
+    setTimeout(() => notification.remove(), 500);
+  }, 3000);
+}
+
+function updateAchievementsUI() {
+  const achievementsContainer = document.querySelector('#achievements-tab .achievements-grid');
+  if (!achievementsContainer) return;
+  
+  achievementsContainer.innerHTML = '';
+  
+  Object.values(achievements).forEach(achievement => {
+    const achievementCard = document.createElement('div');
+    achievementCard.className = `achievement-card bg-slate-800/50 rounded-xl p-4 border ${achievement.completed ? 'border-green-500/30' : 'border-indigo-500/20'}`;
+    achievementCard.innerHTML = `
+      <div class="flex items-center space-x-4">
+        <div class="w-12 h-12 rounded-full bg-slate-700/50 flex items-center justify-center">
+          <i class="${achievement.icon} text-xl ${achievement.completed ? 'text-green-400' : 'text-indigo-400'}"></i>
+        </div>
+        <div class="flex-1">
+          <h3 class="font-medium text-white">${achievement.name}</h3>
+          <p class="text-sm text-gray-400">${achievement.description}</p>
+        </div>
+        ${achievement.completed ? 
+          '<div class="text-green-400"><i class="fas fa-check-circle"></i></div>' :
+          `<div class="text-sm text-gray-400">${achievement.progress}/${achievement.goal}</div>`
+        }
+      </div>
+      <div class="mt-3">
+        <div class="w-full h-2 bg-slate-700/50 rounded-full overflow-hidden">
+          <div class="h-full bg-indigo-500 rounded-full transition-all duration-300" 
+               style="width: ${(achievement.progress / achievement.goal) * 100}%"></div>
+        </div>
+      </div>
+      ${achievement.completed ? 
+        `<div class="mt-2 text-sm text-green-400">
+          <i class="fas fa-gift mr-1"></i> Reward: ${achievement.reward}
+        </div>` : ''
+      }
+    `;
+    
+    achievementsContainer.appendChild(achievementCard);
+  });
+}
+
+// Call this when appropriate actions are taken
+function triggerAchievementCheck(type, data) {
+  switch(type) {
+    case 'visit_website':
+      updateAchievementProgress('explorer');
+      break;
+    case 'use_social_media':
+      updateAchievementProgress('socialButterfly');
+      break;
+    case 'change_theme':
+      updateAchievementProgress('customizer');
+      break;
+    case 'add_widget':
+      updateAchievementProgress('widgetMaster');
+      break;
+    case 'play_music':
+      updateAchievementProgress('musicEnthusiast');
+      break;
+    case 'use_security_feature':
+      updateAchievementProgress('securityPro');
+      break;
+    case 'share_feedback':
+      updateAchievementProgress('shareEnthusiast');
+      break;
+  }
+}
+
+// Initialize achievements on page load
+document.addEventListener('DOMContentLoaded', initAchievements);
+
+function changeSearchEngine(engine) {
+  localStorage.setItem('searchEngine', engine);
+}
+
+function getCurrentSearchEngine() {
+  return localStorage.getItem('searchEngine') || 'duckduckgo';
+}
+
+function toggleProxyPreload(enabled) {
+  localStorage.setItem('proxyPreload', enabled);
+  // Implementation for preloading can be added here
+}
+
+function toggleAlwaysNewTab(enabled) {
+  localStorage.setItem('alwaysNewTab', enabled);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  // ... existing code ...
+
+  // Initialize proxy settings
+  const searchEngineSelect = document.getElementById('search-engine-select');
+  if (searchEngineSelect) {
+    searchEngineSelect.value = getCurrentSearchEngine();
+  }
+
+  const proxyPreload = document.getElementById('proxy-preload');
+  if (proxyPreload) {
+    proxyPreload.checked = localStorage.getItem('proxyPreload') === 'true';
+  }
+
+  const alwaysNewTab = document.getElementById('always-new-tab');
+  if (alwaysNewTab) {
+    alwaysNewTab.checked = localStorage.getItem('alwaysNewTab') === 'true';
+  }
+});
 
 function proxySearch() {
   const searchInput = document.getElementById('proxy-search');
@@ -1222,7 +1687,17 @@ function proxySearch() {
     if (urlPattern.test(query)) {
       searchUrl = query.startsWith('http') ? query : `https://${query}`;
     } else {
-      searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
+      const searchEngine = getCurrentSearchEngine();
+      switch(searchEngine) {
+        case 'bing':
+          searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
+          break;
+        case 'yahoo':
+          searchUrl = `https://search.yahoo.com/search?p=${encodeURIComponent(query)}`;
+          break;
+        default:
+          searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
+      }
     }
     
     const sidePanel = document.getElementById('side-panel');
@@ -1237,7 +1712,6 @@ function proxySearch() {
       ></iframe>
     `;
     
-    // Add the navigation bar
     addProxyNavBar(sidePanel, searchUrl);
     
     sidePanel.classList.add('active');
@@ -1254,13 +1728,6 @@ function toggleProxyBar() {
     iframe.style.marginTop = navBar.style.display === 'none' ? '0' : '44px';
   }
   toggleProxyMenu();
-}
-
-function toggleProxyMenu() {
-  const menu = document.querySelector('#proxy-menu');
-  if (menu) {
-    menu.classList.toggle('hidden');
-  }
 }
 
 function toggleFullscreen() {

@@ -821,6 +821,16 @@
       background-color: rgba(99, 102, 241, 0.3);
       color: white;
     }
+
+    @media (max-width: 768px) {
+      #music-player {
+        display: none !important;
+      }
+
+      #music-player-toggle {
+        display: none !important;
+      }
+    }
   </style>
 </head>
 <body class="bg-slate-900 h-screen flex flex-col items-center justify-center overflow-hidden">
@@ -939,6 +949,10 @@
             <i class="fas fa-paint-brush w-5"></i>
             <span>Appearance</span>
           </button>
+          <button onclick="switchSettingsTab('proxy')" class="settings-tab-btn w-full text-left px-4 py-3 rounded-lg flex items-center space-x-3 text-gray-300 hover:bg-indigo-500/10 hover:text-white transition-all duration-300">
+            <i class="fas fa-globe w-5"></i>
+            <span>Proxy & Browser</span>
+          </button>
           <button onclick="switchSettingsTab('cloaking')" class="settings-tab-btn w-full text-left px-4 py-3 rounded-lg flex items-center space-x-3 text-gray-300 hover:bg-indigo-500/10 hover:text-white transition-all duration-300">
             <i class="fas fa-mask w-5"></i>
             <span>Tab Cloaking</span>
@@ -954,6 +968,10 @@
           <button onclick="switchSettingsTab('lab')" class="settings-tab-btn w-full text-left px-4 py-3 rounded-lg flex items-center space-x-3 text-gray-300 hover:bg-indigo-500/10 hover:text-white transition-all duration-300">
             <i class="fas fa-flask w-5"></i>
             <span>Lab</span>
+          </button>
+          <button onclick="switchSettingsTab('achievements')" class="settings-tab-btn w-full text-left px-4 py-3 rounded-lg flex items-center space-x-3 text-gray-300 hover:bg-indigo-500/10 hover:text-white transition-all duration-300">
+            <i class="fas fa-trophy w-5"></i>
+            <span>Achievements</span>
           </button>
         </div>
       </div>
@@ -1169,6 +1187,72 @@
                   <i class="fas fa-check checkmark text-xl"></i>
                 </label>
                 <p class="text-gray-400 text-sm">Show/hide the floating music player</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Proxy Tab -->
+        <div id="proxy-tab" class="settings-tab hidden p-8">
+          <h3 class="text-2xl font-semibold text-white mb-6 space-glow">Proxy & Browser Settings</h3>
+          <div class="space-y-6">
+            <div class="bg-slate-800/30 rounded-xl border border-indigo-500/20 p-6">
+              <h4 class="text-lg font-medium text-white mb-4">Search Engine</h4>
+              <div class="space-y-4">
+                <div class="flex items-center space-x-3">
+                  <select 
+                    id="search-engine-select" 
+                    class="w-full bg-slate-800/50 backdrop-blur text-white rounded-xl px-4 py-3 border border-indigo-500/20"
+                    onchange="changeSearchEngine(this.value)"
+                  >
+                    <option value="duckduckgo" selected>DuckDuckGo (Default)</option>
+                    <option value="bing">Bing</option>
+                    <option value="yahoo">Yahoo</option>
+                  </select>
+                </div>
+                <p class="text-sm text-gray-400">Select your preferred search engine for proxy searches</p>
+              </div>
+            </div>
+
+            <div class="bg-slate-800/30 rounded-xl border border-indigo-500/20 p-6">
+              <h4 class="text-lg font-medium text-white mb-4">Proxy Performance</h4>
+              <div class="space-y-4">
+                <label class="flex items-center space-x-3 cursor-pointer">
+                  <div class="toggle-checkbox">
+                    <input 
+                      type="checkbox" 
+                      id="!proxy-preload" 
+                      class="hidden"
+                      onchange="toggleProxyPreload(this.checked)"
+                    >
+                    <i class="fas fa-check checkmark text-xl"></i>
+                  </div>
+                  <div>
+                    <p class="text-white">Preload Popular Sites</p>
+                    <p class="text-sm text-gray-400">Improves loading speed but uses more memory</p>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div class="bg-slate-800/30 rounded-xl border border-indigo-500/20 p-6">
+              <h4 class="text-lg font-medium text-white mb-4">Browser Behavior</h4>
+              <div class="space-y-4">
+                <label class="flex items-center space-x-3 cursor-pointer">
+                  <div class="toggle-checkbox">
+                    <input 
+                      type="checkbox" 
+                      id="!always-new-tab" 
+                      class="hidden"
+                      onchange="toggleAlwaysNewTab(this.checked)"
+                    >
+                    <i class="fas fa-check checkmark text-xl"></i>
+                  </div>
+                  <div>
+                    <p class="text-white">Always Open in New Tab</p>
+                    <p class="text-sm text-gray-400">Open proxy links in new tabs by default</p>
+                  </div>
+                </label>
               </div>
             </div>
           </div>
@@ -1398,6 +1482,26 @@
             </div>
           </div>
         </div>
+
+        <!-- Achievements Tab -->
+        <div id="achievements-tab" class="settings-tab hidden p-8">
+          <h3 class="text-2xl font-semibold text-white mb-6 space-glow">Achievements</h3>
+          <div class="mb-6 bg-slate-800/30 rounded-xl border border-indigo-500/20 p-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="text-lg font-medium text-white">Your Progress</h4>
+                <p class="text-sm text-gray-400">Keep exploring to unlock more achievements!</p>
+              </div>
+              <div class="text-right">
+                <p class="text-2xl font-bold text-indigo-400" id="achievements-completed">0/10</p>
+                <p class="text-sm text-gray-400">Achievements</p>
+              </div>
+            </div>
+          </div>
+          <div class="achievements-grid grid gap-4">
+            <!-- Achievements will be populated here by JavaScript -->
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1609,17 +1713,17 @@
   <!-- Context Menu -->
   <div id="context-menu" class="fixed hidden bg-slate-800/90 backdrop-blur rounded-lg border border-indigo-500/20 shadow-xl z-50 overflow-hidden w-48">
     <div class="p-2 space-y-1">
-      <div class="context-menu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="openInAboutBlank()">
+      <div class="context-menu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="openInAboutBlank()">
         <i class="fas fa-external-link-alt mr-2"></i>
         <span>About:blank Cloak</span>
       </div>
 
-      <div class="context-menu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="showTabCloakMenu()">
+      <div class="context-menu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="showTabCloakMenu()">
         <i class="fas fa-mask mr-2"></i>
         <span>Tab Cloak</span>
       </div>
 
-      <div class="context-menu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="openSettings()">
+      <div class="context-menu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="openSettings()">
         <i class="fas fa-cog mr-2"></i>
         <span>View All Settings</span>
       </div>
@@ -1628,19 +1732,19 @@
 
       <!-- Move widgets to bottom -->
       <div class="widget-parent">
-        <div class="context-menu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer flex items-center">
+        <div class="context-menu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer flex items-center">
           <i class="fas fa-plus mr-2"></i>
           <span class="font-medium">Add Widget</span>
         </div>
         
         <div class="widget-submenu hidden pl-4 space-y-1">
-          <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="addWidget('calendar')">
+          <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="addWidget('calendar')">
             <i class="far fa-calendar mr-2"></i>Calendar
           </div>
-          <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="addWidget('weather')">
+          <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="addWidget('weather')">
             <i class="fas fa-cloud mr-2"></i>Weather
           </div>
-          <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="addWidget('timer')">
+          <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="addWidget('timer')">
             <i class="fas fa-clock mr-2"></i>Timer
           </div>
         </div>
@@ -1651,19 +1755,19 @@
   <!-- Tab Cloak Submenu -->
   <div id="tab-cloak-menu" class="fixed hidden bg-slate-800/90 backdrop-blur rounded-lg border border-indigo-500/20 shadow-xl z-50 overflow-hidden w-48">
     <div class="p-2 space-y-1">
-      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="updateTabCloak('google')">
+      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="updateTabCloak('google')">
         <i class="fab fa-google mr-2"></i>Google
       </div>
-      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="updateTabCloak('drive')">
+      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="updateTabCloak('drive')">
         <i class="fab fa-google-drive mr-2"></i>Google Drive
       </div>
-      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="updateTabCloak('classroom')">
+      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="updateTabCloak('classroom')">
         <i class="fas fa-school mr-2"></i>Google Classroom
       </div>
-      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="updateTabCloak('canvas')">
+      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="updateTabCloak('canvas')">
         <i class="fas fa-graduation-cap mr-2"></i>Canvas
       </div>
-      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded cursor-pointer" onclick="updateTabCloak('zoom')">
+      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="updateTabCloak('zoom')">
         <i class="fas fa-video mr-2"></i>Zoom
       </div>
     </div>
@@ -1789,7 +1893,7 @@
                     onclick="proxySearch()" 
                     class="absolute right-4 top-1/2 transform -translate-y-1/2 
                     bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg
-                    transition-all duration-300 flex items-center space-x-2"
+                    transition!-all duration-300 flex items-center space-x-2"
                   >
                     <i class="fas fa-search"></i>
                     <span>Search</span>
@@ -1872,7 +1976,7 @@
                 </div>
               </div>
 
-              <div class="app-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              <div class="app-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 overflow-y-auto max-h-[calc(100vh-220px)]">
                 <div onclick="proxyApp('https://discord.com')" class="app-card flex flex-col items-center text-center">
                   <i class="fab fa-discord app-icon text-indigo-500 text-3xl mb-2"></i>
                   <span class="app-name">Discord</span>
@@ -1923,45 +2027,55 @@
                   <span class="app-name">Pinterest</span>
                   <span class="category-label">Social</span>
                 </div>
-                <div onclick="proxyApp('https://soundcloud.com')" class="app-card flex flex-col items-center text-center">
-                  <i class="fab fa-soundcloud app-icon text-orange-500 text-3xl mb-2"></i>
-                  <span class="app-name">SoundCloud</span>
+                <div onclick="proxyApp('https://messenger.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fab fa-facebook-messenger app-icon text-blue-500 text-3xl mb-2"></i>
+                  <span class="app-name">Messenger</span>
+                  <span class="category-label">Social</span>
+                </div>
+                <div onclick="proxyApp('https://whatsapp.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fab fa-whatsapp app-icon text-green-500 text-3xl mb-2"></i>
+                  <span class="app-name">WhatsApp</span>
+                  <span class="category-label">Social</span>
+                </div>
+                <div onclick="proxyApp('https://telegram.org')" class="app-card flex flex-col items-center text-center">
+                  <i class="fab fa-telegram app-icon text-blue-400 text-3xl mb-2"></i>
+                  <span class="app-name">Telegram</span>
+                  <span class="category-label">Social</span>
+                </div>
+                <div onclick="proxyApp('https://hulu.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fas fa-tv app-icon text-green-400 text-3xl mb-2"></i>
+                  <span class="app-name">Hulu</span>
+                  <span class="category-label">Streaming</span>
+                </div>
+                <div onclick="proxyApp('https://disneyplus.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fas fa-video app-icon text-blue-500 text-3xl mb-2"></i>
+                  <span class="app-name">Disney+</span>
+                  <span class="category-label">Streaming</span>
+                </div>
+                <div onclick="proxyApp('https://pandora.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fas fa-music app-icon text-blue-400 text-3xl mb-2"></i>
+                  <span class="app-name">Pandora</span>
+                  <span class="category-label">Music</span>
+                </div>
+                <div onclick="proxyApp('https://deezer.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fas fa-headphones app-icon text-purple-500 text-3xl mb-2"></i>
+                  <span class="app-name">Deezer</span>
                   <span class="category-label">Music</span>
                 </div>
                 <div onclick="proxyApp('https://tumblr.com')" class="app-card flex flex-col items-center text-center">
-                  <i class="fab fa-tumblr app-icon text-blue-500 text-3xl mb-2"></i>
+                  <i class="fab fa-tumblr app-icon text-blue-600 text-3xl mb-2"></i>
                   <span class="app-name">Tumblr</span>
                   <span class="category-label">Social</span>
                 </div>
                 <div onclick="proxyApp('https://vimeo.com')" class="app-card flex flex-col items-center text-center">
-                  <i class="fab fa-vimeo app-icon text-blue-400 text-3xl mb-2"></i>
+                  <i class="fab fa-vimeo app-icon text-cyan-500 text-3xl mb-2"></i>
                   <span class="app-name">Vimeo</span>
                   <span class="category-label">Video</span>
                 </div>
-                <div onclick="proxyApp('https://dailymotion.com')" class="app-card flex flex-col items-center text-center">
-                  <i class="fas fa-video app-icon text-blue-500 text-3xl mb-2"></i>
-                  <span class="app-name">Dailymotion</span>
-                  <span class="category-label">Video</span>
-                </div>
-                <div onclick="proxyApp('https://amazon.com')" class="app-card flex flex-col items-center text-center">
-                  <i class="fab fa-amazon app-icon text-yellow-500 text-3xl mb-2"></i>
-                  <span class="app-name">Amazon</span>
-                  <span class="category-label">Shopping</span>
-                </div>
-                <div onclick="proxyApp('https://ebay.com')" class="app-card flex flex-col items-center text-center">
-                  <i class="fab fa-ebay app-icon text-blue-500 text-3xl mb-2"></i>
-                  <span class="app-name">eBay</span>
-                  <span class="category-label">Shopping</span>
-                </div>
-                <div onclick="proxyApp('https://crunchyroll.com')" class="app-card flex flex-col items-center text-center">
-                  <i class="fas fa-tv app-icon text-orange-500 text-3xl mb-2"></i>
-                  <span class="app-name">Crunchyroll</span>
-                  <span class="category-label">Anime</span>
-                </div>
-                <div onclick="proxyApp('https://funimation.com')" class="app-card flex flex-col items-center text-center">
-                  <i class="fas fa-play-circle app-icon text-purple-500 text-3xl mb-2"></i>
-                  <span class="app-name">Funimation</span>
-                  <span class="category-label">Anime</span>
+                <div onclick="proxyApp('https://primevideo.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fab fa-amazon app-icon text-blue-500 text-3xl mb-2"></i>
+                  <span class="app-name">Prime Video</span>
+                  <span class="category-label">Streaming</span>
                 </div>
               </div>
             </div>
