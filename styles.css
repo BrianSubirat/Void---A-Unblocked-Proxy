@@ -31,3 +31,29 @@
   margin-top: 0.5rem;
   transition: color 0.3s ease;
 }
+
+#bookmarks-panel {
+  transform: translateX(100%);
+  z-index: 45;
+}
+
+#bookmarks-panel .group:hover .opacity-0 {
+  opacity: 1;
+}
+
+#bookmarks-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+#bookmarks-panel::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.3);
+}
+
+#bookmarks-panel::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.3);
+  border-radius: 4px;
+}
+
+#bookmarks-panel::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.5);
+}

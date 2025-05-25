@@ -688,7 +688,6 @@
       width: 4rem; 
       height: 2rem; 
       background: rgba(79, 70, 229, 0.1);
-      border-radius: 1rem; 
       border: 1px solid rgba(79, 70, 229, 0.2);
       cursor: pointer;
       transition: all 0.3s ease;
@@ -805,31 +804,21 @@
       object-fit: contain;
     }
     
+    /* Cursor styles with neon effect and point cursor */
     body {
-      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10' stroke-opacity='0.7'/%3E%3Ccircle cx='12' cy='12' r='4' fill='%236366f1' fill-opacity='0.5'/%3E%3C/svg%3E"), auto;
+      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z' fill='url(%23purpleGradient)' stroke-opacity='0.7'/%3E%3Cdefs%3E%3ClinearGradient id='purpleGradient' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23a855f7;stop-opacity:0.8'/%3E%3Cstop offset='100%25' style='stop-color:%236366f1;stop-opacity:0.8'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E"), pointer;
     }
 
-    /* Custom cursor for clickable elements */
     a, button, .cursor-pointer, 
     .sidebar-item, .app-card, 
     .category-card, .widget {
-      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10' stroke-opacity='0.7'/%3E%3Ccircle cx='12' cy='12' r='4' fill='%236366f1' fill-opacity='0.8'/%3E%3C/svg%3E"), pointer;
+      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z' fill='url(%23purpleGradient)' stroke-opacity='0.7'/%3E%3Cdefs%3E%3ClinearGradient id='purpleGradient' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23a855f7;stop-opacity:0.8'/%3E%3Cstop offset='100%25' style='stop-color:%236366f1;stop-opacity:0.8'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E"), pointer;
     }
-
+    
     /* Text selection cursor */
     ::selection {
       background-color: rgba(99, 102, 241, 0.3);
       color: white;
-    }
-
-    @media (max-width: 768px) {
-      #music-player {
-        display: none !important;
-      }
-
-      #music-player-toggle {
-        display: none !important;
-      }
     }
   </style>
 </head>
@@ -928,6 +917,10 @@
     <a href="#" class="mobile-nav-item" onclick="openCategory('movies')">
       <i class="fas fa-film"></i>
       <span class="text-xs">Movies</span>
+    </a>
+    <a href="#" class="mobile-nav-item" onclick="openSettings()">
+      <i class="fas fa-cog"></i>
+      <span class="text-xs">Settings</span>
     </a>
   </nav>
 
@@ -1361,9 +1354,9 @@
 
             <div class="p-6 bg-slate-800/30 rounded-xl border border-indigo-500/20">
               <h4 class="text-lg font-medium text-white mb-2">Version Information</h4>
-              <p class="text-gray-300">Version: 1.1.0</p>
-              <p class="text-gray-300">Build: 2024.02</p>
-              <p class="text-gray-300">Last Updated: February 2024</p>
+              <p class="text-gray-300">Version: 1.1.1</p>
+              <p class="text-gray-300">Build: 2024.03</p>
+              <p class="text-gray-300">Last Updated: March 2024</p>
               <p class="text-gray-300 mt-2 font-semibold text-indigo-300">Major UI Overhaul: Significant interface redesign and improvements</p>
             </div>
 
@@ -1512,7 +1505,8 @@
     rounded-full flex items-center justify-center shadow-2xl 
     transition-all duration-300 ease-in-out transform hover:scale-110 
     hover:rotate-6 z-50 cursor-pointer"
-    onclick="openUpdateNotification()">
+    onclick="openUpdateNotification()"
+    style="display: block;">
     <i class="fas fa-bell text-lg"></i>
     <span id="update-dot" class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 
     rounded-full text-xs flex items-center justify-center text-white font-bold"></span>
@@ -1537,13 +1531,21 @@
             <i class="fas fa-rocket"></i>
           </div>
           <div class="update-details">
-            <h3>Version 1.1.0 Released</h3>
-            <p>New features and performance improvements</p>
+            <h3>Version 1.1.1 Released</h3>
+            <p>Major performance and security improvements</p>
           </div>
         </div>
         <div class="update-tags">
-          <span class="update-tag bg-indigo-500/20 text-indigo-300">🚀 Update</span>
-          <span class="update-tag bg-emerald-500/20 text-emerald-300">New Features</span>
+          <span class="update-tag bg-indigo-500/20 text-indigo-300">🚀 Core Update</span>
+          <span class="update-tag bg-emerald-500/20 text-emerald-300">Performance</span>
+        </div>
+        <div class="update-description">
+          <ul class="text-sm text-gray-400 list-disc pl-4">
+            <li>Enhanced proxy connection stability</li>
+            <li>Reduced memory usage</li>
+            <li>Optimized background animations</li>
+            <li>Improved mobile compatibility</li>
+          </ul>
         </div>
       </div>
       
@@ -1553,12 +1555,19 @@
             <i class="fas fa-shield-alt"></i>
           </div>
           <div class="update-details">
-            <h3>Enhanced Security</h3>
-            <p>Improved proxy security features</p>
+            <h3>Security Enhancements</h3>
+            <p>Advanced protection technologies</p>
           </div>
         </div>
         <div class="update-tags">
           <span class="update-tag bg-emerald-500/20 text-emerald-300">🛡️ Security</span>
+        </div>
+        <div class="update-description">
+          <ul class="text-sm text-gray-400 list-disc pl-4">
+            <li>Enhanced XSS protection</li>
+            <li>Improved SSL/TLS handshake</li>
+            <li>Added advanced proxy encryption</li>
+          </ul>
         </div>
       </div>
       
@@ -1568,12 +1577,20 @@
             <i class="fas fa-palette"></i>
           </div>
           <div class="update-details">
-            <h3>UI/UX Updates</h3>
-            <p>Refined user experience design</p>
+            <h3>UI/UX Refinements</h3>
+            <p>Smoother and more intuitive design</p>
           </div>
         </div>
         <div class="update-tags">
           <span class="update-tag bg-purple-500/20 text-purple-300">💡 Design</span>
+        </div>
+        <div class="update-description">
+          <ul class="text-sm text-gray-400 list-disc pl-4">
+            <li>Refined sidebar interactions</li>
+            <li>Enhanced mobile responsiveness</li>
+            <li>More accessible color schemes</li>
+            <li>Smoother transitions</li>
+          </ul>
         </div>
       </div>
       
@@ -1583,13 +1600,21 @@
             <i class="fas fa-globe"></i>
           </div>
           <div class="update-details">
-            <h3>Proxy Enhancements</h3>
-            <p>Added advanced proxy navigation features</p>
+            <h3>Proxy Navigation</h3>
+            <p>Advanced browsing capabilities</p>
           </div>
         </div>
         <div class="update-tags">
           <span class="update-tag bg-blue-500/20 text-blue-300">🌐 Proxy</span>
           <span class="update-tag bg-yellow-500/20 text-yellow-300">Beta</span>
+        </div>
+        <div class="update-description">
+          <ul class="text-sm text-gray-400 list-disc pl-4">
+            <li>Bookmarks system implemented</li>
+            <li>Multi-search engine support</li>
+            <li>Enhanced URL navigation</li>
+            <li>Improved tab management</li>
+          </ul>
         </div>
       </div>
       
@@ -1600,11 +1625,139 @@
           </div>
           <div class="update-details">
             <h3>Bug Fixes</h3>
-            <p>Multiple stability and performance fixes</p>
+            <p>Resolving reported issues</p>
           </div>
         </div>
         <div class="update-tags">
           <span class="update-tag bg-red-500/20 text-red-300">🐛 Fixes</span>
+        </div>
+        <div class="update-description">
+          <ul class="text-sm text-gray-400 list-disc pl-4">
+            <li>Fixed mobile layout glitches</li>
+            <li>Resolved proxy connection errors</li>
+            <li>Stabilized widget interactions</li>
+            <li>Corrected achievement tracking</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="update-item">
+        <div class="update-header">
+          <div class="update-icon bg-cyan-600">
+            <i class="fas fa-th-large"></i>
+          </div>
+          <div class="update-details">
+            <h3>Widget Enhancements</h3>
+            <p>New widgets and improved interactivity</p>
+          </div>
+        </div>
+        <div class="update-tags">
+          <span class="update-tag bg-cyan-500/20 text-cyan-300">🧩 Widgets</span>
+          <span class="update-tag bg-purple-500/20 text-purple-300">New Features</span>
+        </div>
+        <div class="update-description">
+          <ul class="text-sm text-gray-400 list-disc pl-4">
+            <li>Added Calendar, Weather, and Timer widgets</li>
+            <li>Drag and drop widget positioning</li>
+            <li>Persistent widget settings</li>
+            <li>Improved widget interaction</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="update-item">
+        <div class="update-header">
+          <div class="update-icon bg-rose-600">
+            <i class="fas fa-puzzle-piece"></i>
+          </div>
+          <div class="update-details">
+            <h3>Achievement System</h3>
+            <p>Gamify your browsing experience</p>
+          </div>
+        </div>
+        <div class="update-tags">
+          <span class="update-tag bg-rose-500/20 text-rose-300">🏆 Achievements</span>
+          <span class="update-tag bg-yellow-500/20 text-yellow-300">Gamification</span>
+        </div>
+        <div class="update-description">
+          <ul class="text-sm text-gray-400 list-disc pl-4">
+            <li>Introduced 10 unique achievements</li>
+            <li>Reward system for user interactions</li>
+            <li>Progress tracking for each achievement</li>
+            <li>Unlock special features and themes</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="update-item">
+        <div class="update-header">
+          <div class="update-icon bg-emerald-600">
+            <i class="fas fa-mobile-alt"></i>
+          </div>
+          <div class="update-details">
+            <h3>Mobile Optimization</h3>
+            <p>Improved responsive design</p>
+          </div>
+        </div>
+        <div class="update-tags">
+          <span class="update-tag bg-emerald-500/20 text-emerald-300">📱 Responsiveness</span>
+          <span class="update-tag bg-blue-500/20 text-blue-300">UI/UX</span>
+        </div>
+        <div class="update-description">
+          <ul class="text-sm text-gray-400 list-disc pl-4">
+            <li>Enhanced mobile navigation</li>
+            <li>Adaptive sidebar for different screen sizes</li>
+            <li>Touch-friendly interface</li>
+            <li>Optimized mobile performance</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="update-item">
+        <div class="update-header">
+          <div class="update-icon bg-orange-600">
+            <i class="fas fa-music"></i>
+          </div>
+          <div class="update-details">
+            <h3>Music Player Upgrades</h3>
+            <p>Enhanced audio experience</p>
+          </div>
+        </div>
+        <div class="update-tags">
+          <span class="update-tag bg-orange-500/20 text-orange-300">🎵 Music</span>
+          <span class="update-tag bg-indigo-500/20 text-indigo-300">Player</span>
+        </div>
+        <div class="update-description">
+          <ul class="text-sm text-gray-400 list-disc pl-4">
+            <li>Added multiple music track categories</li>
+            <li>Persistent volume and playback settings</li>
+            <li>Mobile-friendly player controls</li>
+            <li>Background music support</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="update-item">
+        <div class="update-header">
+          <div class="update-icon bg-fuchsia-600">
+            <i class="fas fa-palette"></i>
+          </div>
+          <div class="update-details">
+            <h3>Theming System</h3>
+            <p>More customization options</p>
+          </div>
+        </div>
+        <div class="update-tags">
+          <span class="update-tag bg-fuchsia-500/20 text-fuchsia-300">🎨 Themes</span>
+          <span class="update-tag bg-purple-500/20 text-purple-300">Customization</span>
+        </div>
+        <div class="update-description">
+          <ul class="text-sm text-gray-400 list-disc pl-4">
+            <li>Added 6 new theme variations</li>
+            <li>Custom background animations</li>
+            <li>Persistent theme settings</li>
+            <li>Dark mode enhancements</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -1623,7 +1776,10 @@
 
   <div class="max-w-4xl w-full px-4 text-center py-8 mt-20 md:mt-32 main-content">
     <div class="flex flex-col items-center justify-center space-y-4">
-      <h1 class="typing-text text-4xl font-bold text-white space-glow mb-4" id="typing-text"></h1>
+      <div class="flex flex-col items-center justify-center">
+        <img src="/potato-chips.gif" alt="Potato Chips GIF" class="w-16 h-16 object-cover mb-2">
+        <h1 class="typing-text text-4xl font-bold text-white space-glow mb-4" id="typing-text"></h1>
+      </div>
       <h2 class="text-2xl text-indigo-300 space-glow"></h2>
       <p class="text-xl text-indigo-400 space-glow">Start your unblocking journey today!</p>
     </div>
@@ -1696,7 +1852,7 @@
           <button class="start-timer bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 px-4 py-2 rounded-lg">
             <i class="fas fa-play"></i>
           </button>
-          <button class="pause-timer bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 px-4 py-2 rounded-lg" disabled>
+          <button id="pause-timer" class="pause-timer bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 px-4 py-2 rounded-lg" disabled>
             <i class="fas fa-pause"></i>
           </button>
           <button class="reset-timer bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 px-4 py-2 rounded-lg">
@@ -1893,7 +2049,7 @@
                     onclick="proxySearch()" 
                     class="absolute right-4 top-1/2 transform -translate-y-1/2 
                     bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg
-                    transition!-all duration-300 flex items-center space-x-2"
+                    transition-all duration-300 flex items-center space-x-2"
                   >
                     <i class="fas fa-search"></i>
                     <span>Search</span>

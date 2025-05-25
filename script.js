@@ -1185,6 +1185,113 @@ window.shareFeatureIdea = shareFeatureIdea;
 
 let bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
 
+function showBookmarks() {
+  // Close the proxy menu first
+  const menu = document.querySelector('#proxy-menu');
+  if (menu) {
+    menu.classList.add('hidden');
+  }
+
+  // Remove existing bookmarks panel if it exists
+  const existingPanel = document.querySelector('#bookmarks-panel');
+  if (existingPanel) {
+    existingPanel.remove();
+  }
+
+  // Create bookmarks panel
+  const bookmarksPanel = document.createElement('div');
+  bookmarksPanel.id = 'bookmarks-panel';
+  bookmarksPanel.className = 'fixed right-0 top-0 h-full w-72 bg-slate-800/90 backdrop-blur border-l border-indigo-500/20 shadow-2xl transform translate-x-0 transition-transform duration-300 z-[45]';
+  
+  bookmarksPanel.innerHTML = `
+    <div class="p-4 border-b border-indigo-500/20">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-semibold text-white">Bookmarks</h3>
+        <button onclick="closeBookmarksPanel()" class="text-gray-400 hover:text-white transition-colors">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+    <div class="p-4 overflow-y-auto max-h-[calc(100vh-64px)]">
+      ${bookmarks.length === 0 ? 
+        `<div class="text-center text-gray-400 py-4">
+          <i class="fas fa-bookmark text-3xl mb-2"></i>
+          <p>No bookmarks yet</p>
+          <p class="text-sm mt-2">Click the star icon to add bookmarks</p>
+        </div>` :
+        bookmarks.map(bookmark => `
+          <div class="mb-3 bg-slate-700/30 rounded-lg p-3 group hover:bg-slate-700/50 transition-all">
+            <div class="flex items-center justify-between">
+              <button 
+                onclick="proxyNavigate('${bookmark.url}')" 
+                class="flex-1 text-left text-gray-300 hover:text-white truncate"
+              >
+                <div class="font-medium">${bookmark.title}</div>
+                <div class="text-xs text-gray-400 truncate">${bookmark.url}</div>
+              </button>
+              <button 
+                onclick="removeBookmark('${bookmark.url}')" 
+                class="text-red-400 opacity-0 group-hover:opacity-100 transition-opacity ml-2"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+            <div class="text-xs text-gray-500 mt-1">
+              Added ${new Date(bookmark.timestamp).toLocaleDateString()}
+            </div>
+          </div>
+        `).join('')
+      }
+    </div>
+  `;
+
+  document.body.appendChild(bookmarksPanel);
+
+  // Animate panel in
+  requestAnimationFrame(() => {
+    bookmarksPanel.style.transform = 'translateX(0)';
+  });
+}
+
+function closeBookmarksPanel() {
+  const panel = document.querySelector('#bookmarks-panel');
+  if (panel) {
+    panel.style.transform = 'translateX(100%)';
+    setTimeout(() => panel.remove(), 300);
+  }
+}
+
+function removeBookmark(url) {
+  bookmarks = bookmarks.filter(b => b.url !== url);
+  localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+  
+  // Refresh bookmarks panel
+  showBookmarks();
+  
+  // Update star icon
+  updateBookmarkStar(url);
+}
+
+function updateBookmarkStar(url) {
+  const starIcon = document.querySelector('#bookmark-star');
+  if (!starIcon) return;
+  
+  const isBookmarked = bookmarks.some(b => b.url === url);
+  starIcon.classList.toggle('text-yellow-400', isBookmarked);
+  starIcon.classList.toggle('text-gray-400', !isBookmarked);
+}
+
+document.addEventListener('click', (e) => {
+  const panel = document.querySelector('#bookmarks-panel');
+  const menu = document.querySelector('#proxy-menu');
+  
+  if (panel && !panel.contains(e.target) && 
+      !menu?.contains(e.target) && 
+      !e.target.closest('button[onclick="showBookmarks()"]')) {
+    closeBookmarksPanel();
+  }
+});
+
 function toggleBookmark() {
   const iframe = document.querySelector('#search-iframe');
   const starIcon = document.querySelector('#bookmark-star');
@@ -1212,78 +1319,7 @@ function toggleBookmark() {
   localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
 }
 
-function updateBookmarkStar(url) {
-  const starIcon = document.querySelector('#bookmark-star');
-  if (!starIcon) return;
-  
-  const isBookmarked = bookmarks.some(b => b.url === url);
-  starIcon.classList.toggle('text-yellow-400', isBookmarked);
-  starIcon.classList.toggle('text-gray-400', !isBookmarked);
-}
-
-function showBookmarks() {
-  const menu = document.querySelector('#proxy-menu');
-  const bookmarksList = menu.querySelector('#bookmarks-list');
-  
-  if (!menu || !bookmarksList) {
-    console.warn('Proxy menu or bookmarks list not found');
-    return;
-  }
-  
-  if (bookmarks.length === 0) {
-    bookmarksList.innerHTML = `
-      <div class="px-4 py-2 text-gray-400 text-center">
-        No bookmarks yet
-      </div>
-    `;
-  } else {
-    bookmarksList.innerHTML = bookmarks.map(bookmark => `
-      <div class="px-4 py-2 hover:bg-indigo-500/20 flex items-center justify-between group">
-        <button 
-          onclick="proxyNavigate('${bookmark.url}')" 
-          class="flex-1 text-left text-gray-300 truncate"
-        >
-          ${bookmark.title}
-        </button>
-        <button 
-          onclick="removeBookmark('${bookmark.url}')" 
-          class="text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
-        >
-          <i class="fas fa-trash"></i>
-        </button>
-      </div>
-    `).join('');
-  }
-  
-  // Ensure menu is visible
-  toggleProxyMenu();
-}
-
-function removeBookmark(url) {
-  bookmarks = bookmarks.filter(b => b.url !== url);
-  localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
-  showBookmarks();
-  updateBookmarkStar(url);
-}
-
-function updateBookmarkStar(url) {
-  const starIcon = document.querySelector('#bookmark-star');
-  if (!starIcon) return;
-  
-  const isBookmarked = bookmarks.some(b => b.url === url);
-  starIcon.classList.toggle('text-yellow-400', isBookmarked);
-  starIcon.classList.toggle('text-gray-400', !isBookmarked);
-}
-
-function toggleProxyMenu() {
-  const menu = document.querySelector('#proxy-menu');
-  if (menu) {
-    menu.classList.toggle('hidden');
-  } else {
-    console.warn('Proxy menu element not found');
-  }
-}
-
+// Add Proxy NavBar
 function addProxyNavBar(sidePanel, url) {
   // Defensive checks
   if (!sidePanel) {
@@ -1393,7 +1429,116 @@ function addProxyNavBar(sidePanel, url) {
   updateBookmarkStar(url);
 }
 
-// Define achievements
+function toggleProxyMenu() {
+  const menu = document.querySelector('#proxy-menu');
+  if (menu) {
+    menu.classList.toggle('hidden');
+  } else {
+    console.warn('Proxy menu element not found');
+  }
+}
+
+function toggleProxyBar() {
+  const navBar = document.getElementById('proxy-nav-bar');
+  const iframe = document.querySelector('#search-iframe');
+  if (navBar && iframe) {
+    navBar.style.display = navBar.style.display === 'none' ? 'flex' : 'none';
+    iframe.style.height = navBar.style.display === 'none' ? '100%' : 'calc(100% - 44px)';
+    iframe.style.marginTop = navBar.style.display === 'none' ? '0' : '44px';
+  }
+  toggleProxyMenu();
+}
+
+function toggleFullscreen() {
+  const sidePanel = document.getElementById('side-panel');
+  if (!document.fullscreenElement) {
+    sidePanel.requestFullscreen().catch(err => {
+      console.log(`Error attempting to enable fullscreen: ${err.message}`);
+    });
+  } else {
+    document.exitFullscreen();
+  }
+  toggleProxyMenu();
+}
+
+function proxyGoBack() {
+  const iframe = document.querySelector('#search-iframe');
+  if (iframe) {
+    iframe.contentWindow.postMessage({ type: 'goBack' }, '*');
+  }
+}
+
+function proxyGoForward() {
+  const iframe = document.querySelector('#search-iframe');
+  if (iframe) {
+    iframe.contentWindow.postMessage({ type: 'goForward' }, '*');
+  }
+}
+
+function proxyReload() {
+  const iframe = document.querySelector('#search-iframe');
+  if (iframe) {
+    iframe.contentWindow.postMessage({ type: 'reload' }, '*');
+  }
+}
+
+function proxyNavigate(url) {
+  const iframe = document.querySelector('#search-iframe');
+  if (iframe) {
+    // Add https:// if not present
+    if (!/^https?:\/\//i.test(url)) {
+      url = 'https://' + url;
+    }
+    iframe.src = url;
+    document.querySelector('#proxy-url-bar').value = url;
+  }
+}
+
+window.addEventListener('message', (event) => {
+  // Optional: Add origin checking for additional security
+  // if (event.origin !== "https://expected-origin.com") return;
+
+  switch(event.data.type) {
+    case 'urlChanged':
+      const proxyUrlBar = document.querySelector('#proxy-url-bar');
+      if (proxyUrlBar) {
+        proxyUrlBar.value = event.data.url;
+      }
+      break;
+  }
+}, false);
+
+function proxyOpenInNewTab() {
+  const iframe = document.querySelector('#search-iframe');
+  if (iframe) {
+    window.open(iframe.src, '_blank');
+  }
+  toggleProxyMenu();
+}
+
+function proxyCopyUrl() {
+  const iframe = document.querySelector('#search-iframe');
+  if (iframe) {
+    navigator.clipboard.writeText(iframe.src);
+    // Show feedback toast
+    const toast = document.createElement('div');
+    toast.className = 'fixed bottom-4 right-4 bg-green-500/90 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+    toast.textContent = 'URL copied to clipboard';
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2000);
+  }
+  toggleProxyMenu();
+}
+
+function proxyViewSource() {
+  const iframe = document.querySelector('#search-iframe');
+  if (iframe) {
+    window.open('view-source:' + iframe.src);
+  }
+  toggleProxyMenu();
+}
+
+// Achievements
 const achievements = {
   explorer: {
     id: 'explorer',
@@ -1497,7 +1642,6 @@ const achievements = {
   }
 };
 
-// Initialize achievements
 function initAchievements() {
   // Load saved achievements from localStorage
   const savedAchievements = JSON.parse(localStorage.getItem('achievements')) || {};
@@ -1609,7 +1753,6 @@ function updateAchievementsUI() {
   });
 }
 
-// Call this when appropriate actions are taken
 function triggerAchievementCheck(type, data) {
   switch(type) {
     case 'visit_website':
@@ -1717,105 +1860,4 @@ function proxySearch() {
     sidePanel.classList.add('active');
     updateNotificationBtn.style.display = 'none';
   }
-}
-
-function toggleProxyBar() {
-  const navBar = document.getElementById('proxy-nav-bar');
-  const iframe = document.querySelector('#search-iframe');
-  if (navBar && iframe) {
-    navBar.style.display = navBar.style.display === 'none' ? 'flex' : 'none';
-    iframe.style.height = navBar.style.display === 'none' ? '100%' : 'calc(100% - 44px)';
-    iframe.style.marginTop = navBar.style.display === 'none' ? '0' : '44px';
-  }
-  toggleProxyMenu();
-}
-
-function toggleFullscreen() {
-  const sidePanel = document.getElementById('side-panel');
-  if (!document.fullscreenElement) {
-    sidePanel.requestFullscreen().catch(err => {
-      console.log(`Error attempting to enable fullscreen: ${err.message}`);
-    });
-  } else {
-    document.exitFullscreen();
-  }
-  toggleProxyMenu();
-}
-
-function proxyGoBack() {
-  const iframe = document.querySelector('#search-iframe');
-  if (iframe) {
-    iframe.contentWindow.postMessage({ type: 'goBack' }, '*');
-  }
-}
-
-function proxyGoForward() {
-  const iframe = document.querySelector('#search-iframe');
-  if (iframe) {
-    iframe.contentWindow.postMessage({ type: 'goForward' }, '*');
-  }
-}
-
-function proxyReload() {
-  const iframe = document.querySelector('#search-iframe');
-  if (iframe) {
-    iframe.contentWindow.postMessage({ type: 'reload' }, '*');
-  }
-}
-
-function proxyNavigate(url) {
-  const iframe = document.querySelector('#search-iframe');
-  if (iframe) {
-    // Add https:// if not present
-    if (!/^https?:\/\//i.test(url)) {
-      url = 'https://' + url;
-    }
-    iframe.src = url;
-    document.querySelector('#proxy-url-bar').value = url;
-  }
-}
-
-// Add an event listener to handle cross-origin messaging
-window.addEventListener('message', (event) => {
-  // Optional: Add origin checking for additional security
-  // if (event.origin !== "https://expected-origin.com") return;
-
-  switch(event.data.type) {
-    case 'urlChanged':
-      const proxyUrlBar = document.querySelector('#proxy-url-bar');
-      if (proxyUrlBar) {
-        proxyUrlBar.value = event.data.url;
-      }
-      break;
-  }
-}, false);
-
-function proxyOpenInNewTab() {
-  const iframe = document.querySelector('#search-iframe');
-  if (iframe) {
-    window.open(iframe.src, '_blank');
-  }
-  toggleProxyMenu();
-}
-
-function proxyCopyUrl() {
-  const iframe = document.querySelector('#search-iframe');
-  if (iframe) {
-    navigator.clipboard.writeText(iframe.src);
-    // Show feedback toast
-    const toast = document.createElement('div');
-    toast.className = 'fixed bottom-4 right-4 bg-green-500/90 text-white px-4 py-2 rounded-lg shadow-lg z-50';
-    toast.textContent = 'URL copied to clipboard';
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 2000);
-  }
-  toggleProxyMenu();
-}
-
-function proxyViewSource() {
-  const iframe = document.querySelector('#search-iframe');
-  if (iframe) {
-    window.open('view-source:' + iframe.src);
-  }
-  toggleProxyMenu();
 }
