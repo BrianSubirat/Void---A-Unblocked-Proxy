@@ -859,6 +859,10 @@
     <a href="#" class="sidebar-item" onclick="openCategory('terminal')">
       <i class="fas fa-terminal"></i>
     </a>
+
+    <a href="#" class="sidebar-item" onclick="openCategory('cheats')">
+      <i class="fas fa-code"></i>
+    </a>
     
     <div class="w-8 h-[1px] bg-indigo-500/30 mb-4"></div>
     
@@ -1774,6 +1778,27 @@
     </div>
   </div>
 
+  <!-- Tab Cloak Submenu - Move this outside other menus but still inside body -->
+  <div id="tab-cloak-menu" class="fixed hidden bg-slate-800/90 backdrop-blur rounded-lg border border-indigo-500/20 shadow-xl z-[9999] overflow-hidden w-48">
+    <div class="p-2 space-y-1">
+      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="updateTabCloak('google')">
+        <i class="fab fa-google mr-2"></i>Google
+      </div>
+      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="updateTabCloak('drive')">
+        <i class="fab fa-google-drive mr-2"></i>Google Drive
+      </div>
+      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="updateTabCloak('classroom')">
+        <i class="fas fa-school mr-2"></i>Google Classroom
+      </div>
+      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="updateTabCloak('canvas')">
+        <i class="fas fa-graduation-cap mr-2"></i>Canvas
+      </div>
+      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="updateTabCloak('zoom')">
+        <i class="fas fa-video mr-2"></i>Zoom
+      </div>
+    </div>
+  </div>
+
   <div class="max-w-4xl w-full px-4 text-center py-8 mt-20 md:mt-32 main-content">
     <div class="flex flex-col items-center justify-center space-y-4">
       <div class="flex flex-col items-center justify-center">
@@ -1904,27 +1929,6 @@
             <i class="fas fa-clock mr-2"></i>Timer
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Tab Cloak Submenu -->
-  <div id="tab-cloak-menu" class="fixed hidden bg-slate-800/90 backdrop-blur rounded-lg border border-indigo-500/20 shadow-xl z-50 overflow-hidden w-48">
-    <div class="p-2 space-y-1">
-      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="updateTabCloak('google')">
-        <i class="fab fa-google mr-2"></i>Google
-      </div>
-      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="updateTabCloak('drive')">
-        <i class="fab fa-google-drive mr-2"></i>Google Drive
-      </div>
-      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="updateTabCloak('classroom')">
-        <i class="fas fa-school mr-2"></i>Google Classroom
-      </div>
-      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="updateTabCloak('canvas')">
-        <i class="fas fa-graduation-cap mr-2"></i>Canvas
-      </div>
-      <div class="submenu-item hover:bg-indigo-500/20 text-white px-4 py-2 rounded-lg cursor-pointer" onclick="updateTabCloak('zoom')">
-        <i class="fas fa-video mr-2"></i>Zoom
       </div>
     </div>
   </div>
