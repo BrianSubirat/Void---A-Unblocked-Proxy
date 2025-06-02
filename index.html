@@ -864,6 +864,10 @@
       <i class="fas fa-code"></i>
     </a>
     
+    <a href="#" class="sidebar-item" onclick="openCategory('store')">
+      <i class="fas fa-store"></i>
+    </a>
+    
     <div class="w-8 h-[1px] bg-indigo-500/30 mb-4"></div>
     
     <a href="#" class="sidebar-item" onclick="openSettings()">
@@ -1299,7 +1303,10 @@
               <div class="flex items-center space-x-4">
                 <div class="relative flex-1">
                   <input type="text" id="panic-key" placeholder="Press a key" 
-                    class="w-full bg-slate-800/50 backdrop-blur text-white px-4 py-3 rounded-xl border border-indigo-500/20 hover:border-indigo-500/40 transition-all duration-300" readonly>
+                    class="w-full px-12 py-4 rounded-xl bg-slate-800/50 backdrop-blur text-white 
+                    border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none
+                    placeholder-gray-400"
+                  >
                   <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                     <i class="fas fa-keyboard"></i>
                   </div>
@@ -1947,41 +1954,6 @@
     <iframe id="panel-iframe" class="w-full h-full"></iframe>
   </div>
 
-  <!-- Music Player -->
-  <div id="music-player" class="fixed bottom-4 left-4 bg-slate-800/90 backdrop-blur rounded-xl p-4 shadow-2xl border border-indigo-500/20 flex flex-col items-center space-y-2 cursor-move z-[60] w-64">
-    <div class="w-full flex items-center justify-between mb-2">
-      <span id="track-title" class="text-white text-sm truncate flex-1 text-center">Loading...</span>
-    </div>
-    
-    <audio id="audio-player"></audio>
-    
-    <div class="flex items-center justify-center space-x-4">
-      <button onclick="prevTrack()" class="text-indigo-400 hover:text-indigo-300 transition-colors">
-        <i class="fas fa-backward"></i>
-      </button>
-      <button id="play-btn" onclick="togglePlay()" class="w-10 h-10 rounded-full bg-indigo-500/20 text-indigo-400 hover:text-indigo-300 flex items-center justify-center transition-all hover:bg-indigo-500/30">
-        <i class="fas fa-play"></i>
-      </button>
-      <button onclick="nextTrack()" class="text-indigo-400 hover:text-indigo-300 transition-colors">
-        <i class="fas fa-forward"></i>
-      </button>
-    </div>
-    
-    <div class="w-full flex items-center space-x-2">
-      <i class="fas fa-volume-down text-indigo-400"></i>
-      <input 
-        type="range" 
-        min="0" 
-        max="1" 
-        step="0.1" 
-        value="0.5"
-        class="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500"
-        oninput="updateVolume(this.value)"
-      >
-      <i class="fas fa-volume-up text-indigo-400"></i>
-    </div>
-  </div>
-
   <script>
     // Ensure __uv$config is defined before any proxy functions
     if (typeof __uv$config === 'undefined') {
@@ -2183,15 +2155,25 @@
                   <span class="app-name">Netflix</span>
                   <span class="category-label">Streaming</span>
                 </div>
-                <div onclick="proxyApp('https://instagram.com')" class="app-card flex flex-col items-center text-center">
-                  <i class="fab fa-instagram app-icon text-pink-500 text-3xl mb-2"></i>
-                  <span class="app-name">Instagram</span>
-                  <span class="category-label">Social</span>
+                <div onclick="proxyApp('https://amazon.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fab fa-amazon app-icon text-orange-400 text-3xl mb-2"></i>
+                  <span class="app-name">Amazon</span>
+                  <span class="category-label">Shopping</span>
+                </div>
+                <div onclick="proxyApp('https://ebay.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fas fa-shopping-cart app-icon text-blue-500 text-3xl mb-2"></i>
+                  <span class="app-name">eBay</span>
+                  <span class="category-label">Shopping</span>
                 </div>
                 <div onclick="proxyApp('https://pinterest.com')" class="app-card flex flex-col items-center text-center">
                   <i class="fab fa-pinterest app-icon text-red-500 text-3xl mb-2"></i>
                   <span class="app-name">Pinterest</span>
                   <span class="category-label">Social</span>
+                </div>
+                <div onclick="proxyApp('https://github.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fab fa-github app-icon text-gray-800 text-3xl mb-2"></i>
+                  <span class="app-name">GitHub</span>
+                  <span class="category-label">Development</span>
                 </div>
                 <div onclick="proxyApp('https://messenger.com')" class="app-card flex flex-col items-center text-center">
                   <i class="fab fa-facebook-messenger app-icon text-blue-500 text-3xl mb-2"></i>
@@ -2208,40 +2190,30 @@
                   <span class="app-name">Telegram</span>
                   <span class="category-label">Social</span>
                 </div>
-                <div onclick="proxyApp('https://hulu.com')" class="app-card flex flex-col items-center text-center">
-                  <i class="fas fa-tv app-icon text-green-400 text-3xl mb-2"></i>
-                  <span class="app-name">Hulu</span>
-                  <span class="category-label">Streaming</span>
-                </div>
-                <div onclick="proxyApp('https://disneyplus.com')" class="app-card flex flex-col items-center text-center">
-                  <i class="fas fa-video app-icon text-blue-500 text-3xl mb-2"></i>
-                  <span class="app-name">Disney+</span>
-                  <span class="category-label">Streaming</span>
-                </div>
-                <div onclick="proxyApp('https://pandora.com')" class="app-card flex flex-col items-center text-center">
-                  <i class="fas fa-music app-icon text-blue-400 text-3xl mb-2"></i>
-                  <span class="app-name">Pandora</span>
+                <div onclick="proxyApp('https://soundcloud.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fab fa-soundcloud app-icon text-orange-500 text-3xl mb-2"></i>
+                  <span class="app-name">SoundCloud</span>
                   <span class="category-label">Music</span>
                 </div>
-                <div onclick="proxyApp('https://deezer.com')" class="app-card flex flex-col items-center text-center">
-                  <i class="fas fa-headphones app-icon text-purple-500 text-3xl mb-2"></i>
-                  <span class="app-name">Deezer</span>
-                  <span class="category-label">Music</span>
+                <div onclick="proxyApp('https://linkedin.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fab fa-linkedin app-icon text-blue-600 text-3xl mb-2"></i>
+                  <span class="app-name">LinkedIn</span>
+                  <span class="category-label">Professional</span>
                 </div>
                 <div onclick="proxyApp('https://tumblr.com')" class="app-card flex flex-col items-center text-center">
-                  <i class="fab fa-tumblr app-icon text-blue-600 text-3xl mb-2"></i>
+                  <i class="fab fa-tumblr app-icon text-blue-800 text-3xl mb-2"></i>
                   <span class="app-name">Tumblr</span>
                   <span class="category-label">Social</span>
+                </div>
+                <div onclick="proxyApp('https://imgur.com')" class="app-card flex flex-col items-center text-center">
+                  <i class="fas fa-images app-icon text-green-400 text-3xl mb-2"></i>
+                  <span class="app-name">Imgur</span>
+                  <span class="category-label">Images</span>
                 </div>
                 <div onclick="proxyApp('https://vimeo.com')" class="app-card flex flex-col items-center text-center">
                   <i class="fab fa-vimeo app-icon text-cyan-500 text-3xl mb-2"></i>
                   <span class="app-name">Vimeo</span>
                   <span class="category-label">Video</span>
-                </div>
-                <div onclick="proxyApp('https://primevideo.com')" class="app-card flex flex-col items-center text-center">
-                  <i class="fab fa-amazon app-icon text-blue-500 text-3xl mb-2"></i>
-                  <span class="app-name">Prime Video</span>
-                  <span class="category-label">Streaming</span>
                 </div>
               </div>
             </div>
@@ -2260,6 +2232,37 @@
             src="https://school-terminal-com.pages.dev" 
             class="w-full h-full border-none"
           ></iframe>
+        `;
+        
+        sidePanel.classList.add('active');
+        updateNotificationBtn.style.display = 'none';
+      } else if (category === 'store') {
+        sidePanel.innerHTML = `
+          <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
+            <i class="fas fa-times"></i>
+          </button>
+          <div class="w-full h-full flex flex-col items-center p-6">
+            <div class="max-w-6xl w-full">
+              <div class="flex items-center justify-between mb-8">
+                <h1 class="text-3xl font-bold text-white space-glow">Store</h1>
+              </div>
+              
+              <div class="app-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                <div class="app-card flex flex-col items-center text-center">
+                  <i class="fas fa-coins app-icon text-yellow-400 text-3xl mb-2"></i>
+                  <span class="app-name">Buy Coins</span>
+                </div>
+                <div class="app-card flex flex-col items-center text-center">
+                  <i class="fas fa-shopping-cart app-icon text-blue-400 text-3xl mb-2"></i>
+                  <span class="app-name">Shop</span>
+                </div>
+                <div class="app-card flex flex-col items-center text-center">
+                  <i class="fas fa-gift app-icon text-pink-500 text-3xl mb-2"></i>
+                  <span class="app-name">Rewards</span>
+                </div>
+              </div>
+            </div>
+          </div>
         `;
         
         sidePanel.classList.add('active');
@@ -3112,39 +3115,5 @@
   </script>
 
   <script src="/script.js"></script>
-  <script>
-    // Initialize music player on page load
-    document.addEventListener('DOMContentLoaded', () => {
-      initMusicPlayer();
-      
-      // Load saved volume
-      const savedVolume = localStorage.getItem('playerVolume');
-      if (savedVolume !== null) {
-        document.getElementById('audio-player').volume = savedVolume;
-        document.querySelector('input[type="range"]').value = savedVolume;
-      }
-      
-      // Load saved visibility state
-      const playerVisible = localStorage.getItem('playerVisible') !== 'false';
-      document.getElementById('music-player').style.display = playerVisible ? 'flex' : 'none';
-      document.getElementById('music-player-toggle').checked = playerVisible;
-      
-      // Set up music player toggle
-      const musicPlayerToggle = document.getElementById('music-player-toggle');
-      const musicPlayer = document.getElementById('music-player');
-      
-      if (musicPlayerToggle && musicPlayer) {
-        const playerVisible = localStorage.getItem('playerVisible') !== 'false';
-        musicPlayerToggle.checked = playerVisible;
-        musicPlayer.style.display = playerVisible ? 'flex' : 'none';
-      }
-    });
-    
-    function toggleMusicPlayer() {
-      const player = document.getElementById('music-player');
-      player.style.display = player.style.display === 'flex' ? 'none' : 'flex';
-      localStorage.setItem('playerVisible', player.style.display === 'flex');
-    }
-  </script>
 </body>
 </html>

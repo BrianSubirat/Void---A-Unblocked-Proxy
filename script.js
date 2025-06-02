@@ -1,296 +1,384 @@
+let userCoins = parseInt(localStorage.getItem('userCoins')) || 0;
+let lastCoinUpdate = parseInt(localStorage.getItem('lastCoinUpdate')) || Date.now();
+const COIN_REWARD = 10;
+const COIN_INTERVAL = 8 * 60 * 1000; // 8 minutes in milliseconds
+
+const storeItems = [
+  {
+    id: 'pet_companion',
+    name: 'Virtual Pet Companion',
+    description: 'A cute virtual pet that follows your cursor around the screen',
+    price: 100,
+    category: 'companion',
+    icon: 'fa-paw'
+  },
+  {
+    id: 'custom_sounds',
+    name: 'UI Sound Effects',
+    description: 'Premium sound effects for clicks, hovers, and notifications',
+    price: 75,
+    category: 'audio',
+    icon: 'fa-volume-up'
+  },
+  {
+    id: 'tab_groups',
+    name: 'Tab Groups',
+    description: 'Organize your proxy tabs into custom groups',
+    price: 150,
+    category: 'productivity',
+    icon: 'fa-layer-group'
+  },
+  {
+    id: 'quick_notes',
+    name: 'Quick Notes Widget',
+    description: 'Add a floating notepad for quick notes',
+    price: 120,
+    category: 'widgets',
+    icon: 'fa-sticky-note'
+  },
+  {
+    id: 'custom_hotkeys',
+    name: 'Custom Hotkeys',
+    description: 'Create your own keyboard shortcuts',
+    price: 200,
+    category: 'productivity',
+    icon: 'fa-keyboard'
+  },
+  {
+    id: 'proxy_history',
+    name: 'Browsing History',
+    description: 'View and manage your proxy browsing history',
+    price: 180,
+    category: 'productivity',
+    icon: 'fa-history'
+  },
+  {
+    id: 'search_filters',
+    name: 'Advanced Search Filters',
+    description: 'Additional search options and filters',
+    price: 160,
+    category: 'productivity',
+    icon: 'fa-filter'
+  },
+  {
+    id: 'proxy_speed',
+    name: 'Speed Boost',
+    description: 'Enhanced proxy connection speed',
+    price: 250,
+    category: 'performance',
+    icon: 'fa-tachometer-alt'
+  },
+  {
+    id: 'download_manager',
+    name: 'Download Manager',
+    description: 'Manage and organize your downloads',
+    price: 200,
+    category: 'productivity',
+    icon: 'fa-download'
+  }
+];
+
 function openCategory(category) {
   const sidePanel = document.getElementById('side-panel');
   const updateNotificationBtn = document.getElementById('update-notification-btn');
   
-  // Reset panel and prepare for new content
-  sidePanel.innerHTML = `
-    <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
-      <i class="fas fa-times"></i>
-    </button>
-  `;
-  
-  switch(category) {
-    case 'proxy':
-      sidePanel.innerHTML += `
-        <div class="w-full h-full flex flex-col items-center p-6">
-          <div class="max-w-2xl w-full">
-            <div class="text-center mb-8">
-              <h1 class="text-4xl font-bold text-white mb-2 space-glow">Void Proxy</h1>
-              <p class="text-indigo-400">Fast, secure, and reliable web proxy service</p>
-            </div>
+  if (category === 'proxy') {
+    sidePanel.innerHTML = `
+      <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="w-full h-full flex flex-col items-center p-6">
+        <div class="max-w-2xl w-full">
+          <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-white mb-2 space-glow">Void Proxy</h1>
+            <p class="text-indigo-400">Fast, secure, and reliable web proxy service</p>
+          </div>
 
-            <div class="search-container mb-8">
-              <div class="relative w-full max-w-xl mx-auto">
-                <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                  <i class="fas fa-globe text-indigo-400"></i>
-                </div>
-                <input 
-                  type="text" 
-                  id="proxy-search" 
-                  placeholder="Search or enter a URL" 
-                  class="w-full px-12 py-4 rounded-xl bg-slate-800/50 backdrop-blur text-white 
-                  border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none
-                  placeholder-gray-400"
-                >
-                <button 
-                  onclick="proxySearch()" 
-                  class="absolute right-4 top-1/2 transform -translate-y-1/2 
-                  bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg
-                  transition-all duration-300 flex items-center space-x-2"
-                >
-                  <i class="fas fa-search"></i>
-                  <span>Search</span>
-                </button>
+          <div class="search-container mb-8">
+            <div class="relative w-full max-w-xl mx-auto">
+              <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                <i class="fas fa-globe text-indigo-400"></i>
               </div>
+              <input 
+                type="text" 
+                id="proxy-search" 
+                placeholder="Search or enter a URL" 
+                class="w-full px-12 py-4 rounded-xl bg-slate-800/50 backdrop-blur text-white 
+                border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none
+                placeholder-gray-400"
+              >
+              <button 
+                onclick="proxySearch()" 
+                class="absolute right-4 top-1/2 transform -translate-y-1/2 
+                bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg
+                transition-all duration-300 flex items-center space-x-2"
+              >
+                <i class="fas fa-search"></i>
+                <span>Search</span>
+              </button>
             </div>
+          </div>
 
-            <div class="app-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              <div onclick="proxyApp('https://www.youtube.com')" class="app-card flex flex-col items-center">
-                <i class="fab fa-youtube app-icon text-red-500 text-3xl mb-2"></i>
-                <span class="app-name">YouTube</span>
-              </div>
-              <div onclick="proxyApp('https://discord.com')" class="app-card flex flex-col items-center">
-                <i class="fab fa-discord app-icon text-indigo-500 text-3xl mb-2"></i>
-                <span class="app-name">Discord</span>
-              </div>
-              <div onclick="proxyApp('https://www.tiktok.com')" class="app-card flex flex-col items-center">
-                <i class="fab fa-tiktok app-icon text-black text-3xl mb-2"></i>
-                <span class="app-name">TikTok</span>
-              </div>
-              <div onclick="proxyApp('https://www.twitch.tv')" class="app-card flex flex-col items-center">
-                <i class="fab fa-twitch app-icon text-purple-500 text-3xl mb-2"></i>
-                <span class="app-name">Twitch</span>
-              </div>
-              <div onclick="proxyApp('https://www.reddit.com')" class="app-card flex flex-col items-center">
-                <i class="fab fa-reddit app-icon text-orange-500 text-3xl mb-2"></i>
-                <span class="app-name">Reddit</span>
-              </div>
-              <div onclick="proxyApp('https://twitter.com')" class="app-card flex flex-col items-center">
-                <i class="fab fa-twitter app-icon text-blue-400 text-3xl mb-2"></i>
-                <span class="app-name">Twitter</span>
-              </div>
-              <div onclick="proxyApp('https://www.spotify.com')" class="app-card flex flex-col items-center">
-                <i class="fab fa-spotify app-icon text-green-500 text-3xl mb-2"></i>
-                <span class="app-name">Spotify</span>
-              </div>
-              <div onclick="proxyApp('https://www.netflix.com')" class="app-card flex flex-col items-center">
-                <i class="fas fa-film app-icon text-red-600 text-3xl mb-2"></i>
-                <span class="app-name">Netflix</span>
-              </div>
-              <div onclick="proxyApp('https://www.instagram.com')" class="app-card flex flex-col items-center">
-                <i class="fab fa-instagram app-icon text-pink-500 text-3xl mb-2"></i>
-                <span class="app-name">Instagram</span>
-              </div>
-              <div onclick="proxyApp('https://www.facebook.com')" class="app-card flex flex-col items-center">
-                <i class="fab fa-facebook app-icon text-blue-500 text-3xl mb-2"></i>
-                <span class="app-name">Facebook</span>
-              </div>
+          <div class="app-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            <div onclick="proxyApp('https://www.youtube.com')" class="app-card flex flex-col items-center">
+              <i class="fab fa-youtube app-icon text-red-500 text-3xl mb-2"></i>
+              <span class="app-name">YouTube</span>
+            </div>
+            <div onclick="proxyApp('https://discord.com')" class="app-card flex flex-col items-center">
+              <i class="fab fa-discord app-icon text-indigo-500 text-3xl mb-2"></i>
+              <span class="app-name">Discord</span>
+            </div>
+            <div onclick="proxyApp('https://www.tiktok.com')" class="app-card flex flex-col items-center">
+              <i class="fab fa-tiktok app-icon text-black text-3xl mb-2"></i>
+              <span class="app-name">TikTok</span>
+            </div>
+            <div onclick="proxyApp('https://www.twitch.tv')" class="app-card flex flex-col items-center">
+              <i class="fab fa-twitch app-icon text-purple-500 text-3xl mb-2"></i>
+              <span class="app-name">Twitch</span>
+            </div>
+            <div onclick="proxyApp('https://www.reddit.com')" class="app-card flex flex-col items-center">
+              <i class="fab fa-reddit app-icon text-orange-500 text-3xl mb-2"></i>
+              <span class="app-name">Reddit</span>
             </div>
           </div>
         </div>
-      `;
-      break;
+      </div>
+    `;
+  } else if (category === 'apps') {
+    sidePanel.innerHTML = `
+      <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="w-full h-full flex flex-col items-center p-6">
+        <div class="max-w-6xl w-full">
+          <div class="flex items-center justify-between mb-8">
+            <h1 class="text-3xl font-bold text-white space-glow">Apps</h1>
+          </div>
+          
+          <div class="flex justify-center mb-8">
+            <div class="relative w-96">
+              <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                <i class="fas fa-search text-indigo-400"></i>
+              </div>
+              <input 
+                type="text" 
+                id="app-search-input" 
+                placeholder="Search apps..." 
+                class="w-full bg-slate-800/50 backdrop-blur text-white rounded-xl px-12 py-3 border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none
+                placeholder-gray-400"
+                oninput="searchApps()"
+              >
+            </div>
+          </div>
+
+          <div class="app-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <div onclick="proxyApp('https://discord.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fab fa-discord app-icon text-indigo-500 text-3xl mb-2"></i>
+              <span class="app-name">Discord</span>
+              <span class="category-label">Social</span>
+            </div>
+            <div onclick="proxyApp('https://youtube.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fab fa-youtube app-icon text-red-500 text-3xl mb-2"></i>
+              <span class="app-name">YouTube</span>
+              <span class="category-label">Media</span>
+            </div>
+            <div onclick="proxyApp('https://spotify.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fab fa-spotify app-icon text-green-500 text-3xl mb-2"></i>
+              <span class="app-name">Spotify</span>
+              <span class="category-label">Music</span>
+            </div>
+            <div onclick="proxyApp('https://twitch.tv')" class="app-card flex flex-col items-center text-center">
+              <i class="fab fa-twitch app-icon text-purple-500 text-3xl mb-2"></i>
+              <span class="app-name">Twitch</span>
+              <span class="category-label">Streaming</span>
+            </div>
+            <div onclick="proxyApp('https://reddit.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fab fa-reddit app-icon text-orange-500 text-3xl mb-2"></i>
+              <span class="app-name">Reddit</span>
+              <span class="category-label">Social</span>
+            </div>
+            <div onclick="proxyApp('https://tiktok.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fab fa-tiktok app-icon text-black text-3xl mb-2"></i>
+              <span class="app-name">TikTok</span>
+              <span class="category-label">Social</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  } else if (category === 'cheats') {
+    sidePanel.innerHTML = `
+      <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="w-full h-full flex flex-col items-center p-6 overflow-y-auto">
+        <div class="max-w-4xl w-full">
+          <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-white mb-2 space-glow">Educational Tools</h1>
+            <p class="text-indigo-400">Automated assistance for educational platforms</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Edpuzzle Section -->
+            <div class="category-card p-6 rounded-xl relative overflow-hidden">
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-white">Edpuzzle</h2>
+                <i class="fas fa-video text-indigo-400 text-2xl"></i>
+              </div>
+              <p class="text-gray-300 mb-4">Auto-answer and video acceleration tools</p>
+              <div class="space-y-2">
+                <a href="https://schoolcheats.net/edpuzzle" target="_blank"
+                  class="w-full bg-indigo-600/20 hover:bg-indigo-600/30 text-white py-2 px-4 rounded-lg transition-all flex items-center justify-between">
+                  <span>Edpuzzle Answers</span>
+                  <i class="fas fa-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+
+            <!-- Kahoot Section -->
+            <div class="category-card p-6 rounded-xl relative overflow-hidden">
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-white">Kahoot</h2>
+                <i class="fas fa-gamepad text-indigo-400 text-2xl"></i>
+              </div>
+              <p class="text-gray-300 mb-4">Answer viewer and game automation</p>
+              <div class="space-y-2">
+                <a href="https://schoolcheats.net/kahoot" target="_blank"
+                  class="w-full bg-indigo-600/20 hover:bg-indigo-600/30 text-white py-2 px-4 rounded-lg transition-all flex items-center justify-between">
+                  <span>Kahoot Answers</span>
+                  <i class="fas fa-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+
+            <!-- Blooket Section -->
+            <div class="category-card p-6 rounded-xl relative overflow-hidden">
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-white">Blooket</h2>
+                <i class="fas fa-puzzle-piece text-indigo-400 text-2xl"></i>
+              </div>
+              <p class="text-gray-300 mb-4">Game modifications and answer tools</p>
+              <div class="space-y-2">
+                <a href="https://schoolcheats.net/blooket" target="_blank"
+                  class="w-full bg-indigo-600/20 hover:bg-indigo-600/30 text-white py-2 px-4 rounded-lg transition-all flex items-center justify-between">
+                  <span>Blooket Answers</span>
+                  <i class="fas fa-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+
+            <!-- Gimkit Section -->
+            <div class="category-card p-6 rounded-xl relative overflow-hidden">
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-white">Gimkit</h2>
+                <i class="fas fa-bolt text-indigo-400 text-2xl"></i>
+              </div>
+              <p class="text-gray-300 mb-4">Answer assistance and game automation</p>
+              <div class="space-y-2">
+                <a href="https://schoolcheats.net/gimkit" target="_blank"
+                  class="w-full bg-indigo-600/20 hover:bg-indigo-600/30 text-white py-2 px-4 rounded-lg transition-all flex items-center justify-between">
+                  <span>Gimkit Answers</span>
+                  <i class="fas fa-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-8 p-4 bg-yellow-600/10 border border-yellow-500/20 rounded-lg">
+            <div class="flex items-center mb-2">
+              <i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>
+              <h3 class="text-white font-bold">Important Notice</h3>
+            </div>
+            <p class="text-gray-300 text-sm">
+              These tools are for educational purposes only. Please use responsibly and in accordance with your institution's policies.
+            </p>
+          </div>
+        </div>
+      </div>
+    `;
+  } else if (category === 'store') {
+    const purchasedItems = JSON.parse(localStorage.getItem('purchasedItems') || '[]');
     
-    case 'apps':
-      sidePanel.innerHTML += `
-        <div class="w-full h-full flex flex-col items-center p-6">
-          <div class="max-w-6xl w-full">
-            <div class="flex items-center justify-between mb-8">
-              <h1 class="text-3xl font-bold text-white space-glow">Apps</h1>
+    sidePanel.innerHTML = `
+      <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="w-full h-full flex flex-col items-center p-6 overflow-y-auto">
+        <div class="max-w-4xl w-full">
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <h1 class="text-3xl font-bold text-white space-glow">Store</h1>
+              <p class="text-indigo-400">Unlock premium features and customizations</p>
             </div>
-            
-            <div class="flex justify-center mb-8">
-              <div class="relative w-96">
-                <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                  <i class="fas fa-search text-indigo-400"></i>
-                </div>
-                <input 
-                  type="text" 
-                  id="app-search-input" 
-                  placeholder="Search apps..." 
-                  class="w-full bg-slate-800/50 backdrop-blur text-white rounded-xl px-4 py-3 border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none
-                  placeholder-gray-400"
-                  oninput="searchApps()"
-                >
-              </div>
-            </div>
-
-            <div class="app-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 overflow-y-auto max-h-[calc(100vh-220px)]">
-              <div onclick="proxyApp('https://discord.com')" class="app-card flex flex-col items-center text-center">
-                <i class="fab fa-discord app-icon text-indigo-500 text-3xl mb-2"></i>
-                <span class="app-name">Discord</span>
-                <span class="category-label">Social</span>
-              </div>
-              <div onclick="proxyApp('https://youtube.com')" class="app-card flex flex-col items-center text-center">
-                <i class="fab fa-youtube app-icon text-red-500 text-3xl mb-2"></i>
-                <span class="app-name">YouTube</span>
-                <span class="category-label">Media</span>
-              </div>
-              <div onclick="proxyApp('https://spotify.com')" class="app-card flex flex-col items-center text-center">
-                <i class="fab fa-spotify app-icon text-green-500 text-3xl mb-2"></i>
-                <span class="app-name">Spotify</span>
-                <span class="category-label">Music</span>
-              </div>
-              <div onclick="proxyApp('https://twitch.tv')" class="app-card flex flex-col items-center text-center">
-                <i class="fab fa-twitch app-icon text-purple-500 text-3xl mb-2"></i>
-                <span class="app-name">Twitch</span>
-                <span class="category-label">Streaming</span>
-              </div>
-              <div onclick="proxyApp('https://reddit.com')" class="app-card flex flex-col items-center text-center">
-                <i class="fab fa-reddit app-icon text-orange-500 text-3xl mb-2"></i>
-                <span class="app-name">Reddit</span>
-                <span class="category-label">Social</span>
-              </div>
-              <div onclick="proxyApp('https://tiktok.com')" class="app-card flex flex-col items-center text-center">
-                <i class="fab fa-tiktok app-icon text-black text-3xl mb-2"></i>
-                <span class="app-name">TikTok</span>
-                <span class="category-label">Social</span>
-              </div>
-              <div onclick="proxyApp('https://twitter.com')" class="app-card flex flex-col items-center text-center">
-                <i class="fab fa-twitter app-icon text-blue-400 text-3xl mb-2"></i>
-                <span class="app-name">Twitter</span>
-                <span class="category-label">Social</span>
-              </div>
-              <div onclick="proxyApp('https://netflix.com')" class="app-card flex flex-col items-center text-center">
-                <i class="fas fa-film app-icon text-red-600 text-3xl mb-2"></i>
-                <span class="app-name">Netflix</span>
-                <span class="category-label">Streaming</span>
-              </div>
-              <div onclick="proxyApp('https://instagram.com')" class="app-card flex flex-col items-center text-center">
-                <i class="fab fa-instagram app-icon text-pink-500 text-3xl mb-2"></i>
-                <span class="app-name">Instagram</span>
-                <span class="category-label">Social</span>
-              </div>
-              <div onclick="proxyApp('https://pinterest.com')" class="app-card flex flex-col items-center text-center">
-                <i class="fab fa-pinterest app-icon text-red-500 text-3xl mb-2"></i>
-                <span class="app-name">Pinterest</span>
-                <span class="category-label">Social</span>
-              </div>
-              <div onclick="proxyApp('https://messenger.com')" class="app-card flex flex-col items-center text-center">
-                <i class="fab fa-facebook-messenger app-icon text-blue-500 text-3xl mb-2"></i>
-                <span class="app-name">Messenger</span>
-                <span class="category-label">Social</span>
-              </div>
-              <div onclick="proxyApp('https://whatsapp.com')" class="app-card flex flex-col items-center text-center">
-                <i class="fab fa-whatsapp app-icon text-green-500 text-3xl mb-2"></i>
-                <span class="app-name">WhatsApp</span>
-                <span class="category-label">Social</span>
-              </div>
-              <div onclick="proxyApp('https://telegram.org')" class="app-card flex flex-col items-center text-center">
-                <i class="fab fa-telegram app-icon text-blue-400 text-3xl mb-2"></i>
-                <span class="app-name">Telegram</span>
-                <span class="category-label">Social</span>
-              </div>
-              <div onclick="proxyApp('https://hulu.com')" class="app-card flex flex-col items-center text-center">
-                <i class="fas fa-tv app-icon text-green-400 text-3xl mb-2"></i>
-                <span class="app-name">Hulu</span>
-                <span class="category-label">Streaming</span>
-              </div>
-              <div onclick="proxyApp('https://disneyplus.com')" class="app-card flex flex-col items-center text-center">
-                <i class="fas fa-video app-icon text-blue-500 text-3xl mb-2"></i>
-                <span class="app-name">Disney+</span>
-                <span class="category-label">Streaming</span>
-              </div>
-              <div onclick="proxyApp('https://pandora.com')" class="app-card flex flex-col items-center text-center">
-                <i class="fas fa-music app-icon text-blue-400 text-3xl mb-2"></i>
-                <span class="app-name">Pandora</span>
-                <span class="category-label">Music</span>
-              </div>
-              <div onclick="proxyApp('https://deezer.com')" class="app-card flex flex-col items-center text-center">
-                <i class="fas fa-headphones app-icon text-purple-500 text-3xl mb-2"></i>
-                <span class="app-name">Deezer</span>
-                <span class="category-label">Music</span>
-              </div>
-              <div onclick="proxyApp('https://tumblr.com')" class="app-card flex flex-col items-center text-center">
-                <i class="fab fa-tumblr app-icon text-blue-600 text-3xl mb-2"></i>
-                <span class="app-name">Tumblr</span>
-                <span class="category-label">Social</span>
-              </div>
-              <div onclick="proxyApp('https://vimeo.com')" class="app-card flex flex-col items-center text-center">
-                <i class="fab fa-vimeo app-icon text-cyan-500 text-3xl mb-2"></i>
-                <span class="app-name">Vimeo</span>
-                <span class="category-label">Video</span>
-              </div>
-              <div onclick="proxyApp('https://primevideo.com')" class="app-card flex flex-col items-center text-center">
-                <i class="fab fa-amazon app-icon text-blue-500 text-3xl mb-2"></i>
-                <span class="app-name">Prime Video</span>
-                <span class="category-label">Streaming</span>
-              </div>
+            <div class="flex items-center space-x-2 bg-slate-800/50 rounded-lg px-4 py-2 border border-indigo-500/20">
+              <i class="fas fa-coins text-yellow-400"></i>
+              <span id="store-coins" class="text-white font-bold">${userCoins}</span>
             </div>
           </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            ${storeItems.map(item => `
+              <div class="category-card p-6 rounded-xl relative overflow-hidden">
+                <div class="flex items-center justify-between mb-4">
+                  <h2 class="text-xl font-bold text-white">${item.name}</h2>
+                  <i class="fas ${item.icon} text-indigo-400 text-2xl"></i>
+                </div>
+                <p class="text-gray-300 mb-4">${item.description}</p>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-2">
+                    <i class="fas fa-coins text-yellow-400"></i>
+                    <span class="text-white">${item.price}</span>
+                  </div>
+                  ${purchasedItems.includes(item.id) 
+                    ? '<span class="text-green-400"><i class="fas fa-check"></i> Owned</span>'
+                    : `<button 
+                        onclick="purchaseItem('${item.id}')" 
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-all duration-300"
+                        ${userCoins < item.price ? 'disabled' : ''}
+                      >
+                        Purchase
+                      </button>`
+                  }
+                </div>
+              </div>
+            `).join('')}
+          </div>
         </div>
-      `;
-      break;
+      </div>
+    `;
+    
+    sidePanel.classList.add('active');
+    updateNotificationBtn.style.display = 'none';
+  } else {
+    let url = '';
+    switch(category) {
+      case 'games':
+        url = 'https://voidgames-com.pages.dev/';
+        break;
+      case 'ai':
+        url = 'http://gemini.google.com/';
+        break;
+      case 'movies':
+        url = 'https://movies.usewaves.site/';
+        break;
+      case 'terminal':
+        url = 'https://school-terminal-com.pages.dev/';
+        break
+    }
 
-    case 'cheats':
-      sidePanel.innerHTML += `
+    if (url) {
+      sidePanel.innerHTML = `
+        <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
+          <i class="fas fa-times"></i>
+        </button>
         <iframe 
-          id="cheats-iframe" 
-          src="https://voidgames-com.pages.dev/cheats" 
+          id="category-iframe" 
+          src="${url}" 
           class="w-full h-full border-none"
         ></iframe>
       `;
-      break;
-
-    case 'terminal':
-      sidePanel.innerHTML += `
-        <iframe 
-          id="terminal-iframe" 
-          src="https://school-terminal-com.pages.dev" 
-          class="w-full h-full border-none"
-        ></iframe>
-      `;
-      break;
-  
-    case 'games':
-      sidePanel.innerHTML += `
-        <iframe 
-          id="games-iframe" 
-          src="https://voidgames-com.pages.dev/" 
-          class="w-full h-full border-none"
-        ></iframe>
-      `;
-      break;
-  
-    case 'ai':
-      sidePanel.innerHTML += `
-        <iframe 
-          id="ai-iframe" 
-          src="https://gemini.google.com/" 
-          class="w-full h-full border-none"
-        ></iframe>
-      `;
-      break;
-  
-    case 'movies':
-      sidePanel.innerHTML += `
-        <iframe 
-          id="movies-iframe" 
-          src="https://movies.usewaves.site/" 
-          class="w-full h-full border-none"
-        ></iframe>
-      `;
-      break;
+    }
   }
-
-  sidePanel.classList.add('active');
-  updateNotificationBtn.style.display = 'none';
-}
-
-function proxyApp(url) {
-  const sidePanel = document.getElementById('side-panel');
-  const updateNotificationBtn = document.getElementById('update-notification-btn');
-  
-  sidePanel.innerHTML = `
-    <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
-      <i class="fas fa-times"></i>
-    </button>
-    <iframe 
-      id="proxy-iframe" 
-      src="${__uv$config.prefix}${__uv$config.encodeUrl(url)}" 
-      class="w-full h-full border-none"
-    ></iframe>
-  `;
   
   sidePanel.classList.add('active');
   updateNotificationBtn.style.display = 'none';
@@ -307,6 +395,7 @@ function proxySearch() {
     if (urlPattern.test(query)) {
       searchUrl = query.startsWith('http') ? query : `https://${query}`;
     } else {
+      // Append search bar UI elements to the search URL
       searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
     }
     
@@ -314,74 +403,66 @@ function proxySearch() {
     const updateNotificationBtn = document.getElementById('update-notification-btn');
     
     sidePanel.innerHTML = `
-      <div class="w-full flex flex-col h-full">
-        <div class="flex items-center gap-2 p-1.5 bg-slate-800/90 border-b border-indigo-500/20">
-          <button onclick="proxyGoBack()" class="text-gray-400 hover:text-white p-1.5 rounded hover:bg-slate-700/50 transition-colors">
-            <i class="fas fa-arrow-left"></i>
-          </button>
-          <button onclick="proxyGoForward()" class="text-gray-400 hover:text-white p-1.5 rounded hover:bg-slate-700/50 transition-colors">
-            <i class="fas fa-arrow-right"></i>
-          </button>
-          <button onclick="proxyReload()" class="text-gray-400 hover:text-white p-1.5 rounded hover:bg-slate-700/50 transition-colors">
-            <i class="fas fa-redo"></i>
-          </button>
-          <div class="flex-1 relative flex items-center">
-            <input 
-              type="text" 
-              id="url-bar" 
-              value="${searchUrl}"
-              class="w-full bg-slate-700/50 text-white px-3 py-1.5 rounded text-sm"
-              onkeydown="if(event.key === 'Enter') proxyNavigate(this.value)"
-            >
-            <div class="absolute right-2 flex items-center gap-1">
-              <button onclick="toggleBookmark()" id="bookmark-btn" class="text-gray-400 hover:text-white p-1 rounded hover:bg-slate-700/50 transition-colors">
-                <i class="far fa-bookmark"></i>
-              </button>
-              <button onclick="showProxyMenu(event)" class="text-gray-400 hover:text-white p-1 rounded hover:bg-slate-700/50 transition-colors">
-                <i class="fas fa-ellipsis-v"></i>
-              </button>
+      <div class="w-full h-full flex flex-col">
+        <!-- Toolbar -->
+        <div class="flex items-center px-4 py-2 bg-slate-800/90 backdrop-blur border-b border-indigo-500/20">
+          <div class="flex-1 flex items-center">
+            <button onclick="proxyGoBack()" class="text-gray-300 hover:text-white px-2">
+              <i class="fas fa-arrow-left"></i>
+            </button>
+            <button onclick="proxyGoForward()" class="text-gray-300 hover:text-white px-2">
+              <i class="fas fa-arrow-right"></i>
+            </button>
+            <button onclick="proxyRefresh()" class="text-gray-300 hover:text-white px-2">
+              <i class="fas fa-redo"></i>
+            </button>
+            
+            <div class="flex-1 mx-4 relative">
+              <input 
+                type="text" 
+                id="url-bar" 
+                value="${searchUrl}"
+                class="w-full bg-slate-700/50 text-white px-4 py-1 rounded-lg text-sm border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none"
+                onkeypress="handleProxyUrlBarKeyPress(event)"
+              >
+            </div>
+          </div>
+          
+          <div class="relative">
+            <button onclick="toggleToolbarMenu()" class="text-gray-300 hover:text-white px-2">
+              <i class="fas fa-bars"></i>
+            </button>
+            
+            <div id="toolbar-menu" class="hidden absolute right-0 top-full mt-2 w-48 bg-slate-800/90 backdrop-blur rounded-lg border border-indigo-500/20 shadow-xl z-50">
+              <div class="py-2">
+                <button onclick="proxyToggleFullscreen()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
+                  <i class="fas fa-expand w-5"></i>
+                  <span>Fullscreen</span>
+                </button>
+                <button onclick="proxyCopyUrl()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
+                  <i class="fas fa-copy w-5"></i>
+                  <span>Copy URL</span>
+                </button>
+                <button onclick="proxyToggleToolbar()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
+                  <i class="fas fa-eye-slash w-5"></i>
+                  <span>Hide Toolbar</span>
+                </button>
+                <button onclick="proxyToggleBookmark()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
+                  <i class="fas fa-bookmark w-5"></i>
+                  <span>Bookmark Page</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
-        <iframe 
-          id="proxy-iframe" 
-          src="${__uv$config.prefix}${__uv$config.encodeUrl(searchUrl)}" 
-          class="flex-1 w-full border-none"
-        ></iframe>
-      </div>
-
-      <div id="proxy-menu" class="hidden absolute right-4 top-12 bg-slate-800/90 backdrop-blur rounded-lg border border-indigo-500/20 shadow-xl z-50 w-48">
-        <div class="py-2">
-          <button onclick="showBookmarks()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white transition-colors flex items-center gap-2">
-            <i class="fas fa-bookmark"></i>
-            <span>Bookmarks</span>
-          </button>
-          <button onclick="toggleFullscreen()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white transition-colors flex items-center gap-2">
-            <i class="fas fa-expand"></i>
-            <span>Toggle Fullscreen</span>
-          </button>
-          <button onclick="hideProxy()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white transition-colors flex items-center gap-2">
-            <i class="fas fa-eye-slash"></i>
-            <span>Hide Proxy</span>
-          </button>
-          <button onclick="copyProxyUrl()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white transition-colors flex items-center gap-2">
-            <i class="fas fa-copy"></i>
-            <span>Copy URL</span>
-          </button>
-        </div>
-      </div>
-
-      <div id="bookmarks-panel" class="hidden fixed right-0 top-0 h-full w-80 bg-slate-800/90 backdrop-blur border-l border-indigo-500/20 overflow-y-auto z-50 transition-transform duration-300">
-        <div class="p-4">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-medium text-white">Bookmarks</h3>
-            <button onclick="closeBookmarks()" class="text-gray-400 hover:text-white">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-          <div id="bookmarks-list" class="space-y-2">
-            <!-- Bookmarks will be populated here -->
-          </div>
+        
+        <!-- Iframe container -->
+        <div class="flex-1 relative">
+          <iframe 
+            id="proxy-iframe" 
+            src="${encodeURI(searchUrl)}"
+            class="w-full h-full border-none"
+          ></iframe>
         </div>
       </div>
     `;
@@ -389,513 +470,699 @@ function proxySearch() {
     sidePanel.classList.add('active');
     updateNotificationBtn.style.display = 'none';
 
-    // Update bookmark button if URL is already bookmarked
-    const bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
-    const bookmarkBtn = document.getElementById('bookmark-btn');
-    if (bookmarks.includes(searchUrl)) {
-      bookmarkBtn.innerHTML = '<i class="fas fa-bookmark"></i>';
-    }
+    // Add navigation functions
+    window.addEventListener('message', handleProxyMessage);
   }
+}
+
+function handleProxyMessage(event) {
+  switch(event.data.type) {
+    case 'urlChanged':
+      document.getElementById('url-bar').value = event.data.url;
+      break;
+  }
+}
+
+function proxyApp(url) {
+  const sidePanel = document.getElementById('side-panel');
+  const updateNotificationBtn = document.getElementById('update-notification-btn');
+  
+  sidePanel.innerHTML = `
+    <div class="w-full h-full flex flex-col">
+      <!-- Toolbar -->
+      <div class="flex items-center px-4 py-2 bg-slate-800/90 backdrop-blur border-b border-indigo-500/20">
+        <div class="flex-1 flex items-center">
+          <button onclick="proxyGoBack()" class="text-gray-300 hover:text-white px-2">
+            <i class="fas fa-arrow-left"></i>
+          </button>
+          <button onclick="proxyGoForward()" class="text-gray-300 hover:text-white px-2">
+            <i class="fas fa-arrow-right"></i>
+          </button>
+          <button onclick="proxyRefresh()" class="text-gray-300 hover:text-white px-2">
+            <i class="fas fa-redo"></i>
+          </button>
+          
+          <div class="flex-1 mx-4 relative">
+            <input 
+              type="text" 
+              id="url-bar" 
+              value="${url}"
+              class="w-full bg-slate-700/50 text-white px-4 py-1 rounded-lg text-sm border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none"
+              onkeypress="handleProxyUrlBarKeyPress(event)"
+            >
+          </div>
+        </div>
+        
+        <div class="relative">
+          <button onclick="toggleToolbarMenu()" class="text-gray-300 hover:text-white px-2">
+            <i class="fas fa-bars"></i>
+          </button>
+          
+          <div id="toolbar-menu" class="hidden absolute right-0 top-full mt-2 w-48 bg-slate-800/90 backdrop-blur rounded-lg border border-indigo-500/20 shadow-xl z-50">
+            <div class="py-2">
+              <button onclick="proxyToggleFullscreen()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
+                <i class="fas fa-expand w-5"></i>
+                <span>Fullscreen</span>
+              </button>
+              <button onclick="proxyCopyUrl()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
+                <i class="fas fa-copy w-5"></i>
+                <span>Copy URL</span>
+              </button>
+              <button onclick="proxyToggleToolbar()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
+                <i class="fas fa-eye-slash w-5"></i>
+                <span>Hide Toolbar</span>
+              </button>
+              <button onclick="proxyToggleBookmark()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
+                <i class="fas fa-bookmark w-5"></i>
+                <span>Bookmark Page</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Iframe container -->
+      <div class="flex-1 relative">
+        <iframe 
+          id="proxy-iframe" 
+          src="${encodeURI(url)}"
+          class="w-full h-full border-none"
+        ></iframe>
+      </div>
+    </div>
+  `;
+  
+  sidePanel.classList.add('active');
+  updateNotificationBtn.style.display = 'none';
+
+  // Add navigation functions
+  window.addEventListener('message', handleProxyMessage);
 }
 
 function proxyGoBack() {
   const iframe = document.getElementById('proxy-iframe');
-  if (iframe && iframe.contentWindow) {
-    iframe.contentWindow.history.back();
-  }
+  iframe.contentWindow.postMessage({ type: 'goBack' }, '*');
 }
 
 function proxyGoForward() {
   const iframe = document.getElementById('proxy-iframe');
-  if (iframe && iframe.contentWindow) {
-    iframe.contentWindow.history.forward();
-  }
+  iframe.contentWindow.postMessage({ type: 'goForward' }, '*');
 }
 
-function proxyReload() {
+function proxyRefresh() {
   const iframe = document.getElementById('proxy-iframe');
-  if (iframe) {
-    iframe.contentWindow.location.reload();
-  }
+  iframe.contentWindow.postMessage({ type: 'refresh' }, '*');
 }
 
-function proxyNavigate(url) {
-  if (!url.startsWith('http://') && !url.startsWith('https://')) {
-    url = 'https://' + url;
-  }
+function proxyToggleFullscreen() {
   const iframe = document.getElementById('proxy-iframe');
-  if (iframe) {
-    iframe.src = `${__uv$config.prefix}${__uv$config.encodeUrl(url)}`;
+  if (iframe.requestFullscreen) {
+    iframe.requestFullscreen();
   }
 }
 
-function toggleBookmark() {
-  const bookmarkBtn = document.getElementById('bookmark-btn');
-  const urlBar = document.getElementById('url-bar');
-  const url = urlBar.value;
-  
-  let bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
-  const isBookmarked = bookmarks.includes(url);
-  
-  if (isBookmarked) {
-    bookmarks = bookmarks.filter(b => b !== url);
-    bookmarkBtn.innerHTML = '<i class="far fa-bookmark"></i>';
-  } else {
-    bookmarks.push(url);
-    bookmarkBtn.innerHTML = '<i class="fas fa-bookmark"></i>';
-  }
-  
-  localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
-}
-
-function showProxyMenu(event) {
-  event.stopPropagation();
-  const menu = document.getElementById('proxy-menu');
-  menu.style.display = 'block';
-  
-  function closeMenu(e) {
-    if (!menu.contains(e.target) && e.target !== event.target) {
-      menu.style.display = 'none';
-      document.removeEventListener('click', closeMenu);
-    }
-  }
-  
-  document.addEventListener('click', closeMenu);
-}
-
-function toggleFullscreen() {
-  const iframe = document.getElementById('proxy-iframe');
-  if (iframe) {
-    if (document.fullscreenElement) {
-      document.exitFullscreen();
-    } else {
-      iframe.requestFullscreen();
-    }
-  }
-}
-
-function hideProxy() {
-  closeSidePanel();
-}
-
-function copyProxyUrl() {
+function proxyCopyUrl() {
   const urlBar = document.getElementById('url-bar');
   navigator.clipboard.writeText(urlBar.value)
     .then(() => {
-      const menu = document.getElementById('proxy-menu');
-      const originalHTML = menu.innerHTML;
-      menu.innerHTML = `
-        <div class="py-4 px-4 text-center text-green-400">
-          <i class="fas fa-check mr-2"></i>URL Copied!
-        </div>
-      `;
-      setTimeout(() => {
-        menu.innerHTML = originalHTML;
-      }, 1500);
+      const notification = document.createElement('div');
+      notification.textContent = 'URL copied!';
+      notification.className = 'fixed bottom-4 right-4 bg-indigo-500 text-white px-4 py-2 rounded-lg shadow-lg';
+      document.body.appendChild(notification);
+      setTimeout(() => notification.remove(), 2000);
     });
+  document.getElementById('toolbar-menu').classList.add('hidden');
 }
 
-function showBookmarks() {
-  const bookmarksPanel = document.getElementById('bookmarks-panel');
-  const bookmarksList = document.getElementById('bookmarks-list');
-  const bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
-  
-  bookmarksList.innerHTML = '';
-  
-  if (bookmarks.length === 0) {
-    bookmarksList.innerHTML = `
-      <div class="text-center py-4 text-gray-400">
-        <i class="fas fa-bookmark mb-2 text-2xl"></i>
-        <p>No bookmarks yet</p>
-      </div>
-    `;
-  } else {
-    bookmarks.forEach(url => {
-      const bookmarkItem = document.createElement('div');
-      bookmarkItem.className = 'group flex items-center justify-between p-2 rounded hover:bg-indigo-500/20 transition-colors';
-      bookmarkItem.innerHTML = `
-        <a href="#" onclick="proxyNavigate('${url}'); return false;" class="flex-1 text-gray-300 hover:text-white truncate">
-          <i class="fas fa-globe mr-2"></i>
-          ${url}
-        </a>
-        <button onclick="removeBookmark('${url}')" class="text-gray-400 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity">
-          <i class="fas fa-trash"></i>
-        </button>
-      `;
-      bookmarksList.appendChild(bookmarkItem);
-    });
+function handleProxyUrlBarKeyPress(event) {
+  if (event.key === 'Enter') {
+    const urlBar = document.getElementById('url-bar');
+    const url = urlBar.value;
+    const iframe = document.getElementById('proxy-iframe');
+    iframe.contentWindow.postMessage({ 
+      type: 'navigate', 
+      url: encodeURI(url) 
+    }, '*');
   }
-  
-  bookmarksPanel.classList.remove('hidden');
-  bookmarksPanel.style.transform = 'translateX(0)';
-  
-  // Close proxy menu
-  document.getElementById('proxy-menu').style.display = 'none';
 }
 
-function closeBookmarks() {
-  const bookmarksPanel = document.getElementById('bookmarks-panel');
-  bookmarksPanel.style.transform = 'translateX(100%)';
-  setTimeout(() => {
-    bookmarksPanel.classList.add('hidden');
-  }, 300);
+function proxyToggleToolbar() {
+  const toolbar = document.querySelector('.flex.items-center.px-4.py-2');
+  toolbar.style.display = 'none';
+  
+  const showButton = document.createElement('button');
+  showButton.className = 'fixed top-2 right-2 bg-slate-800/90 text-gray-300 hover:text-white p-2 rounded-lg z-50';
+  showButton.innerHTML = '<i class="fas fa-bars"></i>';
+  showButton.onclick = function() {
+    toolbar.style.display = 'flex';
+    showButton.remove();
+  };
+  document.body.appendChild(showButton);
+  
+  document.getElementById('toolbar-menu').classList.add('hidden');
 }
 
-function removeBookmark(url) {
-  let bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
-  bookmarks = bookmarks.filter(b => b !== url);
-  localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
-  
-  // Update bookmark button if current URL is removed
+function proxyToggleBookmark() {
   const urlBar = document.getElementById('url-bar');
-  const bookmarkBtn = document.getElementById('bookmark-btn');
-  if (urlBar.value === url) {
-    bookmarkBtn.innerHTML = '<i class="far fa-bookmark"></i>';
+  const url = urlBar.value;
+  const title = document.title;
+  
+  let bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
+  
+  const isBookmarked = bookmarks.some(bookmark => bookmark.url === url);
+  
+  if (isBookmarked) {
+    bookmarks = bookmarks.filter(bookmark => bookmark.url !== url);
+    showNotification('Bookmark removed');
+  } else {
+    bookmarks.push({ url, title, date: new Date().toISOString() });
+    showNotification('Bookmark added');
   }
   
-  showBookmarks(); // Refresh bookmarks panel
+  localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+  document.getElementById('toolbar-menu').classList.add('hidden');
 }
 
-function searchApps() {
-  const searchInput = document.getElementById('app-search-input');
-  if (!searchInput) return;
+function showNotification(message) {
+  const notification = document.createElement('div');
+  notification.textContent = message;
+  notification.className = 'fixed bottom-4 right-4 bg-indigo-500 text-white px-4 py-2 rounded-lg shadow-lg z-[100]';
+  document.body.appendChild(notification);
+  setTimeout(() => notification.remove(), 2000);
+}
+
+document.addEventListener('contextmenu', function(e) {
+  e.preventDefault(); // Prevent default context menu
   
-  const query = searchInput.value.trim().toLowerCase();
-  const appGrid = document.querySelector('.app-grid');
-  if (!appGrid) return;
+  const contextMenu = document.getElementById('context-menu');
+  if (!contextMenu) return;
+
+  // Position the menu at click coordinates
+  contextMenu.style.display = 'block';
   
-  const apps = appGrid.getElementsByClassName('app-card');
-  let visibleAppsCount = 0;
+  // Adjust menu position to prevent it going off-screen
+  let x = e.clientX;
+  let y = e.clientY;
   
-  Array.from(apps).forEach(app => {
-    const appName = app.querySelector('.app-name')?.textContent.toLowerCase() || '';
-    const appCategory = app.querySelector('.category-label')?.textContent.toLowerCase() || '';
-    
-    if (appName.includes(query) || appCategory.includes(query)) {
-      app.style.display = 'flex';
-      visibleAppsCount++;
-    } else {
-      app.style.display = 'none';
+  const menuWidth = contextMenu.offsetWidth;
+  const menuHeight = contextMenu.offsetHeight;
+  const windowWidth = window.innerWidth;
+  const windowHeight = window.innerHeight;
+  
+  if (x + menuWidth > windowWidth) {
+    x = windowWidth - menuWidth;
+  }
+  
+  if (y + menuHeight > windowHeight) {
+    y = windowHeight - menuHeight;
+  }
+  
+  contextMenu.style.left = x + 'px';
+  contextMenu.style.top = y + 'px';
+  
+  // Add handler to close menu when clicking outside
+  const closeContextMenu = function(e) {
+    if (!contextMenu.contains(e.target)) {
+      contextMenu.style.display = 'none';
+      document.removeEventListener('click', closeContextMenu);
     }
-  });
+  };
+  
+  // Small delay to prevent immediate closing
+  setTimeout(() => {
+    document.addEventListener('click', closeContextMenu);
+  }, 0);
+});
 
-  const existingMessage = document.getElementById('no-results-message');
-  if (existingMessage) {
-    existingMessage.remove();
+// Add handler for widget submenu
+document.addEventListener('DOMContentLoaded', function() {
+  const widgetParent = document.querySelector('.widget-parent');
+  if (widgetParent) {
+    widgetParent.addEventListener('click', function(e) {
+      const submenu = this.querySelector('.widget-submenu');
+      if (submenu) {
+        submenu.classList.toggle('hidden');
+      }
+    });
   }
+});
 
-  if (visibleAppsCount === 0 && query !== '') {
-    const message = document.createElement('div');
-    message.id = 'no-results-message';
-    message.className = 'col-span-full text-center py-8 text-gray-400';
-    message.innerHTML = `
-      <i class="fas fa-search mb-2 text-2xl"></i>
-      <p>No apps found matching "${query}"</p>
-    `;
-    appGrid.appendChild(message);
-  }
-}
-
-function changeMonth(change, button) {
-  const widget = button.closest('.calendar-widget');
-  const monthDisplay = widget.querySelector('.month-display');
-  const calendarGrid = widget.querySelector('.calendar-grid');
+// Close context menu when clicking anywhere else
+document.addEventListener('click', function(e) {
+  const contextMenu = document.getElementById('context-menu');
+  const tabCloakMenu = document.getElementById('tab-cloak-menu');
   
-  const [monthName, year] = monthDisplay.textContent.split(' ');
-  const date = new Date(`${monthName} 1, ${year}`);
-  
-  date.setMonth(date.getMonth() + change);
-  
-  monthDisplay.textContent = `${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`;
-  
-  updateCalendarGrid(calendarGrid, date);
-}
-
-function updateCalendarGrid(grid, date) {
-  grid.innerHTML = '';
-  
-  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  days.forEach(day => {
-    const dayHeader = document.createElement('div');
-    dayHeader.className = 'text-center text-indigo-400 text-sm font-medium';
-    dayHeader.textContent = day;
-    grid.appendChild(dayHeader);
-  });
-  
-  const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
-  const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-  
-  for (let i = 0; i < firstDay.getDay(); i++) {
-    const emptyDay = document.createElement('div');
-    grid.appendChild(emptyDay);
+  if (!contextMenu.contains(e.target)) {
+    contextMenu.style.display = 'none';
   }
   
-  for (let i = 1; i <= lastDay.getDate(); i++) {
-    const dayCell = document.createElement('div');
-    dayCell.className = 'text-center py-1 text-gray-300 hover:bg-indigo-500/20 rounded cursor-pointer transition-colors';
-    dayCell.textContent = i;
-    
-    if (date.getMonth() === new Date().getMonth() && 
-        date.getFullYear() === new Date().getFullYear() && 
-        i === new Date().getDate()) {
-      dayCell.className += ' bg-indigo-500/30 text-white';
-    }
-    
-    grid.appendChild(dayCell);
+  if (tabCloakMenu && !tabCloakMenu.contains(e.target)) {
+    tabCloakMenu.style.display = 'none';
   }
-}
+});
 
-function initCalendarWidget(widget) {
-  const monthDisplay = widget.querySelector('.month-display');
-  const calendarGrid = widget.querySelector('.calendar-grid');
-  const today = new Date();
-  
-  monthDisplay.textContent = `${today.toLocaleString('default', { month: 'long' })} ${today.getFullYear()}`;
-  updateCalendarGrid(calendarGrid, today);
-}
-
-function addWidget(type) {
-  const widgetsContainer = document.getElementById('widgets-container');
-  const templateId = `${type}-widget-template`;
-  const template = document.getElementById(templateId);
-  
-  if (template) {
-    const widget = template.content.cloneNode(true).querySelector('.widget');
-    widget.style.position = 'absolute';
-    widget.style.left = '50px';
-    widget.style.top = '50px';
-    
-    makeDraggable(widget);
-    
-    if (type === 'calendar') {
-      initCalendarWidget(widget);
-    }
-    
-    widgetsContainer.appendChild(widget);
-  }
-}
-
+// Show tab cloak submenu
 function showTabCloakMenu() {
   const contextMenu = document.getElementById('context-menu');
   const tabCloakMenu = document.getElementById('tab-cloak-menu');
   
-  const rect = contextMenu.getBoundingClientRect();
+  if (!tabCloakMenu) return;
   
-  contextMenu.style.display = 'none';
+  const contextRect = contextMenu.getBoundingClientRect();
   
   tabCloakMenu.style.display = 'block';
-  tabCloakMenu.style.left = rect.left + 'px';
-  tabCloakMenu.style.top = rect.top + 'px';
-  
-  function closeTabCloakMenu(e) {
-    if (!tabCloakMenu.contains(e.target)) {
-      tabCloakMenu.style.display = 'none';
-      document.removeEventListener('click', closeTabCloakMenu);
-    }
-  }
-  
-  setTimeout(() => {
-    document.addEventListener('click', closeTabCloakMenu);
-  }, 100);
+  tabCloakMenu.style.left = (contextRect.right + 5) + 'px';
+  tabCloakMenu.style.top = contextRect.top + 'px';
 }
 
-let currentTrackIndex = 0;
-const musicTracks = [
-  {
-    title: "Ambient Lofi",
-    url: "https://example.com/ambient-lofi.mp3",
-    category: "lofi"
+const widgets = {
+  calendar: {
+    name: 'Calendar',
+    template: '#calendar-widget-template',
+    initializer: initCalendarWidget
   },
-  {
-    title: "Study Beats",
-    url: "https://example.com/study-beats.mp3", 
-    category: "study"
+  weather: {
+    name: 'Weather',
+    template: '#weather-widget-template',
+    initializer: initWeatherWidget
   },
-  {
-    title: "Chill Wave",
-    url: "https://example.com/chill-wave.mp3",
-    category: "chill"
+  timer: {
+    name: 'Timer',
+    template: '#timer-widget-template',
+    initializer: initTimerWidget
   }
-];
+};
 
-function initMusicPlayer() {
-  const audioPlayer = document.getElementById('audio-player');
-  const playBtn = document.getElementById('play-btn');
-  const trackTitle = document.getElementById('track-title');
-  
-  loadTrack(0);
-  
-  audioPlayer.addEventListener('ended', () => {
-    nextTrack();
-  });
-  
-  const musicPlayer = document.getElementById('music-player');
-  makeDraggable(musicPlayer);
-}
+function addWidget(type) {
+  const widgetsContainer = document.getElementById('widgets-container');
+  if (!widgetsContainer) return;
 
-function loadTrack(index) {
-  const audioPlayer = document.getElementById('audio-player');
-  const trackTitle = document.getElementById('track-title');
-  
-  currentTrackIndex = index;
-  audioPlayer.src = musicTracks[index].url;
-  trackTitle.textContent = musicTracks[index].title;
-  
-  if (!audioPlayer.paused) {
-    audioPlayer.play();
-  }
-}
+  const widgetInfo = widgets[type];
+  if (!widgetInfo) return;
 
-function togglePlay() {
-  const audioPlayer = document.getElementById('audio-player');
-  const playBtn = document.getElementById('play-btn');
-  
-  if (audioPlayer.paused) {
-    audioPlayer.play();
-    playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-  } else {
-    audioPlayer.pause();
-    playBtn.innerHTML = '<i class="fas fa-play"></i>';
-  }
-}
+  const templateEl = document.querySelector(widgetInfo.template);
+  if (!templateEl) return;
 
-function nextTrack() {
-  loadTrack((currentTrackIndex + 1) % musicTracks.length);
-}
+  const widgetClone = templateEl.content.cloneNode(true);
+  const widgetElement = widgetClone.querySelector('.widget');
 
-function prevTrack() {
-  loadTrack((currentTrackIndex - 1 + musicTracks.length) % musicTracks.length);
-}
+  // Make widget draggable
+  widgetElement.addEventListener('mousedown', startDragging);
 
-function updateVolume(value) {
-  const audioPlayer = document.getElementById('audio-player');
-  audioPlayer.volume = value;
-  localStorage.setItem('playerVolume', value);
-}
+  widgetsContainer.appendChild(widgetElement);
 
-function makeDraggable(element) {
-  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-  
-  element.onmousedown = dragMouseDown;
-
-  function dragMouseDown(e) {
-    e = e || window.event;
-    e.preventDefault();
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    document.onmouseup = closeDragElement;
-    document.onmousemove = elementDrag;
+  // Call widget-specific initialization
+  if (widgetInfo.initializer) {
+    widgetInfo.initializer(widgetElement);
   }
 
-  function elementDrag(e) {
-    e = e || window.event;
-    e.preventDefault();
-    pos1 = pos3 - e.clientX;
-    pos2 = pos4 - e.clientY;
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    element.style.top = (element.offsetTop - pos2) + "px";
-    element.style.left = (element.offsetLeft - pos1) + "px";
-  }
-
-  function closeDragElement() {
-    document.onmouseup = null;
-    document.onmousemove = null;
-  }
-}
-
-function handleContextMenu(event) {
-  event.preventDefault(); 
-  
+  // Close context menu after adding widget
   const contextMenu = document.getElementById('context-menu');
-  const widgetParent = contextMenu.querySelector('.widget-parent');
-  const widgetSubmenu = contextMenu.querySelector('.widget-submenu');
-  
-  contextMenu.style.display = 'block';
-  contextMenu.style.left = `${event.clientX}px`;
-  contextMenu.style.top = `${event.clientY}px`;
-  
-  widgetParent.addEventListener('click', () => {
-    widgetSubmenu.classList.toggle('hidden');
-  });
+  if (contextMenu) {
+    contextMenu.style.display = 'none';
+  }
+}
 
-  function closeContextMenu(e) {
-    if (!contextMenu.contains(e.target)) {
-      contextMenu.style.display = 'none';
-      widgetSubmenu.classList.add('hidden');
-      document.removeEventListener('click', closeContextMenu);
+let isDragging = false;
+let currentWidget = null;
+let offsetX, offsetY;
+
+function startDragging(e) {
+  if (e.target.closest('.widget-header')) {
+    isDragging = true;
+    currentWidget = e.currentTarget;
+    
+    const rect = currentWidget.getBoundingClientRect();
+    offsetX = e.clientX - rect.left;
+    offsetY = e.clientY - rect.top;
+    
+    currentWidget.style.position = 'fixed';
+    currentWidget.style.zIndex = '1000';
+    
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('mouseup', stopDragging);
+  }
+}
+
+function drag(e) {
+  if (!isDragging) return;
+  
+  currentWidget.style.left = `${e.clientX - offsetX}px`;
+  currentWidget.style.top = `${e.clientY - offsetY}px`;
+}
+
+function stopDragging() {
+  isDragging = false;
+  document.removeEventListener('mousemove', drag);
+  document.removeEventListener('mouseup', stopDragging);
+}
+
+function removeWidget(widgetElement) {
+  widgetElement.remove();
+}
+
+function initCalendarWidget(widgetElement) {
+  const monthDisplay = widgetElement.querySelector('.month-display');
+  const calendarGrid = widgetElement.querySelector('.calendar-grid');
+  let currentDate = new Date();
+
+  function renderCalendar(date) {
+    const month = date.getMonth();
+    const year = date.getFullYear();
+    
+    monthDisplay.textContent = new Date(year, month).toLocaleString('default', { month: 'long', year: 'numeric' });
+    
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    
+    calendarGrid.innerHTML = '';
+    
+    // Add days of the week headers
+    ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(day => {
+      const dayEl = document.createElement('div');
+      dayEl.textContent = day;
+      dayEl.classList.add('text-white', 'text-center', 'font-bold');
+      calendarGrid.appendChild(dayEl);
+    });
+    
+    // Add empty cells for days before the first day of the month
+    for (let i = 0; i < firstDay; i++) {
+      calendarGrid.appendChild(document.createElement('div'));
+    }
+    
+    // Add days of the month
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dayEl = document.createElement('div');
+      dayEl.textContent = day;
+      dayEl.classList.add('text-white', 'text-center', 'p-1');
+      
+      // Highlight current day
+      if (
+        year === new Date().getFullYear() && 
+        month === new Date().getMonth() && 
+        day === new Date().getDate()
+      ) {
+        dayEl.classList.add('bg-indigo-500', 'rounded');
+      }
+      
+      calendarGrid.appendChild(dayEl);
     }
   }
+
+  renderCalendar(currentDate);
+
+  widgetElement.querySelector('button:first-of-type').addEventListener('click', () => {
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    renderCalendar(currentDate);
+  });
+
+  widgetElement.querySelector('button:last-of-type').addEventListener('click', () => {
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    renderCalendar(currentDate);
+  });
+}
+
+function initWeatherWidget(widgetElement) {
+  const weatherLocation = widgetElement.querySelector('.weather-location');
+  const weatherTemp = widgetElement.querySelector('.weather-temp');
+  const weatherDesc = widgetElement.querySelector('.weather-desc');
+
+  function fetchWeather() {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const { latitude, longitude } = position.coords;
+        try {
+          const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=YOUR_API_KEY&units=metric`);
+          const data = await response.json();
+          
+          weatherLocation.textContent = data.name;
+          weatherTemp.textContent = `${Math.round(data.main.temp)}°C`;
+          weatherDesc.innerHTML = `<i class="owf owf-${data.weather[0].id}"></i> ${data.weather[0].description}`;
+        } catch (error) {
+          weatherLocation.textContent = 'Error fetching weather';
+        }
+      }, () => {
+        weatherLocation.textContent = 'Location unavailable';
+      });
+    } else {
+      weatherLocation.textContent = 'Geolocation not supported';
+    }
+  }
+
+  fetchWeather();
+}
+
+function initTimerWidget(widgetElement) {
+  const timerDisplay = widgetElement.querySelector('.timer-display');
+  const startButton = widgetElement.querySelector('.start-timer');
+  const pauseButton = widgetElement.querySelector('.pause-timer');
+  const resetButton = widgetElement.querySelector('.reset-timer');
+  const minutesInput = widgetElement.querySelector('input');
+
+  let interval;
+  let totalSeconds = 0;
+  let isRunning = false;
+
+  startButton.addEventListener('click', () => {
+    if (!isRunning) {
+      const minutes = parseInt(minutesInput.value) || 0;
+      if (minutes > 0) {
+        totalSeconds = minutes * 60;
+      }
+      
+      if (totalSeconds > 0) {
+        interval = setInterval(() => {
+          totalSeconds--;
+          updateDisplay();
+          
+          if (totalSeconds <= 0) {
+            clearInterval(interval);
+            isRunning = false;
+            startButton.disabled = false;
+            pauseButton.disabled = true;
+          }
+        }, 1000);
+        
+        isRunning = true;
+        startButton.disabled = true;
+        pauseButton.disabled = false;
+      }
+    }
+  });
+
+  pauseButton.addEventListener('click', () => {
+    if (isRunning) {
+      clearInterval(interval);
+      isRunning = false;
+      startButton.disabled = false;
+      pauseButton.disabled = true;
+    }
+  });
+
+  resetButton.addEventListener('click', () => {
+    clearInterval(interval);
+    totalSeconds = 0;
+    isRunning = false;
+    updateDisplay();
+    startButton.disabled = false;
+    pauseButton.disabled = true;
+  });
+
+  function updateDisplay() {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    
+    timerDisplay.textContent = [hours, minutes, seconds]
+      .map(v => v.toString().padStart(2, '0'))
+      .join(':');
+  }
+
+  updateDisplay();
+  pauseButton.disabled = true;
+}
+
+function toggleToolbarMenu() {
+  const toolbarMenu = document.getElementById('toolbar-menu');
   
-  document.addEventListener('click', closeContextMenu);
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  document.body.addEventListener('contextmenu', handleContextMenu);
-});
-
-function removeWidget(widget) {
-  widget.remove();
-}
-
-async function updateSystemInfo() {
-  // Get battery info
-  try {
-    const battery = await navigator.getBattery();
-    const batteryLevel = Math.round(battery.level * 100);
-    const batteryStatus = battery.charging ? 'Charging' : 'Not charging';
-    document.getElementById('battery-info').innerHTML = `
-      <span class="flex items-center gap-2">
-        <i class="${getBatteryIcon(batteryLevel, battery.charging)}"></i>
-        ${batteryLevel}%
-      </span>
-    `;
-  } catch (err) {
-    document.getElementById('battery-info').innerHTML = `
-      <span class="flex items-center gap-2">
-        <i class="fas fa-battery-full"></i>
-        N/A
-      </span>
-    `;
-  }
-
-  // Get ping
-  try {
-    const start = performance.now();
-    await fetch('/ping', { method: 'HEAD' });
-    const end = performance.now();
-    const ping = Math.round(end - start);
-    document.getElementById('ping-info').innerHTML = `
-      <span class="flex items-center gap-2">
-        <i class="${getPingIcon(ping)}"></i>
-        ${ping}ms
-      </span>
-    `;
-  } catch (err) {
-    document.getElementById('ping-info').innerHTML = `
-      <span class="flex items-center gap-2">
-        <i class="fas fa-signal"></i>
-        N/A
-      </span>
-    `;
+  if (toolbarMenu) {
+    toolbarMenu.classList.toggle('hidden');
   }
 }
 
-function getBatteryIcon(level, charging) {
-  if (charging) return 'fas fa-battery-full text-green-400';
-  if (level > 75) return 'fas fa-battery-full text-green-400';
-  if (level > 50) return 'fas fa-battery-three-quarters text-green-400';
-  if (level > 25) return 'fas fa-battery-half text-yellow-400';
-  return 'fas fa-battery-quarter text-red-400';
+function checkAndUpdateCoins() {
+  const now = Date.now();
+  const timeDiff = now - lastCoinUpdate;
+  
+  if (timeDiff >= COIN_INTERVAL) {
+    const coinRewards = Math.floor(timeDiff / COIN_INTERVAL) * COIN_REWARD;
+    userCoins += coinRewards;
+    lastCoinUpdate = now;
+    
+    // Save to localStorage
+    localStorage.setItem('userCoins', userCoins);
+    localStorage.setItem('lastCoinUpdate', lastCoinUpdate);
+    
+    // Update display if visible
+    updateCoinDisplay();
+    
+    // Show notification
+    showNotification(`+${coinRewards} coins earned!`);
+  }
 }
 
-function getPingIcon(ping) {
-  if (ping < 50) return 'fas fa-signal text-green-400';
-  if (ping < 100) return 'fas fa-signal text-yellow-400';
-  return 'fas fa-signal text-red-400';
+function updateCoinDisplay() {
+  const coinDisplay = document.getElementById('coin-display');
+  if (coinDisplay) {
+    coinDisplay.textContent = userCoins;
+  }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  updateSystemInfo();
-  setInterval(updateSystemInfo, 5000); // Update every 5 seconds
-});
+function purchaseItem(itemId) {
+  const item = storeItems.find(i => i.id === itemId);
+  if (!item) return;
+  
+  if (userCoins >= item.price) {
+    userCoins -= item.price;
+    localStorage.setItem('userCoins', userCoins);
+    
+    // Save purchased item
+    const purchasedItems = JSON.parse(localStorage.getItem('purchasedItems') || '[]');
+    if (!purchasedItems.includes(itemId)) {
+      purchasedItems.push(itemId);
+      localStorage.setItem('purchasedItems', JSON.stringify(purchasedItems));
+    }
+    
+    updateCoinDisplay();
+    showNotification(`Successfully purchased ${item.name}!`);
+    
+    // Apply item effects
+    applyPurchasedItem(item);
+    
+    // Refresh store display
+    openCategory('store');
+  } else {
+    showNotification('Not enough coins!', 'error');
+  }
+}
+
+function applyPurchasedItem(item) {
+  switch(item.id) {
+    case 'pet_companion':
+      enableVirtualPet();
+      break;
+    case 'custom_sounds':
+      enableCustomSounds();
+      break;
+    case 'tab_groups':
+      enableTabGroups();
+      break;
+    case 'quick_notes':
+      enableQuickNotes();
+      break;
+    case 'custom_hotkeys':
+      enableCustomHotkeys();
+      break;
+    case 'proxy_history':
+      enableProxyHistory();
+      break;
+    case 'search_filters':
+      enableSearchFilters();
+      break;
+    case 'proxy_speed':
+      enableSpeedBoost();
+      break;
+    case 'download_manager':
+      enableDownloadManager();
+      break;
+  }
+}
+
+function enableVirtualPet() {
+  const pet = document.createElement('div');
+  pet.className = 'virtual-pet';
+  pet.innerHTML = `<img src="/pet-cat.png" alt="Virtual Pet">`;
+  document.body.appendChild(pet);
+  
+  document.addEventListener('mousemove', (e) => {
+    if (!pet) return;
+    const x = e.clientX;
+    const y = e.clientY;
+    pet.style.transform = `translate(${x + 20}px, ${y + 20}px)`;
+  });
+}
+
+function enableCustomSounds() {
+  // Add sound effects to various UI interactions
+  document.body.addEventListener('click', () => {
+    playSound('click');
+  });
+  
+  // Add hover sound to buttons
+  document.querySelectorAll('button').forEach(button => {
+    button.addEventListener('mouseenter', () => {
+      playSound('hover');
+    });
+  });
+}
+
+function enableTabGroups() {
+  // Add tab grouping functionality to proxy interface
+  const proxyTabs = document.createElement('div');
+  proxyTabs.className = 'proxy-tabs';
+  // Implementation details...
+}
+
+function enableQuickNotes() {
+  // Add floating notepad widget
+  const notepad = document.createElement('div');
+  notepad.className = 'quick-notes-widget';
+  // Implementation details...
+}
+
+function enableCustomHotkeys() {
+  // Add hotkey configuration interface
+  const hotkeyManager = document.createElement('div');
+  hotkeyManager.className = 'hotkey-manager';
+  // Implementation details...
+}
+
+function enableProxyHistory() {
+  // Add browsing history tracking and management
+  const historyManager = document.createElement('div');
+  historyManager.className = 'history-manager';
+  // Implementation details...
+}
+
+function enableSearchFilters() {
+  // Add advanced search filtering options
+  const searchFilters = document.createElement('div');
+  searchFilters.className = 'search-filters';
+  // Implementation details...
+}
+
+function enableSpeedBoost() {
+  // Implement proxy speed optimizations
+  // Implementation details...
+}
+
+function enableDownloadManager() {
+  // Add download management interface
+  const downloadManager = document.createElement('div');
+  downloadManager.className = 'download-manager';
+  // Implementation details...
+}
+
+function playSound(type) {
+  const sounds = {
+    click: 'click.mp3',
+    hover: 'hover.mp3',
+    notification: 'notification.mp3'
+  };
+  
+  const audio = new Audio(sounds[type]);
+  audio.play().catch(() => {}); // Ignore errors if sound can't play
+}
+
+setInterval(checkAndUpdateCoins, 60000); // Check every minute
+checkAndUpdateCoins(); // Initial check
