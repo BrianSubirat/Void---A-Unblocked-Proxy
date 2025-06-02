@@ -214,8 +214,8 @@ function openCategory(category) {
       <div class="w-full h-full flex flex-col items-center p-6 overflow-y-auto">
         <div class="max-w-4xl w-full">
           <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-white mb-2 space-glow">Educational Tools</h1>
-            <p class="text-indigo-400">Automated assistance for educational platforms</p>
+            <h1 class="text-4xl font-bold text-white mb-2 space-glow">Cheats for school</h1>
+            <p class="text-indigo-400">Free cheats for school</p>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -290,7 +290,7 @@ function openCategory(category) {
               <h3 class="text-white font-bold">Important Notice</h3>
             </div>
             <p class="text-gray-300 text-sm">
-              These tools are for educational purposes only. Please use responsibly and in accordance with your institution's policies.
+              Make sure to be carful using these to not get cought.
             </p>
           </div>
         </div>
