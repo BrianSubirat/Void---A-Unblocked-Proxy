@@ -202,6 +202,56 @@ function openCategory(category) {
               <span class="app-name">TikTok</span>
               <span class="category-label">Social</span>
             </div>
+            <div onclick="proxyApp('https://github.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fab fa-github app-icon text-gray-800 text-3xl mb-2"></i>
+              <span class="app-name">GitHub</span>
+              <span class="category-label">Development</span>
+            </div>
+            <div onclick="proxyApp('https://messenger.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fab fa-facebook-messenger app-icon text-blue-500 text-3xl mb-2"></i>
+              <span class="app-name">Messenger</span>
+              <span class="category-label">Social</span>
+            </div>
+            <div onclick="proxyApp('https://whatsapp.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fab fa-whatsapp app-icon text-green-500 text-3xl mb-2"></i>
+              <span class="app-name">WhatsApp</span>
+              <span class="category-label">Social</span>
+            </div>
+            <div onclick="proxyApp('https://telegram.org')" class="app-card flex flex-col items-center text-center">
+              <i class="fab fa-telegram app-icon text-blue-400 text-3xl mb-2"></i>
+              <span class="app-name">Telegram</span>
+              <span class="category-label">Social</span>
+            </div>
+            <div onclick="proxyApp('https://soundcloud.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fab fa-soundcloud app-icon text-orange-500 text-3xl mb-2"></i>
+              <span class="app-name">SoundCloud</span>
+              <span class="category-label">Music</span>
+            </div>
+            <div onclick="proxyApp('https://linkedin.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fab fa-linkedin app-icon text-blue-600 text-3xl mb-2"></i>
+              <span class="app-name">LinkedIn</span>
+              <span class="category-label">Professional</span>
+            </div>
+            <div onclick="proxyApp('https://tumblr.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fab fa-tumblr app-icon text-blue-800 text-3xl mb-2"></i>
+              <span class="app-name">Tumblr</span>
+              <span class="category-label">Social</span>
+            </div>
+            <div onclick="proxyApp('https://imgur.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fas fa-images app-icon text-green-400 text-3xl mb-2"></i>
+              <span class="app-name">Imgur</span>
+              <span class="category-label">Images</span>
+            </div>
+            <div onclick="proxyApp('https://vimeo.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fab fa-vimeo app-icon text-cyan-500 text-3xl mb-2"></i>
+              <span class="app-name">Vimeo</span>
+              <span class="category-label">Video</span>
+            </div>
+            <div onclick="proxyApp('https://trello.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fab fa-trello app-icon text-blue-400 text-3xl mb-2"></i>
+              <span class="app-name">Trello</span>
+              <span class="category-label">Productivity</span>
+            </div>
           </div>
         </div>
       </div>
@@ -395,7 +445,6 @@ function proxySearch() {
     if (urlPattern.test(query)) {
       searchUrl = query.startsWith('http') ? query : `https://${query}`;
     } else {
-      // Append search bar UI elements to the search URL
       searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
     }
     
@@ -430,18 +479,18 @@ function proxySearch() {
           
           <div class="relative">
             <button onclick="toggleToolbarMenu()" class="text-gray-300 hover:text-white px-2">
-              <i class="fas fa-bars"></i>
+              <i class="fas fa-ellipsis-v"></i>
             </button>
             
             <div id="toolbar-menu" class="hidden absolute right-0 top-full mt-2 w-48 bg-slate-800/90 backdrop-blur rounded-lg border border-indigo-500/20 shadow-xl z-50">
               <div class="py-2">
-                <button onclick="proxyToggleFullscreen()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
-                  <i class="fas fa-expand w-5"></i>
-                  <span>Fullscreen</span>
-                </button>
                 <button onclick="proxyCopyUrl()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
                   <i class="fas fa-copy w-5"></i>
                   <span>Copy URL</span>
+                </button>
+                <button onclick="proxyToggleFullscreen()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
+                  <i class="fas fa-expand w-5"></i>
+                  <span>Fullscreen</span>
                 </button>
                 <button onclick="proxyToggleToolbar()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
                   <i class="fas fa-eye-slash w-5"></i>
@@ -449,7 +498,7 @@ function proxySearch() {
                 </button>
                 <button onclick="proxyToggleBookmark()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
                   <i class="fas fa-bookmark w-5"></i>
-                  <span>Bookmark Page</span>
+                  <span>Bookmark</span>
                 </button>
               </div>
             </div>
@@ -470,7 +519,6 @@ function proxySearch() {
     sidePanel.classList.add('active');
     updateNotificationBtn.style.display = 'none';
 
-    // Add navigation functions
     window.addEventListener('message', handleProxyMessage);
   }
 }
@@ -515,18 +563,18 @@ function proxyApp(url) {
         
         <div class="relative">
           <button onclick="toggleToolbarMenu()" class="text-gray-300 hover:text-white px-2">
-            <i class="fas fa-bars"></i>
+            <i class="fas fa-ellipsis-v"></i>
           </button>
           
           <div id="toolbar-menu" class="hidden absolute right-0 top-full mt-2 w-48 bg-slate-800/90 backdrop-blur rounded-lg border border-indigo-500/20 shadow-xl z-50">
             <div class="py-2">
-              <button onclick="proxyToggleFullscreen()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
-                <i class="fas fa-expand w-5"></i>
-                <span>Fullscreen</span>
-              </button>
               <button onclick="proxyCopyUrl()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
                 <i class="fas fa-copy w-5"></i>
                 <span>Copy URL</span>
+              </button>
+              <button onclick="proxyToggleFullscreen()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
+                <i class="fas fa-expand w-5"></i>
+                <span>Fullscreen</span>
               </button>
               <button onclick="proxyToggleToolbar()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
                 <i class="fas fa-eye-slash w-5"></i>
@@ -534,7 +582,7 @@ function proxyApp(url) {
               </button>
               <button onclick="proxyToggleBookmark()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
                 <i class="fas fa-bookmark w-5"></i>
-                <span>Bookmark Page</span>
+                <span>Bookmark</span>
               </button>
             </div>
           </div>
@@ -555,7 +603,6 @@ function proxyApp(url) {
   sidePanel.classList.add('active');
   updateNotificationBtn.style.display = 'none';
 
-  // Add navigation functions
   window.addEventListener('message', handleProxyMessage);
 }
 
