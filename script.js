@@ -466,7 +466,7 @@ function proxySearch() {
               <i class="fas fa-redo"></i>
             </button>
             
-            <div class="flex-1 mx-4 relative">
+            <div class="flex-1 mx-4 relative flex items-center">
               <input 
                 type="text" 
                 id="url-bar" 
@@ -474,6 +474,9 @@ function proxySearch() {
                 class="w-full bg-slate-700/50 text-white px-4 py-1 rounded-lg text-sm border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none"
                 onkeypress="handleProxyUrlBarKeyPress(event)"
               >
+              <button onclick="toggleBookmarksPanel()" class="text-gray-300 hover:text-white px-2 ml-2">
+                <i class="fas fa-bookmark"></i>
+              </button>
             </div>
           </div>
           
@@ -496,11 +499,21 @@ function proxySearch() {
                   <i class="fas fa-eye-slash w-5"></i>
                   <span>Hide Toolbar</span>
                 </button>
-                <button onclick="proxyToggleBookmark()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
+                <button onclick="toggleBookmarksPanel()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
                   <i class="fas fa-bookmark w-5"></i>
-                  <span>Bookmark</span>
+                  <span>Bookmarks</span>
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Bookmarks Panel -->
+        <div id="bookmarks-panel" class="absolute right-0 top-full bg-slate-800/90 backdrop-blur w-80 max-h-96 overflow-y-auto rounded-lg border border-indigo-500/20 shadow-xl transform transition-transform duration-300 ease-in-out">
+          <div class="p-4">
+            <h3 class="text-white font-bold mb-4">Bookmarks</h3>
+            <div id="bookmarks-list" class="space-y-2">
+              <!-- Bookmarks will be populated here -->
             </div>
           </div>
         </div>
@@ -515,6 +528,9 @@ function proxySearch() {
         </div>
       </div>
     `;
+
+    // Initialize bookmarks
+    updateBookmarksList();
     
     sidePanel.classList.add('active');
     updateNotificationBtn.style.display = 'none';
@@ -1209,6 +1225,61 @@ function playSound(type) {
   
   const audio = new Audio(sounds[type]);
   audio.play().catch(() => {}); // Ignore errors if sound can't play
+}
+
+function toggleBookmarksPanel() {
+  const bookmarksPanel = document.getElementById('bookmarks-panel');
+  const isOpen = bookmarksPanel.style.transform === 'translateX(0px)';
+  
+  if (isOpen) {
+    bookmarksPanel.style.transform = 'translateX(100%)';
+  } else {
+    bookmarksPanel.style.transform = 'translateX(0)';
+    updateBookmarksList();
+  }
+  
+  // Hide toolbar menu if open
+  document.getElementById('toolbar-menu').classList.add('hidden');
+}
+
+function updateBookmarksList() {
+  const bookmarksList = document.getElementById('bookmarks-list');
+  const bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
+  
+  bookmarksList.innerHTML = bookmarks.length ? bookmarks.map(bookmark => `
+    <div class="group flex items-center justify-between p-2 hover:bg-indigo-500/20 rounded-lg transition-all duration-200">
+      <a href="#" onclick="navigateToBookmark('${bookmark.url}')" class="flex items-center text-gray-300 hover:text-white">
+        <i class="fas fa-globe w-5"></i>
+        <span class="ml-2 truncate">${bookmark.title || bookmark.url}</span>
+      </a>
+      <button 
+        onclick="removeBookmark('${bookmark.url}')" 
+        class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-400 transition-opacity duration-200"
+      >
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  `).join('') : '<p class="text-gray-400 text-center">No bookmarks yet</p>';
+}
+
+function navigateToBookmark(url) {
+  const iframe = document.getElementById('proxy-iframe');
+  const urlBar = document.getElementById('url-bar');
+  
+  if (iframe && urlBar) {
+    iframe.src = url;
+    urlBar.value = url;
+    toggleBookmarksPanel(); // Close the panel after navigation
+  }
+}
+
+function removeBookmark(url) {
+  let bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
+  bookmarks = bookmarks.filter(bookmark => bookmark.url !== url);
+  localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+  
+  updateBookmarksList();
+  showNotification('Bookmark removed');
 }
 
 setInterval(checkAndUpdateCoins, 60000); // Check every minute
