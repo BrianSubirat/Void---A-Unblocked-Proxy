@@ -32,7 +32,6 @@
   transition: color 0.3s ease;
 }
 
-/* Add these new styles for bookmarks panel */
 #bookmarks-panel {
   transform: translateX(100%);
   z-index: 45;

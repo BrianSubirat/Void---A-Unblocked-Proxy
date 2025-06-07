@@ -82,7 +82,52 @@ function openCategory(category) {
   const sidePanel = document.getElementById('side-panel');
   const updateNotificationBtn = document.getElementById('update-notification-btn');
   
-  if (category === 'proxy') {
+  if (category === 'vm') {
+    sidePanel.innerHTML = `
+      <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="w-full h-full flex flex-col items-center p-6">
+        <div class="max-w-2xl w-full">
+          <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-white mb-2 space-glow">VAPOR Private VMs</h1>
+            <p class="text-indigo-400">Isolated, personal browsers available in the cloud</p>
+          </div>
+
+          <div class="flex items-center justify-center h-full p-8 space-y-6">
+            <div class="bg-slate-800/50 backdrop-blur p-8 rounded-2xl border border-indigo-500/20 max-w-2xl w-full">
+              <h2 class="text-4xl font-bold text-white space-glow text-center mb-8">VAPOR Private VMs</h2>
+              
+              <div class="text-center space-y-4">
+                <p class="text-gray-300 text-lg">
+                  VAPOR Private VMs are isolated, personal browsers available in the cloud.
+                </p>
+                
+                <p class="text-gray-300 text-lg">
+                  Need to search something? Need to test a sketchy site? Try Private VMs.
+                </p>
+                
+                <p class="text-indigo-400 text-lg">
+                  12 minutes of uninterrupted browsing. Ran out of time? In a single click, create a new session right away.
+                </p>
+              </div>
+
+              <div class="mt-8 text-center">
+                <button 
+                  onclick="startVMSession()"
+                  class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl transition-all duration-300 flex items-center space-x-3 text-lg font-medium mx-auto"
+                >
+                  <i class="fas fa-play"></i>
+                  <span>Start Session</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  else if (category === 'proxy') {
     sidePanel.innerHTML = `
       <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
         <i class="fas fa-times"></i>
@@ -172,6 +217,7 @@ function openCategory(category) {
           </div>
 
           <div class="app-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <!-- Original Apps -->
             <div onclick="proxyApp('https://discord.com')" class="app-card flex flex-col items-center text-center">
               <i class="fab fa-discord app-icon text-indigo-500 text-3xl mb-2"></i>
               <span class="app-name">Discord</span>
@@ -202,55 +248,122 @@ function openCategory(category) {
               <span class="app-name">TikTok</span>
               <span class="category-label">Social</span>
             </div>
-            <div onclick="proxyApp('https://github.com')" class="app-card flex flex-col items-center text-center">
-              <i class="fab fa-github app-icon text-gray-800 text-3xl mb-2"></i>
-              <span class="app-name">GitHub</span>
-              <span class="category-label">Development</span>
-            </div>
-            <div onclick="proxyApp('https://messenger.com')" class="app-card flex flex-col items-center text-center">
-              <i class="fab fa-facebook-messenger app-icon text-blue-500 text-3xl mb-2"></i>
-              <span class="app-name">Messenger</span>
+            <div onclick="proxyApp('https://twitter.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fab fa-twitter app-icon text-blue-400 text-3xl mb-2"></i>
+              <span class="app-name">Twitter</span>
               <span class="category-label">Social</span>
             </div>
-            <div onclick="proxyApp('https://whatsapp.com')" class="app-card flex flex-col items-center text-center">
-              <i class="fab fa-whatsapp app-icon text-green-500 text-3xl mb-2"></i>
-              <span class="app-name">WhatsApp</span>
+            <div onclick="proxyApp('https://netflix.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fas fa-film app-icon text-red-600 text-3xl mb-2"></i>
+              <span class="app-name">Netflix</span>
+              <span class="category-label">Streaming</span>
+            </div>
+            
+            <!-- Additional Apps -->
+            <div onclick="proxyApp('https://instagram.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fab fa-instagram app-icon text-pink-500 text-3xl mb-2"></i>
+              <span class="app-name">Instagram</span>
               <span class="category-label">Social</span>
             </div>
-            <div onclick="proxyApp('https://telegram.org')" class="app-card flex flex-col items-center text-center">
-              <i class="fab fa-telegram app-icon text-blue-400 text-3xl mb-2"></i>
-              <span class="app-name">Telegram</span>
+            <div onclick="proxyApp('https://facebook.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fab fa-facebook app-icon text-blue-500 text-3xl mb-2"></i>
+              <span class="app-name">Facebook</span>
               <span class="category-label">Social</span>
             </div>
-            <div onclick="proxyApp('https://soundcloud.com')" class="app-card flex flex-col items-center text-center">
-              <i class="fab fa-soundcloud app-icon text-orange-500 text-3xl mb-2"></i>
-              <span class="app-name">SoundCloud</span>
-              <span class="category-label">Music</span>
+            <div onclick="proxyApp('https://pinterest.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fab fa-pinterest app-icon text-red-500 text-3xl mb-2"></i>
+              <span class="app-name">Pinterest</span>
+              <span class="category-label">Social</span>
             </div>
             <div onclick="proxyApp('https://linkedin.com')" class="app-card flex flex-col items-center text-center">
               <i class="fab fa-linkedin app-icon text-blue-600 text-3xl mb-2"></i>
               <span class="app-name">LinkedIn</span>
               <span class="category-label">Professional</span>
             </div>
-            <div onclick="proxyApp('https://tumblr.com')" class="app-card flex flex-col items-center text-center">
-              <i class="fab fa-tumblr app-icon text-blue-800 text-3xl mb-2"></i>
-              <span class="app-name">Tumblr</span>
-              <span class="category-label">Social</span>
+            <div onclick="proxyApp('https://github.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fab fa-github app-icon text-gray-800 text-3xl mb-2"></i>
+              <span class="app-name">GitHub</span>
+              <span class="category-label">Development</span>
             </div>
-            <div onclick="proxyApp('https://imgur.com')" class="app-card flex flex-col items-center text-center">
-              <i class="fas fa-images app-icon text-green-400 text-3xl mb-2"></i>
-              <span class="app-name">Imgur</span>
-              <span class="category-label">Images</span>
+            <div onclick="proxyApp('https://outlook.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fas fa-envelope app-icon text-blue-500 text-3xl mb-2"></i>
+              <span class="app-name">Outlook</span>
+              <span class="category-label">Email</span>
+            </div>
+            <div onclick="proxyApp('https://amazon.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fab fa-amazon app-icon text-yellow-500 text-3xl mb-2"></i>
+              <span class="app-name">Amazon</span>
+              <span class="category-label">Shopping</span>
+            </div>
+            <div onclick="proxyApp('https://ebay.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fas fa-shopping-cart app-icon text-blue-500 text-3xl mb-2"></i>
+              <span class="app-name">eBay</span>
+              <span class="category-label">Shopping</span>
+            </div>
+            <div onclick="proxyApp('https://walmart.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fas fa-store app-icon text-blue-700 text-3xl mb-2"></i>
+              <span class="app-name">Walmart</span>
+              <span class="category-label">Shopping</span>
+            </div>
+            <div onclick="proxyApp('https://target.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fas fa-bullseye app-icon text-red-600 text-3xl mb-2"></i>
+              <span class="app-name">Target</span>
+              <span class="category-label">Shopping</span>
+            </div>
+            <div onclick="proxyApp('https://crunchyroll.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fas fa-tv app-icon text-orange-500 text-3xl mb-2"></i>
+              <span class="app-name">Crunchyroll</span>
+              <span class="category-label">Streaming</span>
+            </div>
+            <div onclick="proxyApp('https://hulu.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fas fa-play-circle app-icon text-green-500 text-3xl mb-2"></i>
+              <span class="app-name">Hulu</span>
+              <span class="category-label">Streaming</span>
+            </div>
+            <div onclick="proxyApp('https://disneyplus.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fas fa-magic app-icon text-blue-400 text-3xl mb-2"></i>
+              <span class="app-name">Disney+</span>
+              <span class="category-label">Streaming</span>
+            </div>
+            <div onclick="proxyApp('https://hbomax.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fas fa-film app-icon text-purple-600 text-3xl mb-2"></i>
+              <span class="app-name">HBO Max</span>
+              <span class="category-label">Streaming</span>
+            </div>
+            <div onclick="proxyApp('https://peacocktv.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fas fa-feather-alt app-icon text-indigo-400 text-3xl mb-2"></i>
+              <span class="app-name">Peacock</span>
+              <span class="category-label">Streaming</span>
+            </div>
+            <div onclick="proxyApp('https://primevideo.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fab fa-amazon app-icon text-blue-500 text-3xl mb-2"></i>
+              <span class="app-name">Prime Video</span>
+              <span class="category-label">Streaming</span>
+            </div>
+            <div onclick="proxyApp('https://dailymotion.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fas fa-video app-icon text-blue-400 text-3xl mb-2"></i>
+              <span class="app-name">Dailymotion</span>
+              <span class="category-label">Video</span>
             </div>
             <div onclick="proxyApp('https://vimeo.com')" class="app-card flex flex-col items-center text-center">
-              <i class="fab fa-vimeo app-icon text-cyan-500 text-3xl mb-2"></i>
+              <i class="fab fa-vimeo-v app-icon text-cyan-500 text-3xl mb-2"></i>
               <span class="app-name">Vimeo</span>
               <span class="category-label">Video</span>
             </div>
-            <div onclick="proxyApp('https://trello.com')" class="app-card flex flex-col items-center text-center">
-              <i class="fab fa-trello app-icon text-blue-400 text-3xl mb-2"></i>
-              <span class="app-name">Trello</span>
-              <span class="category-label">Productivity</span>
+            <div onclick="proxyApp('https://soundcloud.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fab fa-soundcloud app-icon text-orange-500 text-3xl mb-2"></i>
+              <span class="app-name">SoundCloud</span>
+              <span class="category-label">Music</span>
+            </div>
+            <div onclick="proxyApp('https://pandora.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fas fa-music app-icon text-blue-400 text-3xl mb-2"></i>
+              <span class="app-name">Pandora</span>
+              <span class="category-label">Music</span>
+            </div>
+            <div onclick="proxyApp('https://deezer.com')" class="app-card flex flex-col items-center text-center">
+              <i class="fas fa-headphones app-icon text-indigo-500 text-3xl mb-2"></i>
+              <span class="app-name">Deezer</span>
+              <span class="category-label">Music</span>
             </div>
           </div>
         </div>
@@ -399,6 +512,78 @@ function openCategory(category) {
     
     sidePanel.classList.add('active');
     updateNotificationBtn.style.display = 'none';
+  } else if (category === 'partners') {
+    sidePanel.innerHTML = `
+      <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="w-full h-full flex flex-col items-center p-6">
+        <div class="max-w-4xl w-full">
+          <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-white mb-2 space-glow">Our Partners</h1>
+            <p class="text-indigo-400">Trusted collaborators in the unblocking community</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Waves -->
+            <div class="category-card p-6 rounded-xl relative overflow-hidden">
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-white">Waves</h2>
+                <i class="fas fa-wave-square text-blue-400 text-2xl"></i>
+              </div>
+              <p class="text-gray-300 mb-4">Fast and reliable proxy service</p>
+              <a href="https://usewaves.site" target="_blank" 
+                class="w-full bg-indigo-600/20 hover:bg-indigo-600/30 text-white py-2 px-4 rounded-lg transition-all flex items-center justify-between">
+                <span>Visit Waves</span>
+                <i class="fas fa-external-link-alt"></i>
+              </a>
+            </div>
+
+            <!-- Petezah -->
+            <div class="category-card p-6 rounded-xl relative overflow-hidden">
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-white">Petezah</h2>
+                <i class="fas fa-bolt text-yellow-400 text-2xl"></i>
+              </div>
+              <p class="text-gray-300 mb-4">Advanced proxy technology</p>
+              <a href="https://petezah.xyz" target="_blank"
+                class="w-full bg-indigo-600/20 hover:bg-indigo-600/30 text-white py-2 px-4 rounded-lg transition-all flex items-center justify-between">
+                <span>Visit Petezah</span>
+                <i class="fas fa-external-link-alt"></i>
+              </a>
+            </div>
+
+            <!-- Arsenic -->
+            <div class="category-card p-6 rounded-xl relative overflow-hidden">
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-white">Arsenic</h2>
+                <i class="fas fa-flask text-green-400 text-2xl"></i>
+              </div>
+              <p class="text-gray-300 mb-4">Innovative proxy solutions</p>
+              <a href="https://arsenic.free.hr" target="_blank"
+                class="w-full bg-indigo-600/20 hover:bg-indigo-600/30 text-white py-2 px-4 rounded-lg transition-all flex items-center justify-between">
+                <span>Visit Arsenic</span>
+                <i class="fas fa-external-link-alt"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="mt-8 p-4 bg-indigo-600/10 border border-indigo-500/20 rounded-lg">
+            <div class="flex items-center mb-2">
+              <i class="fas fa-info-circle text-indigo-400 mr-2"></i>
+              <h3 class="text-white font-bold">Partnership Program</h3>
+            </div>
+            <p class="text-gray-300 text-sm">
+              Our partners are carefully selected based on their commitment to quality, security, and user privacy. 
+              Together, we're building a better unblocking ecosystem.
+            </p>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    sidePanel.classList.add('active');
+    updateNotificationBtn.style.display = 'none';
   } else {
     let url = '';
     switch(category) {
@@ -466,7 +651,7 @@ function proxySearch() {
               <i class="fas fa-redo"></i>
             </button>
             
-            <div class="flex-1 mx-4 relative flex items-center">
+            <div class="flex-1 mx-4 relative">
               <input 
                 type="text" 
                 id="url-bar" 
@@ -474,9 +659,6 @@ function proxySearch() {
                 class="w-full bg-slate-700/50 text-white px-4 py-1 rounded-lg text-sm border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none"
                 onkeypress="handleProxyUrlBarKeyPress(event)"
               >
-              <button onclick="toggleBookmarksPanel()" class="text-gray-300 hover:text-white px-2 ml-2">
-                <i class="fas fa-bookmark"></i>
-              </button>
             </div>
           </div>
           
@@ -499,21 +681,11 @@ function proxySearch() {
                   <i class="fas fa-eye-slash w-5"></i>
                   <span>Hide Toolbar</span>
                 </button>
-                <button onclick="toggleBookmarksPanel()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
+                <button onclick="proxyToggleBookmark()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
                   <i class="fas fa-bookmark w-5"></i>
-                  <span>Bookmarks</span>
+                  <span>Bookmark</span>
                 </button>
               </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Bookmarks Panel -->
-        <div id="bookmarks-panel" class="absolute right-0 top-full bg-slate-800/90 backdrop-blur w-80 max-h-96 overflow-y-auto rounded-lg border border-indigo-500/20 shadow-xl transform transition-transform duration-300 ease-in-out">
-          <div class="p-4">
-            <h3 class="text-white font-bold mb-4">Bookmarks</h3>
-            <div id="bookmarks-list" class="space-y-2">
-              <!-- Bookmarks will be populated here -->
             </div>
           </div>
         </div>
@@ -528,9 +700,6 @@ function proxySearch() {
         </div>
       </div>
     `;
-
-    // Initialize bookmarks
-    updateBookmarksList();
     
     sidePanel.classList.add('active');
     updateNotificationBtn.style.display = 'none';
@@ -1227,59 +1396,85 @@ function playSound(type) {
   audio.play().catch(() => {}); // Ignore errors if sound can't play
 }
 
-function toggleBookmarksPanel() {
-  const bookmarksPanel = document.getElementById('bookmarks-panel');
-  const isOpen = bookmarksPanel.style.transform === 'translateX(0px)';
+async function initVM() {
+  const container = document.getElementById('vm-container');
   
-  if (isOpen) {
-    bookmarksPanel.style.transform = 'translateX(100%)';
-  } else {
-    bookmarksPanel.style.transform = 'translateX(0)';
-    updateBookmarksList();
-  }
-  
-  // Hide toolbar menu if open
-  document.getElementById('toolbar-menu').classList.add('hidden');
-}
+  // First show the welcome message
+  container.innerHTML = `
+    <div class="flex flex-col items-center justify-center h-full p-8 space-y-6">
+      <h2 class="text-4xl font-bold text-white space-glow text-center">VAPOR Private VMs</h2>
+      
+      <div class="max-w-2xl text-center space-y-4">
+        <p class="text-gray-300 text-lg">
+          VAPOR Private VMs are isolated, personal browsers available in the cloud.
+        </p>
+        
+        <p class="text-gray-300 text-lg">
+          Need to search something? Need to test a sketchy site? Try Private VMs.
+        </p>
+        
+        <p class="text-indigo-400 text-lg">
+          12 minutes of uninterrupted browsing. Ran out of time? In a single click, create a new session right away.
+        </p>
+      </div>
 
-function updateBookmarksList() {
-  const bookmarksList = document.getElementById('bookmarks-list');
-  const bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
-  
-  bookmarksList.innerHTML = bookmarks.length ? bookmarks.map(bookmark => `
-    <div class="group flex items-center justify-between p-2 hover:bg-indigo-500/20 rounded-lg transition-all duration-200">
-      <a href="#" onclick="navigateToBookmark('${bookmark.url}')" class="flex items-center text-gray-300 hover:text-white">
-        <i class="fas fa-globe w-5"></i>
-        <span class="ml-2 truncate">${bookmark.title || bookmark.url}</span>
-      </a>
       <button 
-        onclick="removeBookmark('${bookmark.url}')" 
-        class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-400 transition-opacity duration-200"
+        onclick="startVMSession()"
+        class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl transition-all duration-300 flex items-center space-x-3 text-lg font-medium"
       >
-        <i class="fas fa-times"></i>
+        <i class="fas fa-play"></i>
+        <span>Start Session</span>
       </button>
     </div>
-  `).join('') : '<p class="text-gray-400 text-center">No bookmarks yet</p>';
+  `;
 }
 
-function navigateToBookmark(url) {
-  const iframe = document.getElementById('proxy-iframe');
-  const urlBar = document.getElementById('url-bar');
+async function startVMSession() {
+  const container = document.getElementById('vm-container');
   
-  if (iframe && urlBar) {
-    iframe.src = url;
-    urlBar.value = url;
-    toggleBookmarksPanel(); // Close the panel after navigation
+  if (!container) {
+    console.error('VM container not found. Make sure the element with ID "vm-container" exists.');
+    alert('Error initializing VM session. Please try again or contact support.');
+    return;
   }
-}
 
-function removeBookmark(url) {
-  let bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
-  bookmarks = bookmarks.filter(bookmark => bookmark.url !== url);
-  localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+  container.innerHTML = `
+    <div class="flex items-center justify-center h-full">
+      <div class="animate-spin rounded-full h-12 w-12 border-4 border-indigo-500 border-t-transparent"></div>
+    </div>
+  `;
   
-  updateBookmarksList();
-  showNotification('Bookmark removed');
+  try {
+    const response = await fetch('https://engine.hyperbeam.com/v0/vm', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer sk_live_sW8gQ_SRglb2SzTdx82Jn7x21Tv6Kc2HDy8qIqgLzmk`
+      }
+    });
+
+    const data = await response.json();
+    
+    if (data.embed_url) {
+      const iframe = document.createElement('iframe');
+      iframe.src = data.embed_url;
+      iframe.style.width = '100%';
+      iframe.style.height = '100%';
+      iframe.style.border = 'none';
+      iframe.style.borderRadius = '0.75rem';
+      
+      container.innerHTML = ''; // Clear loading spinner
+      container.appendChild(iframe);
+    } else {
+      container.innerHTML = '<p class="text-red-500 text-center mt-4">Failed to initialize VM</p>';
+    }
+  } catch (error) {
+    console.error('VM Error:', error);
+    container.innerHTML = `
+      <p class="text-red-500 text-center mt-4">
+        Error connecting to VM service: ${error.message}
+      </p>
+    `;
+  }
 }
 
 setInterval(checkAndUpdateCoins, 60000); // Check every minute
