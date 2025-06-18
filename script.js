@@ -82,7 +82,92 @@ function openCategory(category) {
   const sidePanel = document.getElementById('side-panel');
   const updateNotificationBtn = document.getElementById('update-notification-btn');
   
-  if (category === 'vm') {
+  if (category === 'music') {
+    sidePanel.innerHTML = `
+      <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
+        <i class="fas fa-times"></i>
+      </button>
+      <iframe 
+        id="music-iframe" 
+        src="https://lumabeats-com.pages.dev"
+        class="w-full h-full border-none"
+      ></iframe>
+    `;
+    
+    sidePanel.classList.add('active');
+    updateNotificationBtn.style.display = 'none';
+  } else if (category === 'partners') {
+    sidePanel.innerHTML = `
+      <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="w-full h-full flex flex-col items-center p-6">
+        <div class="max-w-4xl w-full">
+          <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-white mb-2 space-glow" style="font-family: 'Orbitron', monospace;">Our Partners</h1>
+            <p class="text-indigo-400">Trusted collaborators in the proxy community</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Waves Partner -->
+            <div class="category-card p-6 rounded-xl relative overflow-hidden">
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-white" style="font-family: 'Orbitron', monospace;">Waves</h2>
+                <i class="fas fa-water text-blue-400 text-2xl"></i>
+              </div>
+              <p class="text-gray-300 mb-4">Premium proxy service with advanced features</p>
+              <a href="https://usewaves.site" target="_blank"
+                class="w-full bg-blue-600/20 hover:bg-blue-600/30 text-white py-2 px-4 rounded-lg transition-all flex items-center justify-between">
+                <span>Visit Waves</span>
+                <i class="fas fa-arrow-right"></i>
+              </a>
+            </div>
+
+            <!-- Petezah Partner -->
+            <div class="category-card p-6 rounded-xl relative overflow-hidden">
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-white" style="font-family: 'Orbitron', monospace;">Petezah</h2>
+                <i class="fas fa-shield-alt text-green-400 text-2xl"></i>
+              </div>
+              <p class="text-gray-300 mb-4">Secure browsing solutions and privacy tools</p>
+              <a href="https://petezah.net" target="_blank"
+                class="w-full bg-green-600/20 hover:bg-green-600/30 text-white py-2 px-4 rounded-lg transition-all flex items-center justify-between">
+                <span>Visit Petezah</span>
+                <i class="fas fa-arrow-right"></i>
+              </a>
+            </div>
+
+            <!-- Vapor Partner -->
+            <div class="category-card p-6 rounded-xl relative overflow-hidden">
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-white" style="font-family: 'Orbitron', monospace;">Vapor</h2>
+                <i class="fas fa-cloud text-purple-400 text-2xl"></i>
+              </div>
+              <p class="text-gray-300 mb-4">Cloud-based proxy infrastructure and services</p>
+              <a href="https://vapor.network" target="_blank"
+                class="w-full bg-purple-600/20 hover:bg-purple-600/30 text-white py-2 px-4 rounded-lg transition-all flex items-center justify-between">
+                <span>Visit Vapor</span>
+                <i class="fas fa-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="mt-8 p-4 bg-indigo-600/10 border border-indigo-500/20 rounded-lg">
+            <div class="flex items-center mb-2">
+              <i class="fas fa-handshake text-indigo-500 mr-2"></i>
+              <h3 class="text-white font-bold" style="font-family: 'Orbitron', monospace;">Partnership Program</h3>
+            </div>
+            <p class="text-gray-300 text-sm">
+              Interested in becoming a partner? Join our network of trusted proxy providers and expand your reach.
+            </p>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    sidePanel.classList.add('active');
+    updateNotificationBtn.style.display = 'none';
+  } else if (category === 'vm') {
     sidePanel.innerHTML = `
       <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
         <i class="fas fa-times"></i>
@@ -126,8 +211,7 @@ function openCategory(category) {
         </div>
       </div>
     `;
-  }
-  else if (category === 'proxy') {
+  } else if (category === 'proxy') {
     sidePanel.innerHTML = `
       <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
         <i class="fas fa-times"></i>

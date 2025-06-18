@@ -8,6 +8,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
   
+  <!-- Add futuristic fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
   <!-- Ensure Ultraviolet scripts are loaded in the correct order -->
   <script src="/uv/uv.bundle.js"></script>
   <script src="/uv/uv.config.js"></script>
@@ -16,7 +21,7 @@
   <style>
     body {
       background: linear-gradient(135deg, #0a0f1f 0%, #1a1f3f 100%);
-      font-family: 'Inter', sans-serif;
+      font-family: 'Rajdhani', sans-serif;
       color: #e2e8f0;
     }
     .category-card {
@@ -42,8 +47,8 @@
       bottom: 0;
       left: 0;
       width: 0;
-      height: 1px;
-      background-color: #6366f1;
+      height: 2px;
+      background: linear-gradient(90deg, #8b5cf6, #3b82f6);
       transition: width 0.3s ease;
     }
 
@@ -206,43 +211,71 @@
       text-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
     }
 
-    /* Update sidebar styles */
+    /* Update sidebar styles with sleek design */
     .sidebar {
       position: fixed;
       left: 0;
       top: 0;
       height: 100vh;
-      width: 64px; 
-      background: rgba(15, 23, 42, 0.8);
-      backdrop-filter: blur(10px);
-      border-right: 1px solid rgba(79, 70, 229, 0.2);
-      padding: 1rem 0;
+      width: 80px;
+      background: rgba(15, 23, 42, 0.15);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 0;
+      padding: 1.5rem 0;
       display: flex;
       flex-direction: column;
       align-items: center;
-      transform: translateX(-100%);
-      transition: transform 0.3s ease;
+      transform: translateX(0);
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       z-index: 45;
+      box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.25),
+        0 0 0 1px rgba(139, 92, 246, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      overflow: hidden;
     }
 
-    .sidebar.active {
-      transform: translateX(0);
+    .sidebar:hover {
+      width: 280px;
+      background: rgba(15, 23, 42, 0.25);
+      border-color: rgba(139, 92, 246, 0.4);
+      box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.4),
+        0 0 30px rgba(139, 92, 246, 0.2);
     }
 
     .sidebar-item {
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       padding: 1rem;
       color: #a5b4fc;
       text-decoration: none;
-      border-radius: 0.5rem;
-      margin-bottom: 0.5rem;
-      width: 48px;
-      height: 48px;
-      transition: all 0.3s ease;
+      border-radius: 16px;
+      margin: 0.5rem 1rem;
+      width: calc(100% - 2rem);
+      height: 56px;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       position: relative;
       overflow: hidden;
+      font-family: 'Orbitron', monospace;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .sidebar-item::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      border-radius: 16px;
+    }
+
+    .sidebar-item:hover::before {
+      opacity: 1;
     }
 
     .sidebar-item::after {
@@ -252,8 +285,9 @@
       left: 0;
       width: 0;
       height: 2px;
-      background-color: #6366f1;
+      background: linear-gradient(90deg, #8b5cf6, #3b82f6);
       transition: width 0.3s ease;
+      border-radius: 1px;
     }
 
     .sidebar-item:hover::after {
@@ -262,17 +296,68 @@
 
     .sidebar-item i {
       font-size: 1.5rem;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      position: relative;
+      z-index: 2;
+      min-width: 24px;
+      text-align: center;
+    }
+
+    .sidebar-item:hover i {
+      transform: scale(1.2);
+      color: #ffffff;
+      text-shadow: 0 0 20px rgba(139, 92, 246, 0.8);
+      filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.6));
+    }
+
+    .sidebar-item-label {
+      margin-left: 1rem;
+      opacity: 0;
+      transform: translateX(-20px);
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .sidebar:hover .sidebar-item-label {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .sidebar-item:hover .sidebar-item-label {
+      color: #ffffff;
+      text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
     }
 
     @media (min-width: 768px) {
       .main-content {
-        margin-left: 64px; 
+        margin-left: 80px;
       }
       .sidebar {
         transform: translateX(0);
       }
       .sidebar-toggle {
         display: none;
+      }
+    }
+    @media (max-width: 767px) {
+      .sidebar {
+        transform: translateX(-100%);
+        left: 0;
+        top: 0;
+        height: 100vh;
+        border-radius: 0;
+      }
+      
+      .sidebar.active {
+        transform: translateX(0);
+      }
+      
+      .main-content {
+        margin-left: 0;
       }
     }
     .top-bar {
@@ -326,9 +411,9 @@
     .side-panel {
       position: fixed;
       top: 0;
-      left: 64px; /* Width of the sidebar */
+      left: 80px; /* Width of the sidebar */
       bottom: 0;
-      width: calc(100% - 64px); /* Full width minus sidebar width */
+      width: calc(100% - 80px); /* Full width minus sidebar width */
       background: rgba(15, 23, 42, 0.95);
       backdrop-filter: blur(15px);
       transform: translateX(100%);
@@ -477,16 +562,36 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 1rem;
-      transition: transform 0.3s ease;
+      margin-bottom: 2rem;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      position: relative;
     }
+
+    .sidebar-logo::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(59, 130, 246, 0.2));
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .sidebar-logo:hover::before {
+      opacity: 1;
+    }
+
     .sidebar-logo img {
-      width: 40px;
-      height: 40px;
+      width: 48px;
+      height: 48px;
       object-fit: contain;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.3));
     }
-    .sidebar-logo:hover {
+
+    .sidebar-logo:hover img {
       transform: scale(1.1);
+      filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.8));
     }
     
     /* New style for sidebar toggle */
@@ -871,7 +976,7 @@
       <img src="/Screenshot_2025-05-18_11.25.04_AM-removebg-preview.png" alt="Void Logo" class="w-12 h-12">
     </a>
     
-    <div class="w-8 h-[1px] bg-indigo-500/30 mb-4"></div>
+    <div class="sidebar-divider"></div>
 
     <button class="sidebar-toggle" onclick="toggleSidebar()">
       <i class="fas fa-bars"></i>
@@ -879,54 +984,71 @@
 
     <a href="#" class="sidebar-item" onclick="openCategory('games')">
       <i class="fas fa-gamepad"></i>
+      <span class="sidebar-item-label">Games</span>
     </a>
     
     <a href="#" class="sidebar-item" onclick="openCategory('ai')">
       <i class="fas fa-robot"></i>
+      <span class="sidebar-item-label">AI Tools</span>
     </a>
     
     <a href="#" class="sidebar-item" onclick="openCategory('proxy')">
       <i class="fas fa-globe"></i>
+      <span class="sidebar-item-label">Proxy</span>
     </a>
     
     <a href="#" class="sidebar-item" onclick="openCategory('movies')">
       <i class="fas fa-film"></i>
+      <span class="sidebar-item-label">Movies</span>
     </a>
 
     <a href="#" class="sidebar-item" onclick="openCategory('vm')">
       <i class="fas fa-desktop"></i>
+      <span class="sidebar-item-label">Virtual PC</span>
     </a>
 
     <a href="#" class="sidebar-item" onclick="openCategory('apps')">
       <i class="fas fa-th-large"></i>
+      <span class="sidebar-item-label">Apps</span>
     </a>
     
     <a href="#" class="sidebar-item" onclick="openCategory('terminal')">
       <i class="fas fa-terminal"></i>
+      <span class="sidebar-item-label">Terminal</span>
     </a>
 
     <a href="#" class="sidebar-item" onclick="openCategory('cheats')">
       <i class="fas fa-code"></i>
+      <span class="sidebar-item-label">Cheats</span>
     </a>
     
     <a href="#" class="sidebar-item" onclick="openCategory('store')">
       <i class="fas fa-store"></i>
+      <span class="sidebar-item-label">Store</span>
+    </a>
+
+    <a href="#" class="sidebar-item" onclick="openCategory('music')">
+      <i class="fas fa-music"></i>
+      <span class="sidebar-item-label">Music</span>
     </a>
     
-    <div class="w-8 h-[1px] bg-indigo-500/30 mb-4"></div>
+    <div class="sidebar-divider"></div>
     
     <!-- Add Partners Link -->
     <a href="#" class="sidebar-item" onclick="openCategory('partners')">
       <i class="fas fa-handshake"></i>
+      <span class="sidebar-item-label">Partners</span>
     </a>
     
-    <div class="w-8 h-[1px] bg-indigo-500/30 mb-4"></div>
+    <div class="sidebar-divider"></div>
     
     <a href="#" class="sidebar-item" onclick="openSettings()">
       <i class="fas fa-cog"></i>
+      <span class="sidebar-item-label">Settings</span>
     </a>
     <a href="https://discord.gg/WzEdPeCw" target="_blank" class="sidebar-item">
       <i class="fab fa-discord"></i>
+      <span class="sidebar-item-label">Discord</span>
     </a>
   </div>
 
@@ -1707,23 +1829,23 @@
       <div class="update-item">
         <div class="update-header">
           <div class="update-icon bg-cyan-600">
-            <i class="fas fa-th-large"></i>
+            <i class="fas fa-palette"></i>
           </div>
           <div class="update-details">
-            <h3>Widget Enhancements</h3>
-            <p>New widgets and improved interactivity</p>
+            <h3>Theming System</h3>
+            <p>More customization options</p>
           </div>
         </div>
         <div class="update-tags">
-          <span class="update-tag bg-cyan-500/20 text-cyan-300">🧩 Widgets</span>
-          <span class="update-tag bg-purple-500/20 text-purple-300">New Features</span>
+          <span class="update-tag bg-cyan-500/20 text-cyan-300">🎨 Themes</span>
+          <span class="update-tag bg-purple-500/20 text-purple-300">Customization</span>
         </div>
         <div class="update-description">
           <ul class="text-sm text-gray-400 list-disc pl-4">
-            <li>Added Calendar, Weather, and Timer widgets</li>
-            <li>Drag and drop widget positioning</li>
-            <li>Persistent widget settings</li>
-            <li>Improved widget interaction</li>
+            <li>Added 6 new theme variations</li>
+            <li>Custom background animations</li>
+            <li>Persistent theme settings</li>
+            <li>Dark mode enhancements</li>
           </ul>
         </div>
       </div>
@@ -1754,80 +1876,8 @@
 
       <div class="update-item">
         <div class="update-header">
-          <div class="update-icon bg-emerald-600">
-            <i class="fas fa-mobile-alt"></i>
-          </div>
-          <div class="update-details">
-            <h3>Mobile Optimization</h3>
-            <p>Improved responsive design</p>
-          </div>
-        </div>
-        <div class="update-tags">
-          <span class="update-tag bg-emerald-500/20 text-emerald-300">📱 Responsiveness</span>
-          <span class="update-tag bg-blue-500/20 text-blue-300">UI/UX</span>
-        </div>
-        <div class="update-description">
-          <ul class="text-sm text-gray-400 list-disc pl-4">
-            <li>Enhanced mobile navigation</li>
-            <li>Adaptive sidebar for different screen sizes</li>
-            <li>Touch-friendly interface</li>
-            <li>Optimized mobile performance</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="update-item">
-        <div class="update-header">
-          <div class="update-icon bg-orange-600">
-            <i class="fas fa-music"></i>
-          </div>
-          <div class="update-details">
-            <h3>Music Player Upgrades</h3>
-            <p>Enhanced audio experience</p>
-          </div>
-        </div>
-        <div class="update-tags">
-          <span class="update-tag bg-orange-500/20 text-orange-300">🎵 Music</span>
-          <span class="update-tag bg-indigo-500/20 text-indigo-300">Player</span>
-        </div>
-        <div class="update-description">
-          <ul class="text-sm text-gray-400 list-disc pl-4">
-            <li>Added multiple music track categories</li>
-            <li>Persistent volume and playback settings</li>
-            <li>Mobile-friendly player controls</li>
-            <li>Background music support</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="update-item">
-        <div class="update-header">
-          <div class="update-icon bg-fuchsia-600">
-            <i class="fas fa-palette"></i>
-          </div>
-          <div class="update-details">
-            <h3>Theming System</h3>
-            <p>More customization options</p>
-          </div>
-        </div>
-        <div class="update-tags">
-          <span class="update-tag bg-fuchsia-500/20 text-fuchsia-300">🎨 Themes</span>
-          <span class="update-tag bg-purple-500/20 text-purple-300">Customization</span>
-        </div>
-        <div class="update-description">
-          <ul class="text-sm text-gray-400 list-disc pl-4">
-            <li>Added 6 new theme variations</li>
-            <li>Custom background animations</li>
-            <li>Persistent theme settings</li>
-            <li>Dark mode enhancements</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="update-item">
-        <div class="update-header">
           <div class="update-icon bg-cyan-600">
-            <i class="fas fa-plus"></i>
+            <i class="fas fa-th-large"></i>
           </div>
           <div class="update-details">
             <h3>New Apps and Categories</h3>
@@ -2913,6 +2963,55 @@
       // Initial time greeting
       getTimeGreeting();
     });
+
+    let musicPlayer = null;
+    let isPlaying = false;
+
+    function toggleMusic() {
+      const playIcon = document.getElementById('play-icon');
+      const musicPlayer = document.getElementById('music-player-iframe');
+      
+      if (isPlaying) {
+        playIcon.className = 'fas fa-play';
+        isPlaying = false;
+      } else {
+        playIcon.className = 'fas fa-pause';
+        isPlaying = true;
+      }
+    }
+
+    function nextTrack() {
+      // Simulate track change
+      const titles = [
+        'LumaBeats Collection',
+        'Ambient Synthwave',
+        'Cyberpunk Dreams',
+        'Neon Nights',
+        'Digital Horizons'
+      ];
+      const currentTitle = document.getElementById('track-title');
+      const randomTitle = titles[Math.floor(Math.random() * titles.length)];
+      currentTitle.textContent = randomTitle;
+    }
+
+    function openMusicPlayer() {
+      const sidePanel = document.getElementById('side-panel');
+      const updateNotificationBtn = document.getElementById('update-notification-btn');
+      
+      sidePanel.innerHTML = `
+        <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
+          <i class="fas fa-times"></i>
+        </button>
+        <iframe 
+          id="music-player-iframe" 
+          src="https://lumabeats-com.pages.dev"
+          class="w-full h-full border-none"
+        ></iframe>
+      `;
+      
+      sidePanel.classList.add('active');
+      updateNotificationBtn.style.display = 'none';
+    }
   </script>
 
   <script>
@@ -3064,9 +3163,8 @@
       const chars = '01'.split('');
       const drops = [];
       const fontSize = 14;
-      const columns = canvas.width/fontSize;
       
-      for(let i = 0; i < columns; i++) {
+      for(let i = 0; i < canvas.width/fontSize; i++) {
         drops[i] = 1;
       }
       
