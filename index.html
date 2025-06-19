@@ -3297,6 +3297,18 @@
 
       // Start the animation
       typeText(texts[0]);
+
+      // Check if user has visited before and show welcome modal if not
+      const savedName = localStorage.getItem('userName');
+      const welcomeModal = document.getElementById('welcome-modal');
+      
+      if (!savedName && welcomeModal) {
+        welcomeModal.style.display = 'flex';
+        welcomeModal.style.opacity = '1';
+        getTimeGreeting();
+      } else if (savedName) {
+        getTimeGreeting();
+      }
     });
   </script>
 
