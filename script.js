@@ -216,11 +216,82 @@ function openCategory(category) {
       <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
         <i class="fas fa-times"></i>
       </button>
-      <iframe 
-        id="proxy-iframe" 
-        src="https://swiftguard-com.pages.dev"
-        class="w-full h-full border-none"
-      ></iframe>
+      <div class="w-full h-full flex flex-col items-center p-6">
+        <div class="max-w-2xl w-full">
+          <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-white mb-2 space-glow">Void Proxy</h1>
+            <p class="text-indigo-400">Fast, secure, and reliable web proxy service</p>
+          </div>
+
+          <div class="search-container mb-8">
+            <div class="relative w-full max-w-xl mx-auto">
+              <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                <i class="fas fa-globe text-indigo-400"></i>
+              </div>
+              <input 
+                type="text" 
+                id="proxy-search" 
+                placeholder="Search or enter a URL" 
+                class="w-full px-12 py-4 rounded-xl bg-slate-800/50 backdrop-blur text-white 
+                border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none
+                placeholder-gray-400"
+              >
+              <button 
+                onclick="proxySearch()" 
+                class="absolute right-4 top-1/2 transform -translate-y-1/2 
+                bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg
+                transition-all duration-300 flex items-center space-x-2"
+              >
+                <i class="fas fa-search"></i>
+                <span>Search</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="app-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            <div onclick="proxyApp('https://www.youtube.com')" class="app-card flex flex-col items-center">
+              <i class="fab fa-youtube app-icon text-red-500 text-3xl mb-2"></i>
+              <span class="app-name">YouTube</span>
+            </div>
+            <div onclick="proxyApp('https://discord.com')" class="app-card flex flex-col items-center">
+              <i class="fab fa-discord app-icon text-indigo-500 text-3xl mb-2"></i>
+              <span class="app-name">Discord</span>
+            </div>
+            <div onclick="proxyApp('https://www.tiktok.com')" class="app-card flex flex-col items-center">
+              <i class="fab fa-tiktok app-icon text-black text-3xl mb-2"></i>
+              <span class="app-name">TikTok</span>
+            </div>
+            <div onclick="proxyApp('https://www.twitch.tv')" class="app-card flex flex-col items-center">
+              <i class="fab fa-twitch app-icon text-purple-500 text-3xl mb-2"></i>
+              <span class="app-name">Twitch</span>
+            </div>
+            <div onclick="proxyApp('https://www.reddit.com')" class="app-card flex flex-col items-center">
+              <i class="fab fa-reddit app-icon text-orange-500 text-3xl mb-2"></i>
+              <span class="app-name">Reddit</span>
+            </div>
+            <div onclick="proxyApp('https://twitter.com')" class="app-card flex flex-col items-center">
+              <i class="fab fa-twitter app-icon text-blue-400 text-3xl mb-2"></i>
+              <span class="app-name">Twitter</span>
+            </div>
+            <div onclick="proxyApp('https://www.spotify.com')" class="app-card flex flex-col items-center">
+              <i class="fab fa-spotify app-icon text-green-500 text-3xl mb-2"></i>
+              <span class="app-name">Spotify</span>
+            </div>
+            <div onclick="proxyApp('https://www.netflix.com')" class="app-card flex flex-col items-center">
+              <i class="fas fa-film app-icon text-red-600 text-3xl mb-2"></i>
+              <span class="app-name">Netflix</span>
+            </div>
+            <div onclick="proxyApp('https://www.instagram.com')" class="app-card flex flex-col items-center">
+              <i class="fab fa-instagram app-icon text-pink-500 text-3xl mb-2"></i>
+              <span class="app-name">Instagram</span>
+            </div>
+            <div onclick="proxyApp('https://www.facebook.com')" class="app-card flex flex-col items-center">
+              <i class="fab fa-facebook app-icon text-blue-500 text-3xl mb-2"></i>
+              <span class="app-name">Facebook</span>
+            </div>
+          </div>
+        </div>
+      </div>
     `;
     
     sidePanel.classList.add('active');
@@ -1387,7 +1458,7 @@ async function initVM() {
 
       <button 
         onclick="startVMSession()"
-        class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl transition-all duration-300 flex items-center space-x-3 text-lg font-medium"
+        class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl transition-all duration-300 flex items-center space-x-3 text-lg font-medium mx-auto"
       >
         <i class="fas fa-play"></i>
         <span>Start Session</span>
