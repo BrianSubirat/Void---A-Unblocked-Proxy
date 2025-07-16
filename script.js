@@ -213,83 +213,66 @@ function openCategory(category) {
     `;
   } else if (category === 'proxy') {
     sidePanel.innerHTML = `
-      <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
-        <i class="fas fa-times"></i>
-      </button>
-      <div class="w-full h-full flex flex-col items-center p-6">
-        <div class="max-w-2xl w-full">
-          <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-white mb-2 space-glow">Void Proxy</h1>
-            <p class="text-indigo-400">Fast, secure, and reliable web proxy service</p>
-          </div>
-
-          <div class="search-container mb-8">
-            <div class="relative w-full max-w-xl mx-auto">
-              <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                <i class="fas fa-globe text-indigo-400"></i>
-              </div>
+      <div class="w-full h-full flex flex-col">
+        <!-- Toolbar -->
+        <div class="flex items-center px-4 py-2 bg-slate-800/90 backdrop-blur border-b border-indigo-500/20">
+          <div class="flex-1 flex items-center">
+            <button onclick="proxyGoBack()" class="text-gray-300 hover:text-white px-2">
+              <i class="fas fa-arrow-left"></i>
+            </button>
+            <button onclick="proxyGoForward()" class="text-gray-300 hover:text-white px-2">
+              <i class="fas fa-arrow-right"></i>
+            </button>
+            <button onclick="proxyRefresh()" class="text-gray-300 hover:text-white px-2">
+              <i class="fas fa-redo"></i>
+            </button>
+            
+            <div class="flex-1 mx-4 relative">
               <input 
                 type="text" 
-                id="proxy-search" 
-                placeholder="Search or enter a URL" 
-                class="w-full px-12 py-4 rounded-xl bg-slate-800/50 backdrop-blur text-white 
-                border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none
-                placeholder-gray-400"
+                id="url-bar" 
+                value="https://vapor.my/scramjet/https%3A%2F%2Fstart.duckduckgo.com%2F%3Ft%3Dh_%26kp%3D1"
+                class="w-full bg-slate-700/50 text-white px-4 py-1 rounded-lg text-sm border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none"
+                onkeypress="handleProxyUrlBarKeyPress(event)"
               >
-              <button 
-                onclick="proxySearch()" 
-                class="absolute right-4 top-1/2 transform -translate-y-1/2 
-                bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg
-                transition-all duration-300 flex items-center space-x-2"
-              >
-                <i class="fas fa-search"></i>
-                <span>Search</span>
-              </button>
             </div>
           </div>
-
-          <div class="app-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            <div onclick="proxyApp('https://www.youtube.com')" class="app-card flex flex-col items-center">
-              <i class="fab fa-youtube app-icon text-red-500 text-3xl mb-2"></i>
-              <span class="app-name">YouTube</span>
-            </div>
-            <div onclick="proxyApp('https://discord.com')" class="app-card flex flex-col items-center">
-              <i class="fab fa-discord app-icon text-indigo-500 text-3xl mb-2"></i>
-              <span class="app-name">Discord</span>
-            </div>
-            <div onclick="proxyApp('https://www.tiktok.com')" class="app-card flex flex-col items-center">
-              <i class="fab fa-tiktok app-icon text-black text-3xl mb-2"></i>
-              <span class="app-name">TikTok</span>
-            </div>
-            <div onclick="proxyApp('https://www.twitch.tv')" class="app-card flex flex-col items-center">
-              <i class="fab fa-twitch app-icon text-purple-500 text-3xl mb-2"></i>
-              <span class="app-name">Twitch</span>
-            </div>
-            <div onclick="proxyApp('https://www.reddit.com')" class="app-card flex flex-col items-center">
-              <i class="fab fa-reddit app-icon text-orange-500 text-3xl mb-2"></i>
-              <span class="app-name">Reddit</span>
-            </div>
-            <div onclick="proxyApp('https://twitter.com')" class="app-card flex flex-col items-center">
-              <i class="fab fa-twitter app-icon text-blue-400 text-3xl mb-2"></i>
-              <span class="app-name">Twitter</span>
-            </div>
-            <div onclick="proxyApp('https://www.spotify.com')" class="app-card flex flex-col items-center">
-              <i class="fab fa-spotify app-icon text-green-500 text-3xl mb-2"></i>
-              <span class="app-name">Spotify</span>
-            </div>
-            <div onclick="proxyApp('https://www.netflix.com')" class="app-card flex flex-col items-center">
-              <i class="fas fa-film app-icon text-red-600 text-3xl mb-2"></i>
-              <span class="app-name">Netflix</span>
-            </div>
-            <div onclick="proxyApp('https://www.instagram.com')" class="app-card flex flex-col items-center">
-              <i class="fab fa-instagram app-icon text-pink-500 text-3xl mb-2"></i>
-              <span class="app-name">Instagram</span>
-            </div>
-            <div onclick="proxyApp('https://www.facebook.com')" class="app-card flex flex-col items-center">
-              <i class="fab fa-facebook app-icon text-blue-500 text-3xl mb-2"></i>
-              <span class="app-name">Facebook</span>
+          
+          <div class="relative">
+            <button onclick="toggleToolbarMenu()" class="text-gray-300 hover:text-white px-2">
+              <i class="fas fa-ellipsis-v"></i>
+            </button>
+            
+            <div id="toolbar-menu" class="hidden absolute right-0 top-full mt-2 w-48 bg-slate-800/90 backdrop-blur rounded-lg border border-indigo-500/20 shadow-xl z-50">
+              <div class="py-2">
+                <button onclick="proxyCopyUrl()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
+                  <i class="fas fa-copy w-5"></i>
+                  <span>Copy URL</span>
+                </button>
+                <button onclick="proxyToggleFullscreen()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
+                  <i class="fas fa-expand w-5"></i>
+                  <span>Fullscreen</span>
+                </button>
+                <button onclick="proxyToggleToolbar()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
+                  <i class="fas fa-eye-slash w-5"></i>
+                  <span>Hide Toolbar</span>
+                </button>
+                <button onclick="proxyToggleBookmark()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
+                  <i class="fas fa-bookmark w-5"></i>
+                  <span>Bookmark</span>
+                </button>
+              </div>
             </div>
           </div>
+        </div>
+        
+        <!-- Iframe container -->
+        <div class="flex-1 relative">
+          <iframe 
+            id="proxy-iframe" 
+            src="https://vapor.my/scramjet/https%3A%2F%2Fstart.duckduckgo.com%2F%3Ft%3Dh_%26kp%3D1"
+            class="w-full h-full border-none"
+          ></iframe>
         </div>
       </div>
     `;
@@ -626,13 +609,13 @@ function openCategory(category) {
     let url = '';
     switch(category) {
       case 'games':
-        url = 'https://voidgames-com.pages.dev/';
+        url = 'https://gamehub-com.pages.dev/';
         break;
       case 'ai':
         url = 'http://gemini.google.com/';
         break;
       case 'movies':
-        url = 'https://movies.usewaves.site/';
+        url = 'https://movies.waves.lat/';
         break;
       case 'terminal':
         url = 'https://school-terminal-com.pages.dev/';
@@ -1432,87 +1415,6 @@ function playSound(type) {
   
   const audio = new Audio(sounds[type]);
   audio.play().catch(() => {}); // Ignore errors if sound can't play
-}
-
-async function initVM() {
-  const container = document.getElementById('vm-container');
-  
-  // First show the welcome message
-  container.innerHTML = `
-    <div class="flex flex-col items-center justify-center h-full p-8 space-y-6">
-      <h2 class="text-4xl font-bold text-white space-glow text-center">VAPOR Private VMs</h2>
-      
-      <div class="max-w-2xl text-center space-y-4">
-        <p class="text-gray-300 text-lg">
-          VAPOR Private VMs are isolated, personal browsers available in the cloud.
-        </p>
-        
-        <p class="text-gray-300 text-lg">
-          Need to search something? Need to test a sketchy site? Try Private VMs.
-        </p>
-        
-        <p class="text-indigo-400 text-lg">
-          12 minutes of uninterrupted browsing. Ran out of time? In a single click, create a new session right away.
-        </p>
-      </div>
-
-      <button 
-        onclick="startVMSession()"
-        class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl transition-all duration-300 flex items-center space-x-3 text-lg font-medium mx-auto"
-      >
-        <i class="fas fa-play"></i>
-        <span>Start Session</span>
-      </button>
-    </div>
-  `;
-}
-
-async function startVMSession() {
-  const container = document.getElementById('vm-container');
-  
-  if (!container) {
-    console.error('VM container not found. Make sure the element with ID "vm-container" exists.');
-    alert('Error initializing VM session. Please try again or contact support.');
-    return;
-  }
-
-  container.innerHTML = `
-    <div class="flex items-center justify-center h-full">
-      <div class="animate-spin rounded-full h-12 w-12 border-4 border-indigo-500 border-t-transparent"></div>
-    </div>
-  `;
-  
-  try {
-    const response = await fetch('https://engine.hyperbeam.com/v0/vm', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer sk_live_sW8gQ_SRglb2SzTdx82Jn7x21Tv6Kc2HDy8qIqgLzmk`
-      }
-    });
-
-    const data = await response.json();
-    
-    if (data.embed_url) {
-      const iframe = document.createElement('iframe');
-      iframe.src = data.embed_url;
-      iframe.style.width = '100%';
-      iframe.style.height = '100%';
-      iframe.style.border = 'none';
-      iframe.style.borderRadius = '0.75rem';
-      
-      container.innerHTML = ''; // Clear loading spinner
-      container.appendChild(iframe);
-    } else {
-      container.innerHTML = '<p class="text-red-500 text-center mt-4">Failed to initialize VM</p>';
-    }
-  } catch (error) {
-    console.error('VM Error:', error);
-    container.innerHTML = `
-      <p class="text-red-500 text-center mt-4">
-        Error connecting to VM service: ${error.message}
-      </p>
-    `;
-  }
 }
 
 setInterval(checkAndUpdateCoins, 60000); // Check every minute
