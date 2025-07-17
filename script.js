@@ -82,7 +82,21 @@ function openCategory(category) {
   const sidePanel = document.getElementById('side-panel');
   const updateNotificationBtn = document.getElementById('update-notification-btn');
   
-  if (category === 'music') {
+  if (category === 'proxy') {
+    sidePanel.innerHTML = `
+      <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
+        <i class="fas fa-times"></i>
+      </button>
+      <iframe 
+        id="proxy-iframe" 
+        src="https://uv-static-f3u.pages.dev/static/#"
+        class="w-full h-full border-none"
+      ></iframe>
+    `;
+    
+    sidePanel.classList.add('active');
+    updateNotificationBtn.style.display = 'none';
+  } else if (category === 'music') {
     sidePanel.innerHTML = `
       <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
         <i class="fas fa-times"></i>
@@ -211,74 +225,6 @@ function openCategory(category) {
         </div>
       </div>
     `;
-  } else if (category === 'proxy') {
-    sidePanel.innerHTML = `
-      <div class="w-full h-full flex flex-col">
-        <!-- Toolbar -->
-        <div class="flex items-center px-4 py-2 bg-slate-800/90 backdrop-blur border-b border-indigo-500/20">
-          <div class="flex-1 flex items-center">
-            <button onclick="proxyGoBack()" class="text-gray-300 hover:text-white px-2">
-              <i class="fas fa-arrow-left"></i>
-            </button>
-            <button onclick="proxyGoForward()" class="text-gray-300 hover:text-white px-2">
-              <i class="fas fa-arrow-right"></i>
-            </button>
-            <button onclick="proxyRefresh()" class="text-gray-300 hover:text-white px-2">
-              <i class="fas fa-redo"></i>
-            </button>
-            
-            <div class="flex-1 mx-4 relative">
-              <input 
-                type="text" 
-                id="url-bar" 
-                value="https://vapor.my/scramjet/https%3A%2F%2Fstart.duckduckgo.com%2F%3Ft%3Dh_%26kp%3D1"
-                class="w-full bg-slate-700/50 text-white px-4 py-1 rounded-lg text-sm border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none"
-                onkeypress="handleProxyUrlBarKeyPress(event)"
-              >
-            </div>
-          </div>
-          
-          <div class="relative">
-            <button onclick="toggleToolbarMenu()" class="text-gray-300 hover:text-white px-2">
-              <i class="fas fa-ellipsis-v"></i>
-            </button>
-            
-            <div id="toolbar-menu" class="hidden absolute right-0 top-full mt-2 w-48 bg-slate-800/90 backdrop-blur rounded-lg border border-indigo-500/20 shadow-xl z-50">
-              <div class="py-2">
-                <button onclick="proxyCopyUrl()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
-                  <i class="fas fa-copy w-5"></i>
-                  <span>Copy URL</span>
-                </button>
-                <button onclick="proxyToggleFullscreen()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
-                  <i class="fas fa-expand w-5"></i>
-                  <span>Fullscreen</span>
-                </button>
-                <button onclick="proxyToggleToolbar()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
-                  <i class="fas fa-eye-slash w-5"></i>
-                  <span>Hide Toolbar</span>
-                </button>
-                <button onclick="proxyToggleBookmark()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
-                  <i class="fas fa-bookmark w-5"></i>
-                  <span>Bookmark</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Iframe container -->
-        <div class="flex-1 relative">
-          <iframe 
-            id="proxy-iframe" 
-            src="https://vapor.my/scramjet/https%3A%2F%2Fstart.duckduckgo.com%2F%3Ft%3Dh_%26kp%3D1"
-            class="w-full h-full border-none"
-          ></iframe>
-        </div>
-      </div>
-    `;
-    
-    sidePanel.classList.add('active');
-    updateNotificationBtn.style.display = 'none';
   } else if (category === 'apps') {
     sidePanel.innerHTML = `
       <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
@@ -331,11 +277,6 @@ function openCategory(category) {
             <div onclick="proxyApp('https://reddit.com')" class="app-card flex flex-col items-center text-center">
               <i class="fab fa-reddit app-icon text-orange-500 text-3xl mb-2"></i>
               <span class="app-name">Reddit</span>
-              <span class="category-label">Social</span>
-            </div>
-            <div onclick="proxyApp('https://tiktok.com')" class="app-card flex flex-col items-center text-center">
-              <i class="fab fa-tiktok app-icon text-black text-3xl mb-2"></i>
-              <span class="app-name">TikTok</span>
               <span class="category-label">Social</span>
             </div>
             <div onclick="proxyApp('https://twitter.com')" class="app-card flex flex-col items-center text-center">
@@ -552,59 +493,6 @@ function openCategory(category) {
     
     sidePanel.classList.add('active');
     updateNotificationBtn.style.display = 'none';
-  } else if (category === 'store') {
-    const purchasedItems = JSON.parse(localStorage.getItem('purchasedItems') || '[]');
-    
-    sidePanel.innerHTML = `
-      <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
-        <i class="fas fa-times"></i>
-      </button>
-      <div class="w-full h-full flex flex-col items-center p-6 overflow-y-auto">
-        <div class="max-w-4xl w-full">
-          <div class="flex items-center justify-between mb-8">
-            <div>
-              <h1 class="text-3xl font-bold text-white space-glow">Store</h1>
-              <p class="text-indigo-400">Unlock premium features and customizations</p>
-            </div>
-            <div class="flex items-center space-x-2 bg-slate-800/50 rounded-lg px-4 py-2 border border-indigo-500/20">
-              <i class="fas fa-coins text-yellow-400"></i>
-              <span id="store-coins" class="text-white font-bold">${userCoins}</span>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            ${storeItems.map(item => `
-              <div class="category-card p-6 rounded-xl relative overflow-hidden">
-                <div class="flex items-center justify-between mb-4">
-                  <h2 class="text-xl font-bold text-white">${item.name}</h2>
-                  <i class="fas ${item.icon} text-indigo-400 text-2xl"></i>
-                </div>
-                <p class="text-gray-300 mb-4">${item.description}</p>
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center space-x-2">
-                    <i class="fas fa-coins text-yellow-400"></i>
-                    <span class="text-white">${item.price}</span>
-                  </div>
-                  ${purchasedItems.includes(item.id) 
-                    ? '<span class="text-green-400"><i class="fas fa-check"></i> Owned</span>'
-                    : `<button 
-                        onclick="purchaseItem('${item.id}')" 
-                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-all duration-300"
-                        ${userCoins < item.price ? 'disabled' : ''}
-                      >
-                        Purchase
-                      </button>`
-                  }
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      </div>
-    `;
-    
-    sidePanel.classList.add('active');
-    updateNotificationBtn.style.display = 'none';
   } else {
     let url = '';
     switch(category) {
@@ -617,9 +505,6 @@ function openCategory(category) {
       case 'movies':
         url = 'https://movies.waves.lat/';
         break;
-      case 'terminal':
-        url = 'https://school-terminal-com.pages.dev/';
-        break
     }
 
     if (url) {
@@ -640,92 +525,46 @@ function openCategory(category) {
   updateNotificationBtn.style.display = 'none';
 }
 
+function proxyApp(url) {
+  const sidePanel = document.getElementById('side-panel');
+  const updateNotificationBtn = document.getElementById('update-notification-btn');
+  
+  sidePanel.innerHTML = `
+    <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
+      <i class="fas fa-times"></i>
+    </button>
+    <iframe 
+      id="proxy-iframe" 
+      src="https://uv-static-f3u.pages.dev/static/#"
+      class="w-full h-full border-none"
+    ></iframe>
+  `;
+  
+  sidePanel.classList.add('active');
+  updateNotificationBtn.style.display = 'none';
+}
+
 function proxySearch() {
   const searchInput = document.getElementById('proxy-search');
   const query = searchInput.value.trim();
   
   if (query) {
-    const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
-    
-    let searchUrl;
-    if (urlPattern.test(query)) {
-      searchUrl = query.startsWith('http') ? query : `https://${query}`;
-    } else {
-      searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
-    }
-    
     const sidePanel = document.getElementById('side-panel');
     const updateNotificationBtn = document.getElementById('update-notification-btn');
     
     sidePanel.innerHTML = `
-      <div class="w-full h-full flex flex-col">
-        <!-- Toolbar -->
-        <div class="flex items-center px-4 py-2 bg-slate-800/90 backdrop-blur border-b border-indigo-500/20">
-          <div class="flex-1 flex items-center">
-            <button onclick="proxyGoBack()" class="text-gray-300 hover:text-white px-2">
-              <i class="fas fa-arrow-left"></i>
-            </button>
-            <button onclick="proxyGoForward()" class="text-gray-300 hover:text-white px-2">
-              <i class="fas fa-arrow-right"></i>
-            </button>
-            <button onclick="proxyRefresh()" class="text-gray-300 hover:text-white px-2">
-              <i class="fas fa-redo"></i>
-            </button>
-            
-            <div class="flex-1 mx-4 relative">
-              <input 
-                type="text" 
-                id="url-bar" 
-                value="${searchUrl}"
-                class="w-full bg-slate-700/50 text-white px-4 py-1 rounded-lg text-sm border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none"
-                onkeypress="handleProxyUrlBarKeyPress(event)"
-              >
-            </div>
-          </div>
-          
-          <div class="relative">
-            <button onclick="toggleToolbarMenu()" class="text-gray-300 hover:text-white px-2">
-              <i class="fas fa-ellipsis-v"></i>
-            </button>
-            
-            <div id="toolbar-menu" class="hidden absolute right-0 top-full mt-2 w-48 bg-slate-800/90 backdrop-blur rounded-lg border border-indigo-500/20 shadow-xl z-50">
-              <div class="py-2">
-                <button onclick="proxyCopyUrl()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
-                  <i class="fas fa-copy w-5"></i>
-                  <span>Copy URL</span>
-                </button>
-                <button onclick="proxyToggleFullscreen()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
-                  <i class="fas fa-expand w-5"></i>
-                  <span>Fullscreen</span>
-                </button>
-                <button onclick="proxyToggleToolbar()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
-                  <i class="fas fa-eye-slash w-5"></i>
-                  <span>Hide Toolbar</span>
-                </button>
-                <button onclick="proxyToggleBookmark()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
-                  <i class="fas fa-bookmark w-5"></i>
-                  <span>Bookmark</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Iframe container -->
-        <div class="flex-1 relative">
-          <iframe 
-            id="proxy-iframe" 
-            src="${encodeURI(searchUrl)}"
-            class="w-full h-full border-none"
-          ></iframe>
-        </div>
-      </div>
+      <button id="close-panel" class="absolute top-4 right-4 text-3xl text-gray-300 hover:text-white z-50" onclick="closeSidePanel()">
+        <i class="fas fa-times"></i>
+      </button>
+      <iframe 
+        id="proxy-iframe" 
+        src="https://uv-static-f3u.pages.dev/static/#${encodeURIComponent(query)}"
+        class="w-full h-full border-none"
+      ></iframe>
     `;
     
     sidePanel.classList.add('active');
     updateNotificationBtn.style.display = 'none';
-
-    window.addEventListener('message', handleProxyMessage);
   }
 }
 
@@ -735,81 +574,6 @@ function handleProxyMessage(event) {
       document.getElementById('url-bar').value = event.data.url;
       break;
   }
-}
-
-function proxyApp(url) {
-  const sidePanel = document.getElementById('side-panel');
-  const updateNotificationBtn = document.getElementById('update-notification-btn');
-  
-  sidePanel.innerHTML = `
-    <div class="w-full h-full flex flex-col">
-      <!-- Toolbar -->
-      <div class="flex items-center px-4 py-2 bg-slate-800/90 backdrop-blur border-b border-indigo-500/20">
-        <div class="flex-1 flex items-center">
-          <button onclick="proxyGoBack()" class="text-gray-300 hover:text-white px-2">
-            <i class="fas fa-arrow-left"></i>
-          </button>
-          <button onclick="proxyGoForward()" class="text-gray-300 hover:text-white px-2">
-            <i class="fas fa-arrow-right"></i>
-          </button>
-          <button onclick="proxyRefresh()" class="text-gray-300 hover:text-white px-2">
-            <i class="fas fa-redo"></i>
-          </button>
-          
-          <div class="flex-1 mx-4 relative">
-            <input 
-              type="text" 
-              id="url-bar" 
-              value="${url}"
-              class="w-full bg-slate-700/50 text-white px-4 py-1 rounded-lg text-sm border border-indigo-500/20 focus:border-indigo-500/50 focus:outline-none"
-              onkeypress="handleProxyUrlBarKeyPress(event)"
-            >
-          </div>
-        </div>
-        
-        <div class="relative">
-          <button onclick="toggleToolbarMenu()" class="text-gray-300 hover:text-white px-2">
-            <i class="fas fa-ellipsis-v"></i>
-          </button>
-          
-          <div id="toolbar-menu" class="hidden absolute right-0 top-full mt-2 w-48 bg-slate-800/90 backdrop-blur rounded-lg border border-indigo-500/20 shadow-xl z-50">
-            <div class="py-2">
-              <button onclick="proxyCopyUrl()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
-                <i class="fas fa-copy w-5"></i>
-                <span>Copy URL</span>
-              </button>
-              <button onclick="proxyToggleFullscreen()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
-                <i class="fas fa-expand w-5"></i>
-                <span>Fullscreen</span>
-              </button>
-              <button onclick="proxyToggleToolbar()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
-                <i class="fas fa-eye-slash w-5"></i>
-                <span>Hide Toolbar</span>
-              </button>
-              <button onclick="proxyToggleBookmark()" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-indigo-500/20 hover:text-white flex items-center">
-                <i class="fas fa-bookmark w-5"></i>
-                <span>Bookmark</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Iframe container -->
-      <div class="flex-1 relative">
-        <iframe 
-          id="proxy-iframe" 
-          src="${encodeURI(url)}"
-          class="w-full h-full border-none"
-        ></iframe>
-      </div>
-    </div>
-  `;
-  
-  sidePanel.classList.add('active');
-  updateNotificationBtn.style.display = 'none';
-
-  window.addEventListener('message', handleProxyMessage);
 }
 
 function proxyGoBack() {
@@ -1415,6 +1179,87 @@ function playSound(type) {
   
   const audio = new Audio(sounds[type]);
   audio.play().catch(() => {}); // Ignore errors if sound can't play
+}
+
+async function initVM() {
+  const container = document.getElementById('vm-container');
+  
+  // First show the welcome message
+  container.innerHTML = `
+    <div class="flex flex-col items-center justify-center h-full p-8 space-y-6">
+      <h2 class="text-4xl font-bold text-white space-glow text-center">VAPOR Private VMs</h2>
+      
+      <div class="max-w-2xl text-center space-y-4">
+        <p class="text-gray-300 text-lg">
+          VAPOR Private VMs are isolated, personal browsers available in the cloud.
+        </p>
+        
+        <p class="text-gray-300 text-lg">
+          Need to search something? Need to test a sketchy site? Try Private VMs.
+        </p>
+        
+        <p class="text-indigo-400 text-lg">
+          12 minutes of uninterrupted browsing. Ran out of time? In a single click, create a new session right away.
+        </p>
+      </div>
+
+      <button 
+        onclick="startVMSession()"
+        class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl transition-all duration-300 flex items-center space-x-3 text-lg font-medium mx-auto"
+      >
+        <i class="fas fa-play"></i>
+        <span>Start Session</span>
+      </button>
+    </div>
+  `;
+}
+
+async function startVMSession() {
+  const container = document.getElementById('vm-container');
+  
+  if (!container) {
+    console.error('VM container not found. Make sure the element with ID "vm-container" exists.');
+    alert('Error initializing VM session. Please try again or contact support.');
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="flex items-center justify-center h-full">
+      <div class="animate-spin rounded-full h-12 w-12 border-4 border-indigo-500 border-t-transparent"></div>
+    </div>
+  `;
+  
+  try {
+    const response = await fetch('https://engine.hyperbeam.com/v0/vm', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer sk_live_sW8gQ_SRglb2SzTdx82Jn7x21Tv6Kc2HDy8qIqgLzmk`
+      }
+    });
+
+    const data = await response.json();
+    
+    if (data.embed_url) {
+      const iframe = document.createElement('iframe');
+      iframe.src = data.embed_url;
+      iframe.style.width = '100%';
+      iframe.style.height = '100%';
+      iframe.style.border = 'none';
+      iframe.style.borderRadius = '0.75rem';
+      
+      container.innerHTML = ''; // Clear loading spinner
+      container.appendChild(iframe);
+    } else {
+      container.innerHTML = '<p class="text-red-500 text-center mt-4">Failed to initialize VM</p>';
+    }
+  } catch (error) {
+    console.error('VM Error:', error);
+    container.innerHTML = `
+      <p class="text-red-500 text-center mt-4">
+        Error connecting to VM service: ${error.message}
+      </p>
+    `;
+  }
 }
 
 setInterval(checkAndUpdateCoins, 60000); // Check every minute
